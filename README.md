@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/IntershopCommunicationsAG/architectural-report-gradle-plugin.svg?branch=master)](https://travis-ci.org/IntershopCommunicationsAG/architectural-report-gradle-plugin)
+
 # Introduction
 
 This project provides a tool to identify architectural mistakes.
