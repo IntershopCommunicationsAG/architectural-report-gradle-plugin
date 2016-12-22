@@ -21,10 +21,10 @@ plugins {
     id 'com.intershop.gradle.test' version '2.1.0'
     id 'com.intershop.gradle.version.recommender' version '1.2.0'
 
-    id 'maven-publish'
-
     // plugin for publishing to Gradle Portal
+    id 'maven-publish'
     id 'com.gradle.plugin-publish' version '0.9.5'
+    id 'nebula.plugin-plugin' version '4.24.0'
 
     // plugin for publishing to jcenter
     id 'com.jfrog.bintray' version '1.7.1'
@@ -37,7 +37,7 @@ apply plugin: 'com.intershop.gradle.version.recommender'
 // release configuration
 group = 'com.intershop.gradle.architectural.report'
 description 'Gradle architectural report plugin'
-version = '1.0.0-rc2'
+version = '1.0.0-rc3'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -73,19 +73,10 @@ task groovydocJar(type: Jar) {
     from groovydoc.destinationDir
 }
 
-// additional sources artifact
-task sourceJar(type: Jar) {
-    from sourceSets.main.allSource
-}
-
 publishing {
     publications {
         intershopMvn(MavenPublication) {
             from components.java
-
-            artifact sourceJar {
-                classifier 'sources'
-            }
 
             artifact groovydocJar {
                 classifier "javadoc"
