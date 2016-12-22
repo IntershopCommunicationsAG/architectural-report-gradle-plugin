@@ -37,7 +37,7 @@ apply plugin: 'com.intershop.gradle.version.recommender'
 // release configuration
 group = 'com.intershop.gradle.architectural.report'
 description 'Gradle architectural report plugin'
-version = '1.0.0-rc4'
+version = '1.0.0-rc5'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -84,10 +84,6 @@ publishing {
 
             pom.withXml { XmlProvider xml ->
                 def Node root = xml.asNode();
-
-                def scm = root.appendNode( 'scm' )
-                scm.appendNode( 'url', "https://gitlab.intershop.de/IntershopGradlePlugins/${project.name}")
-                scm.appendNode( 'connection', "scm:git:https://gitlab.intershop.de/IntershopGradlePlugins/${project.name}.git")
 
                 def org = root.appendNode( 'organization' )
                 org.appendNode( 'name', 'Intershop Communications' )
