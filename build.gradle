@@ -149,7 +149,7 @@ pluginBundle {
 
     plugins {
         gradleTestPlugin {
-            id = 'com.intershop.gradle.architecturereport'
+            id = 'com.intershop.gradle.architectural.report'
             displayName = project.description
         }
     }
