@@ -170,16 +170,3 @@ dependencies {
 repositories {
 	jcenter()
 }
-
-publishing {
-	repositories {
-        maven {
-            // url 'file:///d:/Server/gradle_home/.localRepo'
-			url 'file:///D:/Source/ish/gradle_7.8/repo'
-        }
-        maven {
-            url 'file:///d:/Server/gradle_home/.localRepo'
-			// url 'file:///D:/Source/ish/gradle_7.8/repo'
-        }
-    }
-}
