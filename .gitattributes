@@ -10,6 +10,7 @@
 
 # always linux
 gradlew text eol=lf
+*.sh text eol=lf
 
 # always windows
 *.bat text eol=crlf
