@@ -84,7 +84,6 @@ publishing {
 
             pom.withXml { XmlProvider xml ->
                 def Node root = xml.asNode();
-                root.appendNode('url', "https:/gitlab.intershop.de/IntershopGradlePlugins/${project.name}")
 
                 def scm = root.appendNode( 'scm' )
                 scm.appendNode( 'url', "https://gitlab.intershop.de/IntershopGradlePlugins/${project.name}")
