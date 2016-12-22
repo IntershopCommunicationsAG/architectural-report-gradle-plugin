@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jira-issues>
+	<jira name="Intershop Jira" url="https://jira.intershop.de/browse/">
+		<!-- Pipelet 'GetSubString' is not thread-safe -->
+		<jira-issue key="f0668c0985416c7537aaee46c3b25cca" jira-id="ENFINITY-17360" />
+		<jira-issue key="624e0010351fcfa982c6f42542024fdd" jira-id="ENFINITY-17361" />
+		<jira-issue key="fb9bde232afa7f6ed1674649bf0de76a" jira-id="ENFINITY-17362" />
+	</jira>
+</jira-issues>

@@ -1,0 +1,14 @@
+# Gradle Files
+.gradle
+build/
+
+# backup files
+**/*~
+**/*.bak
+
+# Eclipse project files
+bin/
+.classpath
+.project
+.settings
+/bin/

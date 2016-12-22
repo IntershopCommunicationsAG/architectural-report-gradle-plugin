@@ -1,0 +1,18 @@
+<isform action="#URL(Action('ViewProductCategoryAssignmentWizard_52-ListCatalogs'))#" name="backForm" method="post">
+	<table border="0" cellspacing="0" cellpadding="0" width="100%">
+		<tr>
+			<td width="100%" class="backbar_left">
+				<table border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td class="button">
+							<input type="hidden" name="ChannelID" value="<isprint value="#ChannelID#">"/>
+							<input type="hidden" name="ProductID" value="<isprint value="#Product:UUID#">"/>
+							<input type="hidden" name="CatalogID" value="<isprint value="#Catalog:UUID#">"/>
+							<input type="submit" name="back" value="&lt;&lt; #localizeText('ProductCategoryAssignmentViewCatalogDetails_52.Back.button')#" class="button"/>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</isform>
