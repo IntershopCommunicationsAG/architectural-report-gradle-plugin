@@ -37,7 +37,7 @@ apply plugin: 'com.intershop.gradle.version.recommender'
 // release configuration
 group = 'com.intershop.gradle.architectural.report'
 description 'Gradle architectural report plugin'
-version = '1.0.0'
+version = '1.0.0-rc1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
