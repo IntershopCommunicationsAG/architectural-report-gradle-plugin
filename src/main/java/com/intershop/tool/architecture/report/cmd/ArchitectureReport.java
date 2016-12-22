@@ -27,8 +27,8 @@ public class ArchitectureReport
     private static boolean buildFailed = false;
 
     /**
-     *
-     * @param args
+     * Execute Architecture report on commandline
+     * @param args command line arguments
      * <ul>
      *            <li>server ivy file: d:\Source\ish\gradle_trunk\server\share\ivy.xml</li>
      *            <li>cartridge directory: d:\Source\ish\gradle_trunk\server\share\system\cartridges</li>
@@ -44,14 +44,13 @@ public class ArchitectureReport
     }
 
     /**
-     * @param ivyFile
-     * @param cartridgesDirectory
-     * @param baselineURI
-     * @param outputDirectory
-     * @param knownIssuesURI
-     * @param keySelector
-     * @param args program arguments
-     * @return true in case of an error
+     * @param outputDirectory output directory
+     * @param ivyFile ivy dependency declaration for deployment
+     * @param cartridgesDirectory directory contains cartridges and libs
+     * @param baselineFile file contains api baseline
+     * @param knownIssuesFile file contains known issues (will be ignored)
+     * @param keySelector list of keys, which will be validated
+     * @return true in case validation is failing
      */
     public static boolean validateArchitecture(File outputDirectory, File ivyFile, File cartridgesDirectory, File baselineFile, File knownIssuesFile, List<String> keySelector)
     {
@@ -66,7 +65,7 @@ public class ArchitectureReport
 
     /**
      * @param args program arguments
-     * @return true in case of an error
+     * @return true in case validation is failing
      */
     public static boolean validateArchitecture(String... args)
     {
