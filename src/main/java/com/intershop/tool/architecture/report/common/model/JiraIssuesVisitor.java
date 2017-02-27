@@ -27,7 +27,7 @@ public class JiraIssuesVisitor implements Function<InputStream, List<JiraIssue>>
         }
         catch(SAXException | ParserConfigurationException | IOException e)
         {
-            throw new RuntimeException("Can't process content", e);
+            throw new XMLLoaderException("Can't import existing issues", e);
         }
         return result;
     }

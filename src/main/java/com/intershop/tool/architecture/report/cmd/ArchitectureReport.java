@@ -54,13 +54,20 @@ public class ArchitectureReport
      */
     public static boolean validateArchitecture(File outputDirectory, File ivyFile, File cartridgesDirectory, File baselineFile, File knownIssuesFile, List<String> keySelector)
     {
-        return ArchitectureReport.validateArchitecture(
-                        "-" + ArchitectureReportConstants.ARG_IVYFILE, ivyFile.getAbsolutePath(),
-                        "-" + ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY, cartridgesDirectory.getAbsolutePath(),
-                        "-" + ArchitectureReportConstants.ARG_BASELINE, baselineFile.toURI().toString(),
-                        "-" + ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY, outputDirectory.getAbsolutePath(),
-                        "-" + ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE, knownIssuesFile.toURI().toString(),
-                        "-" + ArchitectureReportConstants.ARG_KEYS, String.join(",", keySelector));
+        CommandLineArguments info = new CommandLineArguments();
+        info.setArgument(ArchitectureReportConstants.ARG_IVYFILE, ivyFile.getAbsolutePath());
+        info.setArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY, cartridgesDirectory.getAbsolutePath());
+        if (baselineFile != null)
+        {
+            info.setArgument(ArchitectureReportConstants.ARG_BASELINE, baselineFile.toURI().toString());
+        }
+        info.setArgument(ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY, outputDirectory.getAbsolutePath());
+        if(knownIssuesFile != null)
+        {
+            info.setArgument(ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE, knownIssuesFile.toURI().toString());
+        }
+        info.setArgument(ArchitectureReportConstants.ARG_KEYS, String.join(",", keySelector));
+        return validateArchitecture(info);
     }
 
     /**
@@ -70,6 +77,11 @@ public class ArchitectureReport
     public static boolean validateArchitecture(String... args)
     {
         CommandLineArguments info = new CommandLineArguments(args);
+        return validateArchitecture(info);
+    }
+
+    public static boolean validateArchitecture(CommandLineArguments info)
+    {
         final ActorSystem system = ActorSystem.create("ArchitectureReport");
         // Create the 'greeter' actor
         final ActorRef serverActor = system.actorOf(Props.create(ServerActor.class), "server");

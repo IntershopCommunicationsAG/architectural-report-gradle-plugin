@@ -1,7 +1,6 @@
 package com.intershop.tool.architecture.report.api.model.actor;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +27,7 @@ import com.intershop.tool.architecture.report.cmd.ArchitectureReportOutputFolder
 import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 import com.intershop.tool.architecture.report.common.model.Issue;
 import com.intershop.tool.architecture.report.common.model.URILoader;
+import com.intershop.tool.architecture.report.common.model.XMLLoaderException;
 import com.intershop.tool.architecture.report.common.model.XmlLoader;
 import com.intershop.tool.architecture.report.jar.messages.GetJarResponse;
 import com.intershop.tool.architecture.report.java.model.JavaClassRequest;
@@ -75,7 +75,7 @@ public class DefinitionCollectorActor extends UntypedActor
         }
     }
 
-    private void receive(CommandLineArguments request) throws IOException, JAXBException
+    private void receive(CommandLineArguments request)
     {
         folderLocations = new ArchitectureReportOutputFolder(request.getArgument(ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY));
         String baselineLocation = request.getArgument(ArchitectureReportConstants.ARG_BASELINE);
@@ -88,9 +88,9 @@ public class DefinitionCollectorActor extends UntypedActor
                 APIDefinition baselineDefinition = xmlLoader.importXML(is, APIDefinition.class);
                 baseline.addAll(baselineDefinition.getDefinition());
             }
-            catch(FileNotFoundException e)
+            catch(XMLLoaderException|IOException e)
             {
-                LoggerFactory.getLogger(getClass()).warn("loading api definition failed", e);
+                LoggerFactory.getLogger(getClass()).warn("loading api definition failed, location:" + baselineLocation, e);
             }
         }
         if (callFinishOnReceiveLocation)
@@ -120,14 +120,21 @@ public class DefinitionCollectorActor extends UntypedActor
         baseline.remove(definition);
     }
 
-    private void finish() throws IOException, JAXBException
+    private void finish()
     {
         List<Issue> issues = getIssues();
         APIDefinitionResponse message = new APIDefinitionResponse(definitions, baseline, issues);
         if (folderLocations != null)
         {
-            exportDefinition(folderLocations.getApiDefinitionFile(), message.getCollectedDefinitions());
-            exportDefinition(folderLocations.getApiViolationFile(), message.getRemovedDefinitions());
+            try
+            {
+                exportDefinition(folderLocations.getApiDefinitionFile(), message.getCollectedDefinitions());
+                exportDefinition(folderLocations.getApiViolationFile(), message.getRemovedDefinitions());
+            }
+            catch(IOException| JAXBException e)
+            {
+                LoggerFactory.getLogger(getClass()).warn("Can't export definition files", e);
+            }
             getSender().tell(message, getSelf());
         }
         else

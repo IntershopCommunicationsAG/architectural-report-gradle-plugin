@@ -40,10 +40,10 @@ class ValidateArchitectureTask extends DefaultTask {
     @InputDirectory
     File cartridgesDir
 
-    @Input
+    @Input @Optional
     File baselineFile
 
-    @Input
+    @Input @Optional
     File knownIssuesFile
 
     @Input

@@ -17,7 +17,7 @@ public class CommandLineArguments implements Serializable
 
     public CommandLineArguments(Map<String, String> arguments)
     {
-        this.arguments = Collections.unmodifiableMap(arguments);
+        this.arguments = arguments;
     }
 
     public CommandLineArguments(String... args)
@@ -51,11 +51,16 @@ public class CommandLineArguments implements Serializable
 
     public Map<String, String> getArguments()
     {
-        return arguments;
+        return Collections.unmodifiableMap(arguments);
     }
 
     public String getArgument(String key)
     {
         return arguments.get(key);
+    }
+
+    public void setArgument(String key, String value)
+    {
+        arguments.put(key, value);
     }
 }

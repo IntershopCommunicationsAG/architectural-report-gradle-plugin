@@ -29,6 +29,7 @@ import com.intershop.tool.architecture.report.common.model.Issue;
 import com.intershop.tool.architecture.report.common.model.JiraIssue;
 import com.intershop.tool.architecture.report.common.model.JiraIssuesVisitor;
 import com.intershop.tool.architecture.report.common.model.URILoader;
+import com.intershop.tool.architecture.report.common.model.XMLLoaderException;
 
 import akka.actor.UntypedActor;
 
@@ -119,6 +120,7 @@ public class IssuePrinterActor extends UntypedActor
                             .collect(Collectors.toList());
             try (Formatter formatter = new Formatter(folderLocations.getNewIssuesFile()))
             {
+                formatter.format("<jira-issues>\n<jira>\n");
                 for (Issue issue : filteredIssues)
                 {
                     formatter.format(
@@ -126,6 +128,7 @@ public class IssuePrinterActor extends UntypedActor
                                     issue.getProjectRef().getIdentifier(), issue.getKey(), issue.getHash(),
                                     issue.getParametersString());
                 }
+                formatter.format("</jira>\n</jira-issues>\n");
                 formatter.flush();
             }
             getSender().tell(new PrintResponse(message, filteredIssues), getSelf());
@@ -152,9 +155,9 @@ public class IssuePrinterActor extends UntypedActor
                 issues.stream().forEach(issue -> result.put(issue.getKey(), issue));
             }
         }
-        catch(FileNotFoundException e)
+        catch(XMLLoaderException e)
         {
-            LoggerFactory.getLogger(IssuePrinterActor.class).warn("Can't load issues file", e);
+            LoggerFactory.getLogger(IssuePrinterActor.class).warn("Can't load issues file: " + jiraIssueLocation, e);
         }
         return result;
     }

@@ -1,6 +1,5 @@
 package com.intershop.tool.architecture.report.common.model;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 
@@ -21,7 +20,7 @@ public class XmlLoader
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T importXML(InputStream inputStream, Class<T> expectedType) throws IOException
+    public <T> T importXML(InputStream inputStream, Class<T> expectedType) throws XMLLoaderException
     {
         T definition = null;
         try
@@ -32,7 +31,7 @@ public class XmlLoader
         }
         catch(JAXBException e)
         {
-            throw new IOException(e);
+            throw new XMLLoaderException("Can't load stream for class:" + expectedType.getName(), e);
         }
         return definition;
     }
