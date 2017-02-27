@@ -54,9 +54,9 @@ Start the architecture report task:
 | key             | type         | description                                                                |
 |-----------------|--------------|----------------------------------------------------------------------------|
 | reportsDir      | File         | write reports (new_issues, api_definition, resolved_issues)                |
-| knownIssuesFile | File         | read known issues from a xml-file, listed issues will be ignored           |
-| keySelector     | List&lt;String&gt; | define keys for validation, other issues will be ignored                   |
-| baselineFile    | File         | api baseline (previously published api_definition.xml of baseline release) |
+| knownIssuesFile | File         | (optional) read known issues from a xml-file, listed issues will be ignored           |
+| keySelector     | List&lt;String&gt; | define keys for validation, other issues will be ignored                        |
+| baselineFile    | File         | (optional) api baseline (previously published api_definition.xml of baseline release) |
 | cartridgesDir   | File         | cartridge directory of ICM server                                          |
 | ivyFile         | File         | ivy.xml file contains server dependencies and build numbers                |
 
