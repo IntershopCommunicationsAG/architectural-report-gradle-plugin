@@ -96,7 +96,7 @@ public class JavaClassVisitor extends ClassVisitor
                 definition.setSignature(name);
                 definition.setArtifact(isPublic(access) ? Artifact.PUBLIC_FIELD : Artifact.PROTECTED_FIELD);
                 definition.setSource(currentClassName);
-                javaClass.getApiDefinition().getDefinition().add(definition);
+                javaClass.getApiDefinition().add(definition);
             }
         }
         return null;
@@ -147,7 +147,7 @@ public class JavaClassVisitor extends ClassVisitor
                     definition.setSignature(name + "::" +desc);
                     definition.setArtifact(isPublic(access) ? Artifact.PUBLIC_METHOD : Artifact.PROTECTED_METHOD);
                     definition.setSource(currentClassName);
-                    javaClass.getApiDefinition().getDefinition().add(definition);
+                    javaClass.getApiDefinition().add(definition);
                 }
             }
             return new JavaMethodVisitor(isDeprecated);

@@ -18,6 +18,7 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.LoggerFactory;
 
 import com.intershop.tool.architecture.akka.actors.tooling.AkkaMessage;
+import com.intershop.tool.architecture.report.api.messages.APIDefinitionRequest;
 import com.intershop.tool.architecture.report.api.messages.APIDefinitionResponse;
 import com.intershop.tool.architecture.report.api.model.definition.APIDefinition;
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
@@ -29,8 +30,6 @@ import com.intershop.tool.architecture.report.common.model.Issue;
 import com.intershop.tool.architecture.report.common.model.URILoader;
 import com.intershop.tool.architecture.report.common.model.XMLLoaderException;
 import com.intershop.tool.architecture.report.common.model.XmlLoader;
-import com.intershop.tool.architecture.report.jar.messages.GetJarResponse;
-import com.intershop.tool.architecture.report.java.model.JavaClassRequest;
 import com.intershop.tool.architecture.report.project.model.ProjectRef;
 
 import akka.actor.UntypedActor;
@@ -49,14 +48,9 @@ public class DefinitionCollectorActor extends UntypedActor
     @Override
     public void onReceive(Object message) throws Exception
     {
-        if (message instanceof JavaClassRequest)
+        if (message instanceof APIDefinitionRequest)
         {
-            JavaClassRequest request = (JavaClassRequest)message;
-            receive(request);
-        }
-        else if (message instanceof GetJarResponse)
-        {
-            GetJarResponse request = (GetJarResponse)message;
+            APIDefinitionRequest request = (APIDefinitionRequest)message;
             receive(request);
         }
         else if (message instanceof CommandLineArguments)
@@ -99,19 +93,9 @@ public class DefinitionCollectorActor extends UntypedActor
         }
     }
 
-    private static void receive(GetJarResponse request)
+    private static void receive(APIDefinitionRequest request)
     {
-        request.getJar().getClasses().stream().forEach(jc -> registerDefinition(jc.getApiDefinition()));
-    }
-
-    private static void receive(JavaClassRequest request)
-    {
-        registerDefinition(request.getJavaClass().getApiDefinition());
-    }
-
-    private static void registerDefinition(APIDefinition apiDefinition)
-    {
-        apiDefinition.getDefinition().stream().forEach(d -> registerDefinition(d));
+        request.getDefinitions().stream().forEach(d -> registerDefinition(d));
     }
 
     private static void registerDefinition(Definition definition)

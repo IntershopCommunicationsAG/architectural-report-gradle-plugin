@@ -1,6 +1,7 @@
 package com.intershop.tool.architecture.report.server;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -11,8 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import com.intershop.tool.architecture.akka.actors.tooling.AkkaMessage;
 import com.intershop.tool.architecture.akka.actors.tooling.ReliableMessageActorRef;
+import com.intershop.tool.architecture.report.api.messages.APIDefinitionRequest;
 import com.intershop.tool.architecture.report.api.messages.APIDefinitionResponse;
 import com.intershop.tool.architecture.report.api.model.actor.DefinitionCollectorActor;
+import com.intershop.tool.architecture.report.api.model.definition.Artifact;
+import com.intershop.tool.architecture.report.api.model.definition.Definition;
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 import com.intershop.tool.architecture.report.common.actors.IssuePrinterActor;
@@ -75,7 +79,7 @@ public class ServerActor extends UntypedActor
     private final ReliableMessageActorRef<JavaClassRequest> capiValidatorActor = new ReliableMessageActorRef<>(getContext(),CapiValidatorActor.class, getSelf());
     private final ReliableMessageActorRef<JavaClassRequest> unusedPipeletActor = new ReliableMessageActorRef<>(getContext(),UnusedPipeletValidatorActor.class, getSelf());
     private final ReliableMessageActorRef<?> groupPipeletActor = new ReliableMessageActorRef<>(getContext(),PipeletGroupActor.class, getSelf());
-    private final ReliableMessageActorRef<JavaClassRequest> definitionCollectorActor = new ReliableMessageActorRef<>(getContext(),DefinitionCollectorActor.class, getSelf());
+    private final ReliableMessageActorRef<APIDefinitionRequest> definitionCollectorActor = new ReliableMessageActorRef<>(getContext(),DefinitionCollectorActor.class, getSelf());
     private final ReliableMessageActorRef<FileRequest> ismlActor = new ReliableMessageActorRef<>(getContext(),IsmlTemplateActor.class, getSelf());
     private final ReliableMessageActorRef<PipelineTestRequest> pipelineTester = new ReliableMessageActorRef<>(getContext(),PipelineTestActor.class, getSelf());
     private final ReliableMessageActorRef<PrintRequest> printActor = new ReliableMessageActorRef<>(getContext(),IssuePrinterActor.class, getSelf());
@@ -258,7 +262,7 @@ public class ServerActor extends UntypedActor
         boFilterActor.tell(javaClassRequests);
         pipeletFilterActor.tell(javaClassRequests);
         unusedPipeletActor.tellOtherMessage(message);
-        definitionCollectorActor.tellOtherMessage(message);
+        definitionCollectorActor.tell(message.getJar().getClasses().stream().map(jc -> new APIDefinitionRequest(jc.getApiDefinition())).collect(Collectors.toList()));
     }
 
     private void receive(GetJarsResponse message)
@@ -294,12 +298,21 @@ public class ServerActor extends UntypedActor
         definitionCollectorActor.tellOtherMessage(info);
         printActor.tellOtherMessage(info);
         File ivyFile = new File(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE));
+        ProjectRef serverProject = new ProjectRef("SERVER", "SERVER", "LOCAL");
+        List<Definition> definitions = new ArrayList<>();
         for (ProjectRef project : task.apply(ivyFile))
         {
             jarFinder.tell(new GetJarsRequest(project));
             pipelineFinder.tell(new GetPipelinesRequest(project));
             ismlFinder.tell(new GetIsmlTemplatesRequest(project));
+            Definition apiDef = new Definition();
+            apiDef.setProjectRef(serverProject);
+            apiDef.setArtifact(Artifact.LIBRARY);
+            apiDef.setSource("ivy.xml");
+            apiDef.setSignature(project.getIdentifier() + "=" + project.getVersion());
+            definitions.add(apiDef);
         }
+        definitionCollectorActor.tell(new APIDefinitionRequest(definitions));
     }
 
     private boolean flushPrint = false;

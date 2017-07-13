@@ -45,7 +45,7 @@ public class JarActor extends UntypedActor
 
     private static void enrichWithProjectRef(Jar visitFile, ProjectRef projectRef)
     {
-        visitFile.getClasses().stream().forEach(jc -> enrichWithProjectRef(jc.getApiDefinition().getDefinition(), projectRef));
+        visitFile.getClasses().stream().forEach(jc -> enrichWithProjectRef(jc.getApiDefinition(), projectRef));
     }
 
     private static void enrichWithProjectRef(Collection<Definition> definitions, ProjectRef projectRef)

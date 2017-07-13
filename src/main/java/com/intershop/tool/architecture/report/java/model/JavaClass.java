@@ -6,11 +6,13 @@
 package com.intershop.tool.architecture.report.java.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import com.intershop.tool.architecture.report.api.model.definition.APIDefinition;
+import com.intershop.tool.architecture.report.api.model.definition.Definition;
 
 /**
  * Represents a java class
@@ -26,7 +28,7 @@ public class JavaClass implements Serializable
     private final Set<String> implementsRef = new HashSet<>();
     private final Set<String> extensionPointIDs = new HashSet<>();
     private boolean deprecated = false;
-    private final APIDefinition apiDefinition = new APIDefinition();
+    private final List<Definition> apiDefinitions = new ArrayList<>();
 
     public JavaClass(String className, String superName)
     {
@@ -79,9 +81,9 @@ public class JavaClass implements Serializable
         return deprecatedRefs;
     }
 
-    public APIDefinition getApiDefinition()
+    public List<Definition> getApiDefinition()
     {
-        return apiDefinition;
+        return apiDefinitions;
     }
 
 }

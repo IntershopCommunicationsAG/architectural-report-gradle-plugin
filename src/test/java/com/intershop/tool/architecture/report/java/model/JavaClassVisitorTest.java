@@ -31,8 +31,8 @@ public class JavaClassVisitorTest
     {
         Collection<JavaClass> classes = jarVisitor.getClasses(TEST_JAR);
         JavaClass capiClass = classes.parallelStream().filter(c -> c.getClassName().equals("com.intershop.beehive.core.capi.businessobject.BusinessObjectMgr")).findFirst().get();
-        assertTrue("definition found", !capiClass.getApiDefinition().getDefinition().isEmpty());
-        Definition fieldDef = capiClass.getApiDefinition().getDefinition().stream().filter(d -> Artifact.PUBLIC_FIELD.equals(d.getArtifact())).findFirst().get();
+        assertTrue("definition found", !capiClass.getApiDefinition().isEmpty());
+        Definition fieldDef = capiClass.getApiDefinition().stream().filter(d -> Artifact.PUBLIC_FIELD.equals(d.getArtifact())).findFirst().get();
         assertEquals("public member found", "REGISTRY_NAME", fieldDef.getSignature());
     }
 
@@ -41,7 +41,7 @@ public class JavaClassVisitorTest
     {
         Collection<JavaClass> classes = jarVisitor.getClasses(TEST_JAR);
         JavaClass capiClass = classes.parallelStream().filter(c -> c.getClassName().equals("com.intershop.beehive.core.capi.businessobject.BusinessObjectMgr")).findFirst().get();
-        List<Definition> methods = capiClass.getApiDefinition().getDefinition().stream().filter(d -> Artifact.PUBLIC_METHOD.equals(d.getArtifact())).collect(Collectors.toList());
+        List<Definition> methods = capiClass.getApiDefinition().stream().filter(d -> Artifact.PUBLIC_METHOD.equals(d.getArtifact())).collect(Collectors.toList());
         assertEquals("public methods found", 1, methods.size());
     }
 
@@ -58,7 +58,7 @@ public class JavaClassVisitorTest
         XmlLoader loader = new XmlLoader();
         Collection<JavaClass> classes = jarVisitor.getClasses(TEST_JAR);
         APIDefinition xmlModel = new APIDefinition();
-        classes.stream().forEach(jc -> xmlModel.getDefinition().addAll(jc.getApiDefinition().getDefinition()));
+        classes.stream().forEach(jc -> xmlModel.getDefinition().addAll(jc.getApiDefinition()));
         StringWriter writer = new StringWriter();
         loader.exportXML(xmlModel, writer);
         assertEquals("export correct", ResourceLoader.getString("api_definition_test_co.xml").replace("\r", ""), writer.toString().replace("\r", ""));
