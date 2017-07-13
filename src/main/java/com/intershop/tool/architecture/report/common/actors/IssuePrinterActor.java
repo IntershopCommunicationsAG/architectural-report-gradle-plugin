@@ -77,7 +77,8 @@ public class IssuePrinterActor extends UntypedActor
     {
         folderLocations = new ArchitectureReportOutputFolder(message.getArgument(ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY));
         hashToIssueMap = getExistingIssues(message.getArgument(ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE));
-        keySelector = Arrays.asList(message.getArgument(ArchitectureReportConstants.ARG_KEYS).split(","));
+        String keys = message.getArgument(ArchitectureReportConstants.ARG_KEYS);
+        keySelector = keys == null ? Collections.emptyList() : Arrays.asList(keys.split(","));
     }
 
     private void receive(PrintFixedIssueRequest message) throws IOException
