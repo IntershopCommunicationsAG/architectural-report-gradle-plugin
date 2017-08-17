@@ -16,4 +16,6 @@ public class ArchitectureReportConstants
     public static final String KEY_PIPELET_UNUSED = "com.intershop.unused.pipelet";
     public static final String KEY_PIPELET_USED_DEPRECATED = "com.intershop.pipelet.used.deprecated";
     public static final String KEY_INVALID_PIPELINEREF = "com.intershop.pipeline.invalid.pipelineref";
+    public static final String KEY_INVALID_LIBRARY= "com.intershop.library.update";
+    public static final String KEY_NEW_LIBRARY= "com.intershop.library.new";
 }

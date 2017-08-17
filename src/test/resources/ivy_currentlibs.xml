@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
+  <info organisation="com.intershop.primetech" module="primetech" revision="build" status="integration" publication="20150916163237" e:productName="Intershop 7" e:copyrightOwner="Intershop Communications" e:copyrightFrom="2005" e:deployment="2015-09-16 16:33">
+    <e:requiresJdk vendor="^Oracle .*" version="1\.8\.0_\d+"/>
+    <e:hostType name="appserver" includeCartridges="false" includeShare="false" includeLocal="true" includeJavadoc="false"/>
+    <e:hostType name="javadoc" includeCartridges="false" includeShare="false" includeLocal="false" includeJavadoc="true"/>
+    <e:hostType name="share" includeCartridges="true" includeShare="true" includeLocal="false" includeJavadoc="false"/>
+    <e:hostType name="solr" includeCartridges="false" includeShare="false" includeLocal="true" includeJavadoc="false"/>
+    <e:hostType name="webserver" includeCartridges="false" includeShare="false" includeLocal="true" includeJavadoc="false"/>
+    <e:environment name="development"/>
+    <e:environment name="production"/>
+    <e:environment name="test"/>
+    <e:initType name="init"/>
+  </info>
+  <configurations>
+    <conf name="appserver" visibility="public"/>
+    <conf name="default" visibility="public"/>
+    <conf name="deploy-plugins" visibility="public"/>
+    <conf name="development-cartridges" visibility="public"/>
+    <conf name="init-cartridges" visibility="public"/>
+    <conf name="javadoc" visibility="public"/>
+    <conf name="production-cartridges" visibility="public"/>
+    <conf name="share" visibility="public"/>
+    <conf name="solr" visibility="public"/>
+    <conf name="test-cartridges" visibility="public"/>
+    <conf name="webserver" visibility="public"/>
+  </configurations>
+  <publications>
+    <artifact name="deploy" type="deploy-gradle" ext="gradle" conf="default"/>
+    <artifact name="deploy-settings" type="deploy-settings-gradle" ext="gradle" conf="default"/>
+    <artifact name="staging" type="staging-properties" ext="properties" conf="default"/>
+  </publications>
+  <dependencies defaultconfmapping="*-&gt;default">
+    <dependency org="antlr" name="antlr" rev="2.7.7" conf="development-cartridges, init-cartridges, production-cartridges, test-cartridges" transitive="false"/>
+    <dependency org="com.google.guava" name="guava" rev="17.0" conf="development-cartridges, init-cartridges, production-cartridges, test-cartridges" transitive="false"/>
+    <dependency org="ch.qos.logback" name="logback-classic" rev="1.0.13" conf="development-cartridges, init-cartridges, production-cartridges, test-cartridges" transitive="false"/>
+    <dependency org="com.intershop" name="bc_pricing" rev="7.6.0.0.20150909220007" conf="development-cartridges, init-cartridges, production-cartridges, test-cartridges" transitive="false"/>
+  </dependencies>
+</ivy-module>

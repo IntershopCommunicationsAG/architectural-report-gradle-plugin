@@ -1,7 +1,5 @@
 package com.intershop.tool.architecture.report.server;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -15,8 +13,6 @@ import com.intershop.tool.architecture.akka.actors.tooling.ReliableMessageActorR
 import com.intershop.tool.architecture.report.api.messages.APIDefinitionRequest;
 import com.intershop.tool.architecture.report.api.messages.APIDefinitionResponse;
 import com.intershop.tool.architecture.report.api.model.actor.DefinitionCollectorActor;
-import com.intershop.tool.architecture.report.api.model.definition.Artifact;
-import com.intershop.tool.architecture.report.api.model.definition.Definition;
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 import com.intershop.tool.architecture.report.common.actors.IssuePrinterActor;
@@ -54,10 +50,12 @@ import com.intershop.tool.architecture.report.pipeline.messages.PipelineResponse
 import com.intershop.tool.architecture.report.pipeline.messages.PipelineTestRequest;
 import com.intershop.tool.architecture.report.pipeline.messages.PipelineTestResponse;
 import com.intershop.tool.architecture.report.pipeline.validation.PipelineTestActor;
+import com.intershop.tool.architecture.report.project.actors.IvyActor;
 import com.intershop.tool.architecture.report.project.actors.ProjectActor;
 import com.intershop.tool.architecture.report.project.messages.GetJarsRequest;
 import com.intershop.tool.architecture.report.project.messages.GetJarsResponse;
-import com.intershop.tool.architecture.report.project.model.IvyVisitor;
+import com.intershop.tool.architecture.report.project.messages.GetProjectsRequest;
+import com.intershop.tool.architecture.report.project.messages.GetProjectsResponse;
 import com.intershop.tool.architecture.report.project.model.ProjectRef;
 
 import akka.actor.ActorRef;
@@ -65,8 +63,8 @@ import akka.actor.UntypedActor;
 
 public class ServerActor extends UntypedActor
 {
-    private IvyVisitor task = new IvyVisitor();
     private ActorRef terminateActorRef = null;
+    private final ReliableMessageActorRef<GetProjectsRequest> ivyActor= new ReliableMessageActorRef<>(getContext(), IvyActor.class, getSelf());
     private final ReliableMessageActorRef<GetIsmlTemplatesRequest> ismlFinder = new ReliableMessageActorRef<>(getContext(), ProjectActor.class, getSelf());
     private final ReliableMessageActorRef<GetJarsRequest> jarFinder = new ReliableMessageActorRef<>(getContext(), ProjectActor.class, getSelf());
     private final ReliableMessageActorRef<GetPipelinesRequest> pipelineFinder = new ReliableMessageActorRef<>(getContext(), ProjectActor.class, getSelf());
@@ -84,7 +82,7 @@ public class ServerActor extends UntypedActor
     private final ReliableMessageActorRef<PipelineTestRequest> pipelineTester = new ReliableMessageActorRef<>(getContext(),PipelineTestActor.class, getSelf());
     private final ReliableMessageActorRef<PrintRequest> printActor = new ReliableMessageActorRef<>(getContext(),IssuePrinterActor.class, getSelf());
 
-    private final LinkedList<ReliableMessageActorRef<?>> workingActors = new LinkedList<>(Arrays.asList(ismlFinder, jarFinder, pipelineFinder, jarActor, pipelineLoader, persistenceActor, boFilterActor, boValidatorActor, capiValidatorActor, pipeletFilterActor, unusedPipeletActor, groupPipeletActor, definitionCollectorActor, ismlActor, pipelineTester, printActor));
+    private final LinkedList<ReliableMessageActorRef<?>> workingActors = new LinkedList<>(Arrays.asList(ivyActor, ismlFinder, jarFinder, pipelineFinder, jarActor, pipelineLoader, persistenceActor, boFilterActor, boValidatorActor, capiValidatorActor, pipeletFilterActor, unusedPipeletActor, groupPipeletActor, definitionCollectorActor, ismlActor, pipelineTester, printActor));
 
     @Override
     public void onReceive(Object message) throws Exception
@@ -157,7 +155,10 @@ public class ServerActor extends UntypedActor
         {
             receive((NewIssuesResponse)message);
         }
-
+        else if (message instanceof GetProjectsResponse)
+        {
+            receive((GetProjectsResponse) message);
+        }
         else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
         {
             terminateActorRef = getSender();
@@ -297,22 +298,19 @@ public class ServerActor extends UntypedActor
         ismlFinder.tellOtherMessage(info);
         definitionCollectorActor.tellOtherMessage(info);
         printActor.tellOtherMessage(info);
-        File ivyFile = new File(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE));
-        ProjectRef serverProject = new ProjectRef("SERVER", "SERVER", "LOCAL");
-        List<Definition> definitions = new ArrayList<>();
-        for (ProjectRef project : task.apply(ivyFile))
+        ivyActor.tell(new GetProjectsRequest(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE)));
+    }
+
+    private void receive(GetProjectsResponse message)
+    {
+        ivyActor.receive(message.getRequest());
+        for(ProjectRef project : message.getProjects())
         {
             jarFinder.tell(new GetJarsRequest(project));
             pipelineFinder.tell(new GetPipelinesRequest(project));
             ismlFinder.tell(new GetIsmlTemplatesRequest(project));
-            Definition apiDef = new Definition();
-            apiDef.setProjectRef(serverProject);
-            apiDef.setArtifact(Artifact.LIBRARY);
-            apiDef.setSource("ivy.xml");
-            apiDef.setSignature(project.getIdentifier() + "=" + project.getVersion());
-            definitions.add(apiDef);
         }
-        definitionCollectorActor.tell(new APIDefinitionRequest(definitions));
+        definitionCollectorActor.tell(new APIDefinitionRequest(message.getDefinitions()));
     }
 
     private boolean flushPrint = false;

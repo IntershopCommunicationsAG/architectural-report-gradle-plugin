@@ -6,12 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
@@ -26,11 +23,9 @@ import com.intershop.tool.architecture.report.api.model.definition.DefinitionSor
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportOutputFolder;
 import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
-import com.intershop.tool.architecture.report.common.model.Issue;
 import com.intershop.tool.architecture.report.common.model.URILoader;
 import com.intershop.tool.architecture.report.common.model.XMLLoaderException;
 import com.intershop.tool.architecture.report.common.model.XmlLoader;
-import com.intershop.tool.architecture.report.project.model.ProjectRef;
 
 import akka.actor.UntypedActor;
 
@@ -42,6 +37,7 @@ public class DefinitionCollectorActor extends UntypedActor
 {
     private static final List<Definition> definitions = new ArrayList<>();
     private static final Set<Definition> baseline = new HashSet<>();
+
     private ArchitectureReportOutputFolder folderLocations;
     private boolean callFinishOnReceiveLocation = false;
 
@@ -101,13 +97,12 @@ public class DefinitionCollectorActor extends UntypedActor
     private static void registerDefinition(Definition definition)
     {
         definitions.add(definition);
-        baseline.remove(definition);
     }
 
     private void finish()
     {
-        List<Issue> issues = getIssues();
-        APIDefinitionResponse message = new APIDefinitionResponse(definitions, baseline, issues);
+        DefinitionCollectorIssueCollector issueCollector = new DefinitionCollectorIssueCollector(definitions, baseline);
+        APIDefinitionResponse message = new APIDefinitionResponse(definitions, baseline, issueCollector.getIssues());
         if (folderLocations != null)
         {
             try
@@ -125,15 +120,6 @@ public class DefinitionCollectorActor extends UntypedActor
         {
             callFinishOnReceiveLocation  = true;
         }
-    }
-
-    private static List<Issue> getIssues()
-    {
-        Map<String, ProjectRef> touchedClasses = new HashMap<>();
-        baseline.stream().forEach(d -> touchedClasses.put(d.getSource(), d.getProjectRef()));
-        return touchedClasses.entrySet().stream()
-                        .map(entry -> new Issue(entry.getValue(), ArchitectureReportConstants.KEY_API_VIOLATION, entry.getKey()))
-                        .collect(Collectors.toList());
     }
 
     private static void exportDefinition(File file, Collection<Definition> definitions)
