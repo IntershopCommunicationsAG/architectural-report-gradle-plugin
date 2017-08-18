@@ -48,6 +48,8 @@ Start the architecture report task:
 | com.intershop.unused.pipelet               | pipelet can be removed / not longer used                                     |
 | com.intershop.pipelet.used.deprecated      | pipelet is deprecated, but still in use by pipelines                         |
 | com.intershop.pipeline.invalid.pipelineref | pipeline contains references to non existing pipeline start nodes            |
+| com.intershop.library.update               | new version contains major third party library update                        |
+| com.intershop.library.new                  | new version contains a new third party library                               |
 
 # Configuration
 

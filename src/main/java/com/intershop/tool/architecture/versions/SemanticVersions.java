@@ -151,23 +151,49 @@ public class SemanticVersions
         return firstElement.isPresent() ? firstElement.get() : current;
     }
 
-    public static boolean getIsCompatibleVersion(SemanticVersion old, SemanticVersion current, UpdateStrategy strategy)
+    /**
+     * Verify compatibility of a new version with a given update strategy
+     * @param oldVersion
+     * @param newVersion
+     * @param strategy
+     * @return true in case the new version is compatible (e.g. MINOR update requested 1.2.3 a minor update of 1.1.1)
+     */
+    public static boolean getIsCompatibleVersion(SemanticVersion oldVersion, SemanticVersion newVersion, UpdateStrategy strategy)
     {
+        // non semantic included, up to developer
+        if (!oldVersion.isIncrementable() || !newVersion.isIncrementable())
+        {
+            return true;
+        }
         if (UpdateStrategy.MAJOR==strategy)
         {
             return true;
-        } // else UpdateStrategy.MINOR || UpdateStrategy.PATCH
-
-        // non semantic included, up to developer
-        if (!old.isIncrementable() || !current.isIncrementable())
-        {
-            return true;
         }
-        if (old.getMajor() != current.getMajor())
+        if (oldVersion.getMajor() != newVersion.getMajor())
         {
             return false;
         }
-        if (UpdateStrategy.PATCH.equals(strategy) && old.getMinor() != current.getMinor())
+        if (UpdateStrategy.MINOR.equals(strategy))
+        {
+            return true;
+        }
+        if  (oldVersion.getMinor() != newVersion.getMinor())
+        {
+            return false;
+        }
+        if (UpdateStrategy.PATCH.equals(strategy))
+        {
+            return true;
+        }
+        if  (oldVersion.getPatch() != newVersion.getPatch())
+        {
+            return false;
+        }
+        if (UpdateStrategy.INC.equals(strategy))
+        {
+            return true;
+        }
+        if  (oldVersion.getIncrement() != newVersion.getIncrement())
         {
             return false;
         }

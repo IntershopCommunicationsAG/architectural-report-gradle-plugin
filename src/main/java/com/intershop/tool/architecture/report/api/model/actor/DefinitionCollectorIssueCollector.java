@@ -28,11 +28,17 @@ public class DefinitionCollectorIssueCollector
     private static final Object API_SOURCE_IVY_XML = LibDefinitionMapper.API_SOURCE_IVY_XML;
     private final Collection<Definition> definitions;
     private final Collection<Definition> baseline;
-
-    public DefinitionCollectorIssueCollector(Collection<Definition> definitions, Collection<Definition> baseline)
+    private final UpdateStrategy strategy;
+    private final Collection<Definition> touchedDefinitions;
+    public DefinitionCollectorIssueCollector(Collection<Definition> definitions, Collection<Definition> baseline, UpdateStrategy strategy)
     {
         this.baseline = Collections.unmodifiableCollection(baseline);
         this.definitions = Collections.unmodifiableCollection(definitions);
+        this.strategy = strategy;
+        Set<Definition> apiBaseline = new HashSet<>(baseline);
+        apiBaseline.removeAll(definitions);
+        touchedDefinitions = apiBaseline.stream().filter(d -> !API_SOURCE_IVY_XML.equals(d.getSource())).collect(Collectors.toList())
+;
     }
 
     public List<Issue> getIssues()
@@ -45,6 +51,10 @@ public class DefinitionCollectorIssueCollector
     private List<Issue> getLibIssues()
     {
         List<Issue> issues = new ArrayList<>();
+        if (UpdateStrategy.MAJOR == strategy)
+        {
+            return issues;
+        }
         Map<String, String> libs = new HashMap<>();
         baseline.stream().filter(d -> API_SOURCE_IVY_XML.equals(d.getSource()))
                         .forEach(d -> libs.put(getArtifact(d.getSignature()), getVersion(d.getSignature())));
@@ -67,13 +77,13 @@ public class DefinitionCollectorIssueCollector
         return issues;
     }
 
-    private static boolean isLibValid(String artifact, String oldVersion, String newVersion)
+    private boolean isLibValid(String artifact, String oldVersion, String newVersion)
     {
         if (oldVersion.equals(newVersion))
         {
             return true;
         }
-        return SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf(oldVersion), SemanticVersion.valueOf(newVersion), UpdateStrategy.MINOR);
+        return SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf(oldVersion), SemanticVersion.valueOf(newVersion), strategy);
     }
 
     private static String getVersion(String signature)
@@ -88,13 +98,16 @@ public class DefinitionCollectorIssueCollector
 
     private List<Issue> getAPIIssues()
     {
-        Set<Definition> apiBaseline = new HashSet<>(baseline);
-        apiBaseline.removeAll(definitions);
         Map<String, ProjectRef> touchedClasses = new HashMap<>();
-        apiBaseline.stream().filter(d -> !API_SOURCE_IVY_XML.equals(d.getSource())).forEach(d -> touchedClasses.put(d.getSource(), d.getProjectRef()));
+        touchedDefinitions.forEach(d -> touchedClasses.put(d.getSource(), d.getProjectRef()));
         return touchedClasses.entrySet()
                         .stream().map(entry -> new Issue(entry.getValue(),
                                         ArchitectureReportConstants.KEY_API_VIOLATION, entry.getKey()))
                         .collect(Collectors.toList());
+    }
+
+    public Collection<Definition> getAPIViolations()
+    {
+        return touchedDefinitions;
     }
 }

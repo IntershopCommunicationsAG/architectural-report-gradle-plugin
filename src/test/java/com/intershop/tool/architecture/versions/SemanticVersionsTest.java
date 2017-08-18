@@ -66,9 +66,14 @@ public class SemanticVersionsTest
     }
 
     @Test
-    public void testGuavaSupport()
+    public void testCompatibleVersion()
     {
-        assertTrue("is minor update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.3"), SemanticVersion.valueOf("16.4"), UpdateStrategy.MINOR));
+        assertTrue("is major update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.3"), SemanticVersion.valueOf("17.0"), UpdateStrategy.MAJOR));
         assertFalse("is major update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.3"), SemanticVersion.valueOf("17.0"), UpdateStrategy.MINOR));
+        assertTrue("is minor update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.3"), SemanticVersion.valueOf("16.4"), UpdateStrategy.MINOR));
+        assertFalse("is minor update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.3"), SemanticVersion.valueOf("16.4"), UpdateStrategy.PATCH));
+        assertTrue("is patch update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.3"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.PATCH));
+        assertFalse("is patch update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.3"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.INC));
+        assertFalse("is patch update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.3"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.STICK));
     }
 }

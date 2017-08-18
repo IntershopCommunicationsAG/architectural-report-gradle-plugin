@@ -8,6 +8,7 @@ public class ArchitectureReportConstants
     public static final String ARG_CARTRIDGE_DIRECTORY = "cartridges";
     public static final String ARG_EXISTING_ISSUES_FILE = "issues";
     public static final String ARG_KEYS = "keyselector";
+    public static final String ARG_STRATEGY = "strategy";
 
     public static final String KEY_API_VIOLATION = "com.intershop.api.violation";
     public static final String KEY_XSS = "com.intershop.isml.xss";

@@ -26,6 +26,7 @@ import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 import com.intershop.tool.architecture.report.common.model.URILoader;
 import com.intershop.tool.architecture.report.common.model.XMLLoaderException;
 import com.intershop.tool.architecture.report.common.model.XmlLoader;
+import com.intershop.tool.architecture.versions.UpdateStrategy;
 
 import akka.actor.UntypedActor;
 
@@ -40,6 +41,8 @@ public class DefinitionCollectorActor extends UntypedActor
 
     private ArchitectureReportOutputFolder folderLocations;
     private boolean callFinishOnReceiveLocation = false;
+    private UpdateStrategy strategy = UpdateStrategy.MINOR;
+    private boolean taskStarted = false;
 
     @Override
     public void onReceive(Object message) throws Exception
@@ -83,6 +86,11 @@ public class DefinitionCollectorActor extends UntypedActor
                 LoggerFactory.getLogger(getClass()).warn("loading api definition failed, location:" + baselineLocation, e);
             }
         }
+        String strategyArg = request.getArgument(ArchitectureReportConstants.ARG_STRATEGY);
+        if (strategyArg != null)
+        {
+            strategy = UpdateStrategy.valueOf(strategyArg);
+        }
         if (callFinishOnReceiveLocation)
         {
             finish();
@@ -101,10 +109,16 @@ public class DefinitionCollectorActor extends UntypedActor
 
     private void finish()
     {
-        DefinitionCollectorIssueCollector issueCollector = new DefinitionCollectorIssueCollector(definitions, baseline);
-        APIDefinitionResponse message = new APIDefinitionResponse(definitions, baseline, issueCollector.getIssues());
+        // avoid race conditions between both events, do not collect issues twice
+        if (taskStarted)
+        {
+            return;
+        }
         if (folderLocations != null)
         {
+            taskStarted = true;
+            DefinitionCollectorIssueCollector issueCollector = new DefinitionCollectorIssueCollector(definitions, baseline, strategy);
+            APIDefinitionResponse message = new APIDefinitionResponse(definitions, issueCollector.getAPIViolations(), issueCollector.getIssues());
             try
             {
                 exportDefinition(folderLocations.getApiDefinitionFile(), message.getCollectedDefinitions());
