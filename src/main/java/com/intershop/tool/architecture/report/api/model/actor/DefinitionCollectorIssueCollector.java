@@ -70,7 +70,7 @@ public class DefinitionCollectorIssueCollector
                 }
                 else if (!isLibValid(artifact, libs.get(artifact), version))
                 {
-                    issues.add(new Issue(d.getProjectRef(), ArchitectureReportConstants.KEY_INVALID_LIBRARY, d.getSignature() + " but was " + libs.get(artifact)));
+                    issues.add(new Issue(d.getProjectRef(), ArchitectureReportConstants.KEY_INVALID_LIBRARY, artifact + " update incompatible, was version " + libs.get(artifact)));
                 }
             }
         }

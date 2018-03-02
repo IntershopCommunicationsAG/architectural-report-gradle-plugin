@@ -26,6 +26,7 @@ public class SemanticVersion
     }
 
     private final String version;
+    private final String versionWithoutBuild;
     private final boolean isSemantic;
     private final int major;
     private final int minor;
@@ -37,6 +38,8 @@ public class SemanticVersion
     private SemanticVersion(String version)
     {
         this.version = version;
+        String[] versionAndBuild = version.split("[-]");
+        versionWithoutBuild= versionAndBuild[0];
         String[] parts = version.split("[\\.-]");
         int numbers[] = { 0, 0, 0, 0 };
         boolean foundIncrementStateAlone = false;
@@ -225,5 +228,14 @@ public class SemanticVersion
     public ReleaseType getIncrementState()
     {
         return incrementState;
+    }
+
+    public String getVersionWithoutBuildExtension()
+    {
+        if (isSemantic)
+        {
+            return getVersion();
+        }
+        return versionWithoutBuild;
     }
 }

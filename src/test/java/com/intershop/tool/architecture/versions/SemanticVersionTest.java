@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SemanticVersionTest
@@ -46,11 +45,9 @@ public class SemanticVersionTest
     }
 
     @Test
-    @Ignore
     public void testFeatureBranchVersions()
     {
-        assertTrue("development release are not semantic", SemanticVersion.valueOf("FB-12.0.0-ANYISUSE-12233-dev1").isIncrementable());
-        assertEquals("development release are not semantic", 1, SemanticVersion.valueOf("FB-12.0.0-ANYISUSE-12233-dev1").getIncrement());
+        assertFalse("development release are not semantic", SemanticVersion.valueOf("FB-12.0.0-ANYISUSE-12233").isSemantic());
     }
 
     @Test
@@ -92,5 +89,15 @@ public class SemanticVersionTest
     public void testJettyVersion()
     {
         assertEquals("jetty version 14", 0, SemanticVersion.valueOf("9.3.14.v20161028").getIncrement());
+    }
+
+    @Test
+    public void testGetVersionWithoutBuildExtension()
+    {
+        assertEquals("11.8.0", SemanticVersion.valueOf("11.8.0-SNAPSHOT").getVersionWithoutBuildExtension());
+        assertEquals("11.8.0", SemanticVersion.valueOf("11.8.0-LOCAL").getVersionWithoutBuildExtension());
+        assertEquals("11.8.0", SemanticVersion.valueOf("11.8.0-dev1").getVersionWithoutBuildExtension());
+        assertEquals("7.8.0.1", SemanticVersion.valueOf("7.8.0.1").getVersionWithoutBuildExtension());
+        assertEquals("17.0", SemanticVersion.valueOf("17.0").getVersionWithoutBuildExtension());
     }
 }

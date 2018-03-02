@@ -193,10 +193,6 @@ public class SemanticVersions
         {
             return true;
         }
-        if  (oldVersion.getIncrement() != newVersion.getIncrement())
-        {
-            return false;
-        }
         return true;
     }
 }

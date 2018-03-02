@@ -17,7 +17,7 @@ public class LibDefinitionMapper implements Function<ProjectRef, Definition>
         apiDef.setProjectRef(SERVER_PROJECT);
         apiDef.setArtifact(Artifact.LIBRARY);
         apiDef.setSource(API_SOURCE_IVY_XML);
-        apiDef.setSignature(project.getIdentifier() + "=" + project.getVersion());
+        apiDef.setSignature(project.getIdentifier() + "=" + project.getSemanticVersion());
         return apiDef;
     }
 

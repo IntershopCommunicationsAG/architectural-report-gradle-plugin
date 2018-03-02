@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.intershop.tool.architecture.versions.SemanticVersion;
+
 public class ProjectRef implements Serializable
 {
     private static final long serialVersionUID = 1L;
@@ -80,5 +82,10 @@ public class ProjectRef implements Serializable
     public int compareTo(ProjectRef other)
     {
         return this.getIdentifier().compareTo(other.getIdentifier());
+    }
+
+    public String getSemanticVersion()
+    {
+        return SemanticVersion.valueOf(getVersion()).getVersionWithoutBuildExtension();
     }
 }

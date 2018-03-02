@@ -74,6 +74,8 @@ public class SemanticVersionsTest
         assertFalse("is minor update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.3"), SemanticVersion.valueOf("16.4"), UpdateStrategy.PATCH));
         assertTrue("is patch update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.3"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.PATCH));
         assertFalse("is patch update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.3"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.INC));
-        assertFalse("is patch update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.3"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.STICK));
+        assertFalse("is sticky update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.3"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.STICK));
+        assertTrue("is sticky snapshot update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.4-SNAPSHOT"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.STICK));
+        assertTrue("is sticky dev update", SemanticVersions.getIsCompatibleVersion(SemanticVersion.valueOf("16.1.4-dev1"), SemanticVersion.valueOf("16.1.4"), UpdateStrategy.STICK));
     }
 }
