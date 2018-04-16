@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class SemanticVersion
 {
-    final static Pattern INCREMENT_PATTERN = Pattern.compile("^(.*[^0-9])+([0-9]+)$");
+    final static Pattern INCREMENT_PATTERN = Pattern.compile("^([^0-9]+)([0-9]+)$");
     final static Pattern JETTY_GA_PATTERN = Pattern.compile("^v[0-9]{8}$");
 
     public static SemanticVersion valueOf(String revision)

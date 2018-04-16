@@ -99,5 +99,6 @@ public class SemanticVersionTest
         assertEquals("11.8.0", SemanticVersion.valueOf("11.8.0-dev1").getVersionWithoutBuildExtension());
         assertEquals("7.8.0.1", SemanticVersion.valueOf("7.8.0.1").getVersionWithoutBuildExtension());
         assertEquals("17.0", SemanticVersion.valueOf("17.0").getVersionWithoutBuildExtension());
+        assertEquals("14.0.0", SemanticVersion.valueOf("14.0.0-IS_12345_check_feature_test_master").getVersionWithoutBuildExtension());
     }
 }

@@ -112,7 +112,7 @@ public class ArchitectureReport
     private static boolean processResponse(final Inbox inbox, CommandLineArguments info)
                     throws IOException, JAXBException, TimeoutException
     {
-        Object message = inbox.receive(Duration.create(5, TimeUnit.MINUTES));
+        Object message = inbox.receive(Duration.create(2, TimeUnit.MINUTES));
         if (message instanceof String)
         {
             LOGGER.error("message: {}", message);
