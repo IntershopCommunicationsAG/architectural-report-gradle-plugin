@@ -15,13 +15,26 @@ import com.intershop.tool.architecture.report.common.model.Issue;
 import com.intershop.tool.architecture.report.pipeline.messages.PipelineTestRequest;
 import com.intershop.tool.architecture.report.pipeline.messages.PipelineTestResponse;
 import com.intershop.tool.architecture.report.pipeline.model.Pipeline;
+import com.intershop.tool.architecture.report.project.model.ProjectRef;
 
 import akka.actor.UntypedActor;
 
 public class PipelineTestActor extends UntypedActor
 {
     private static Set<String> EXISTING_START_NODES = new HashSet<>();
-    private static Map<String, PipelineTestRequest> EXISTING_PIPELINE_REFS = new HashMap<>();
+    private static Map<String, ExistingPipelineRef> EXISTING_PIPELINE_REFS = new HashMap<>();
+
+    private static class ExistingPipelineRef
+    {
+        private final String pipelineName;
+        private final ProjectRef projectRef;
+
+        private ExistingPipelineRef(ProjectRef projectRef, String pipelineName)
+        {
+            this.projectRef = projectRef;
+            this.pipelineName = pipelineName;
+        }
+    }
 
     @Override
     public void onReceive(Object message) throws Exception
@@ -34,6 +47,8 @@ public class PipelineTestActor extends UntypedActor
         else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
         {
             processNonExistingPipelineRefs();
+            EXISTING_START_NODES.clear();
+            EXISTING_PIPELINE_REFS.clear();
             getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
         }
         else
@@ -45,15 +60,14 @@ public class PipelineTestActor extends UntypedActor
 
     private void processNonExistingPipelineRefs()
     {
-        Map<String, PipelineTestRequest> result = new HashMap<>(EXISTING_PIPELINE_REFS);
+        Map<String, ExistingPipelineRef> result = new HashMap<>(EXISTING_PIPELINE_REFS);
         EXISTING_START_NODES.stream().forEach(s -> result.remove(s));
         List<Issue> issues = new ArrayList<>();
-        for(Entry<String, PipelineTestRequest> entry : result.entrySet())
+        for(Entry<String, ExistingPipelineRef> entry : result.entrySet())
         {
-            issues.add(new Issue(entry.getValue().getProjectRef(), ArchitectureReportConstants.KEY_INVALID_PIPELINEREF, entry.getValue().getPipeline().getName(), entry.getKey()));
+            issues.add(new Issue(entry.getValue().projectRef, ArchitectureReportConstants.KEY_INVALID_PIPELINEREF, entry.getValue().pipelineName, entry.getKey()));
         }
         getSender().tell(new NewIssuesResponse(issues), getSelf());
-
     }
 
     public void onReceive(PipelineTestRequest message)
@@ -65,7 +79,9 @@ public class PipelineTestActor extends UntypedActor
 
     private static void collectPipelineRefs(PipelineTestRequest message)
     {
-        message.getPipeline().getPipelineRefs().stream().forEach(s -> EXISTING_PIPELINE_REFS.put(s, message));
+        message.getPipeline().getPipelineRefs().stream().forEach(s -> {
+            EXISTING_PIPELINE_REFS.put(s, new ExistingPipelineRef(message.getProjectRef(), message.getPipeline().getName()));
+        });
     }
 
     private static void collectStartNodes(Pipeline pipeline)
