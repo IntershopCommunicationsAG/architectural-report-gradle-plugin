@@ -25,13 +25,11 @@ public class IsmlTemplateChecker
     private final File ismlFile;
     private final ProjectRef projectRef;
     private final List<Integer> lineNumbers = new ArrayList<>();
-    private final String content;
 
     public IsmlTemplateChecker(ProjectRef projectRef, File ismlFile)
     {
         this.projectRef = projectRef;
         this.ismlFile = ismlFile;
-        this.content = getContent();
     }
 
     public List<Issue> getIssues()
@@ -88,6 +86,7 @@ public class IsmlTemplateChecker
     {
         boolean withinJSPCode = false;
         boolean withinISMLComment = false;
+        String content = getContent();
 
         for (int i = 0; i < content.length(); i++)
         {
