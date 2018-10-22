@@ -19,6 +19,8 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Inbox;
 import akka.actor.Props;
+import akka.actor.Terminated;
+import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 public class ArchitectureReport
@@ -113,9 +115,15 @@ public class ArchitectureReport
                     throws IOException, JAXBException, TimeoutException
     {
         Object message = inbox.receive(Duration.create(2, TimeUnit.MINUTES));
+        if (message == null)
+        {
+            LOGGER.info("Architecture report doesn't receive messages for 2 minutes.");
+            return true;
+        }
         if (message instanceof String)
         {
             LOGGER.error("message: {}", message);
+            return true;
         }
         else if (AkkaMessage.TERMINATE.FLUSH_RESPONSE.equals(message))
         {

@@ -20,16 +20,16 @@ public class ReliableMessageActorRef<T>
 {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final String name;
-    private final ActorRef actor;
-    private final ActorRef owner;
+    private final ActorRef receiver;
+    private final ActorRef sender;
     private final AkkaWaitingMessages<T> waitingMessages = new AkkaWaitingMessages<>();
     private boolean isFinished = false;
 
-    public ReliableMessageActorRef(UntypedActorContext context, Class<?> actorClass, ActorRef owner)
+    public ReliableMessageActorRef(UntypedActorContext context, Class<?> receiverClass, ActorRef sender)
     {
-        this.name = actorClass.getSimpleName();
-        this.actor = context.actorOf(Props.create(actorClass));
-        this.owner = owner;
+        this.name = receiverClass.getSimpleName();
+        this.receiver = context.actorOf(Props.create(receiverClass));
+        this.sender = sender;
     }
 
     public void tell(Collection<T> messages)
@@ -47,8 +47,8 @@ public class ReliableMessageActorRef<T>
      */
     public void tell(T message)
     {
-        waitingMessages.put(message, owner, owner);
-        actor.tell(message, owner);
+        AkkaMessage<T> akkaMessage = waitingMessages.put(message, sender, receiver);
+        akkaMessage.send();
         isFinished = false;
     }
 
@@ -64,22 +64,19 @@ public class ReliableMessageActorRef<T>
 
     /**
      * tells the actor to finish
-     *
-     * @return true if actor is waiting for answers
      */
-    public boolean flush()
+    public void flush()
     {
         if (!isFinished)
         {
             logger.info("'{}' FLUSH received", name);
-            actor.tell(AkkaMessage.TERMINATE.FLUSH_REQUEST, owner);
+            receiver.tell(AkkaMessage.TERMINATE.FLUSH_REQUEST, sender);
         }
-        return waitingMessages.isEmpty();
     }
 
     public void flushResponse(ActorRef actorRef)
     {
-        if (actorRef.equals(actor) || isFinished)
+        if (actorRef.equals(receiver) || isFinished)
         {
             if (!waitingMessages.resend())
             {
@@ -96,6 +93,6 @@ public class ReliableMessageActorRef<T>
 
     public void tellOtherMessage(Object message)
     {
-        actor.tell(message, owner);
+        receiver.tell(message, sender);
     }
 }

@@ -11,13 +11,15 @@ public class AkkaWaitingMessages<T>
 {
     private final Map<T, AkkaMessage<T>> waiting = new HashMap<>();
 
-    public void put(T message, ActorRef sender, ActorRef owner)
+    public AkkaMessage<T> put(T message, ActorRef sender, ActorRef receiver)
     {
-        waiting.put(message, new AkkaMessage<T>(message, sender, owner));
+        AkkaMessage<T> akkaMessage = new AkkaMessage<T>(message, sender, receiver);
+        waiting.put(message, akkaMessage);
+        return akkaMessage;
     }
 
     /**
-     * @return true in case a message was sended
+     * @return true in case a message was send
      */
     public boolean resend()
     {
