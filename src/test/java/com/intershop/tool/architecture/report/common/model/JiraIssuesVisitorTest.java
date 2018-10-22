@@ -11,9 +11,10 @@ public class JiraIssuesVisitorTest
 {
 
     private static final String TEST_ISSUES = "test-issues.xml";
+    private static final String TEST_DAMAGED = "test-issues-damaged.xml";
 
     @Test
-    public void test() throws FileNotFoundException
+    public void testReadCorrectFile() throws FileNotFoundException
     {
         JiraIssuesVisitor underTest = new JiraIssuesVisitor();
         List<JiraIssue> result = underTest.apply(getClass().getClassLoader().getResourceAsStream(TEST_ISSUES));
@@ -21,4 +22,11 @@ public class JiraIssuesVisitorTest
         assertEquals("correct number","ENFINITY-17360", result.get(0).getJiraID());
     }
 
+    @Test(expected=XMLLoaderException.class)
+    public void testReadDamagedFile() throws FileNotFoundException
+    {
+        JiraIssuesVisitor underTest = new JiraIssuesVisitor();
+        List<JiraIssue> result = underTest.apply(getClass().getClassLoader().getResourceAsStream(TEST_DAMAGED));
+        assertEquals("correct number","ISTOOLS-4069", result.get(0).getJiraID());
+    }
 }
