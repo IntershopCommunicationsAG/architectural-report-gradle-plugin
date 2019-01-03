@@ -12,22 +12,19 @@ plugins {
 
     // intershop test plugin
     id 'com.intershop.gradle.test' version '2.4.0'
-    id 'com.intershop.gradle.version.recommender' version '1.2.0'
 
     // plugin for publishing to Gradle Portal
     id 'maven-publish'
-    id 'com.gradle.plugin-publish' version '0.9.10'
+    id 'com.gradle.plugin-publish' version '0.10.0'
 
     // plugin for publishing to jcenter
-    id 'com.jfrog.bintray' version '1.8.0'
+    id 'com.jfrog.bintray' version '1.8.4'
 }
-
-apply plugin: 'com.intershop.gradle.version.recommender'
 
 // release configuration
 group = 'com.intershop.gradle.architectural.report'
 description 'Gradle architectural report plugin'
-version = '1.1.3'
+version = '1.1.4-rc1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -35,13 +32,6 @@ targetCompatibility = 1.8
 // set correct project status
 if (project.version.endsWith('-SNAPSHOT')) {
     status = 'snapshot'
-}
-
-versionRecommender {
-    strategy = 'MINOR'
-    propertiesFile = new File(project.projectDir, 'version.properties')
-    versionCache = new File(rootProject.buildDir, 'versions.xml')
-    exceptions = [:]
 }
 
 jacocoTestReport {
