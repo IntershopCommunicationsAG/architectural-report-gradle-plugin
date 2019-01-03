@@ -25,7 +25,7 @@
   <root level="WARN">
     <appender-ref ref="ERROR_LOG" />
   </root>
-  <logger name="com.intershop.tool.architecture" level="WARN">
+  <logger name="com.intershop.tool.architecture" level="INFO">
     <appender-ref ref="STDOUT" />
   </logger>
 </configuration>

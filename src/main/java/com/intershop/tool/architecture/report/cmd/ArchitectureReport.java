@@ -19,8 +19,6 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Inbox;
 import akka.actor.Props;
-import akka.actor.Terminated;
-import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 public class ArchitectureReport

@@ -69,7 +69,7 @@ public class ReliableMessageActorRef<T>
     {
         if (!isFinished)
         {
-            logger.info("'{}' FLUSH received", name);
+            logger.debug("'{}' FLUSH received", name);
             receiver.tell(AkkaMessage.TERMINATE.FLUSH_REQUEST, sender);
         }
     }

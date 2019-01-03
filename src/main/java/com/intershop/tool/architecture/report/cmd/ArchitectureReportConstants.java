@@ -14,7 +14,7 @@ public class ArchitectureReportConstants
     public static final String KEY_XSS = "com.intershop.isml.xss";
     public static final String KEY_BO_INTERNAL = "com.intershop.businessobject.internal";
     public static final String KEY_BO_PERSISTENCE = "com.intershop.businessobject.persistence";
-    public static final String KEY_PIPELET_UNUSED = "com.intershop.unused.pipelet";
+    public static final String KEY_PIPELET_UNUSED = "com.intershop.pipelet.unused";
     public static final String KEY_PIPELET_USED_DEPRECATED = "com.intershop.pipelet.used.deprecated";
     public static final String KEY_INVALID_PIPELINEREF = "com.intershop.pipeline.invalid.pipelineref";
     public static final String KEY_INVALID_LIBRARY= "com.intershop.library.update";
