@@ -1,12 +1,9 @@
 package com.intershop.tool.architecture.report.cmd;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +16,15 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Inbox;
 import akka.actor.Props;
+import akka.actor.Terminated;
+import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 
 public class ArchitectureReport
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchitectureReport.class);
     private static boolean buildFailed = false;
+    private static boolean buildFinished = false;
 
     /**
      * Execute Architecture report on commandline
@@ -92,25 +92,33 @@ public class ArchitectureReport
         inbox.send(serverActor, AkkaMessage.TERMINATE.FLUSH_REQUEST);
         try
         {
-            while(processResponse(inbox, info))
+            while(processResponse(inbox))
             {
                 // wait until messages are processed
             }
         }
-        catch(IOException | JAXBException | TimeoutException e)
+        catch(TimeoutException e)
         {
             LOGGER.error("Error during architecture report", e);
             buildFailed = true;
         }
         finally
         {
-            system.terminate();
+            Future<Terminated> isTerminated = system.terminate();
+            while (!isTerminated.isCompleted() && !buildFinished)
+            {
+                try {
+                    processResponse(inbox);
+                }
+                catch (TimeoutException e) {
+                    // nothing to do
+                }
+            }
         }
         return buildFailed;
     }
 
-    private static boolean processResponse(final Inbox inbox, CommandLineArguments info)
-                    throws IOException, JAXBException, TimeoutException
+    private static boolean processResponse(final Inbox inbox) throws TimeoutException
     {
         Object message = inbox.receive(Duration.create(2, TimeUnit.MINUTES));
         if (message == null)
@@ -126,16 +134,13 @@ public class ArchitectureReport
         else if (AkkaMessage.TERMINATE.FLUSH_RESPONSE.equals(message))
         {
             LOGGER.info("REPORT FINISH");
+            buildFinished = true;
             return false;
         }
         else if (message instanceof PrintResponse)
         {
             if (!((PrintResponse)message).getIssues().isEmpty())
             {
-                ArchitectureReportOutputFolder folders = new ArchitectureReportOutputFolder(
-                                info.getArgument(ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY));
-                LOGGER.error("Architecture report contains new errors, see '{}'.",
-                                folders.getNewIssuesFile().getAbsolutePath());
                 buildFailed = true;
             }
         }
