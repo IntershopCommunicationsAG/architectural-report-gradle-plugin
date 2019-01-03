@@ -45,7 +45,7 @@ Start the architecture report task:
 | com.intershop.isml.xss                     | possible XSS issues in isml (Intershop Markup (Template) Language) templates |
 | com.intershop.businessobject.persistence   | references to persistence layer inside of business object api                |
 | com.intershop.businessobject.internal      | references to internal classes inside of business object api                 |
-| com.intershop.unused.pipelet               | pipelet can be removed / not longer used                                     |
+| com.intershop.pipelet.unused               | pipelet can be removed / not longer used                                     |
 | com.intershop.pipelet.used.deprecated      | pipelet is deprecated, but still in use by pipelines                         |
 | com.intershop.pipeline.invalid.pipelineref | pipeline contains references to non existing pipeline start nodes            |
 | com.intershop.library.update               | new version contains major third party library update                        |
