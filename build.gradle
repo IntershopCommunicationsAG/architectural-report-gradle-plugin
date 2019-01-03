@@ -135,21 +135,21 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
 
-    compile 'org.slf4j:slf4j-api:1.7.24'
+    compile 'org.slf4j:slf4j-api:1.7.25'
     compile 'org.ow2.asm:asm:5.2'
     compile 'javax.inject:javax.inject:1'
-    compile 'commons-io:commons-io:2.5'
-    compile 'com.typesafe.akka:akka-actor_2.11:2.4.17'
-    compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+    compile 'commons-io:commons-io:2.6'
+    compile 'com.typesafe.akka:akka-actor_2.11:2.4.20'
+    compile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
 
-    runtime 'com.typesafe.akka:akka-remote_2.11:2.4.17'
-    runtime 'org.apache.cxf:cxf-rt-rs-client:3.1.10'
-    runtime 'org.apache.cxf:cxf-rt-transports-http:3.1.10'
-    runtime 'org.apache.cxf:cxf-rt-transports-local:3.1.10'
-    runtime 'ch.qos.logback:logback-classic:1.2.1'
+    runtime 'com.typesafe.akka:akka-remote_2.11:2.4.20'
+    runtime 'org.apache.cxf:cxf-rt-rs-client:3.1.17'
+    runtime 'org.apache.cxf:cxf-rt-transports-http:3.1.17'
+    runtime 'org.apache.cxf:cxf-rt-transports-local:3.1.17'
+    runtime 'ch.qos.logback:logback-classic:1.2.3'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'com.typesafe.akka:akka-testkit_2.11:2.4.17'
+    testCompile 'com.typesafe.akka:akka-testkit_2.11:2.4.20'
 }
 
 repositories {
