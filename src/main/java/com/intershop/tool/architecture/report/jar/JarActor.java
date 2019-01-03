@@ -1,40 +1,20 @@
 package com.intershop.tool.architecture.report.jar;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 
-import com.intershop.tool.architecture.akka.actors.tooling.AkkaMessage;
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
+import com.intershop.tool.architecture.report.common.actors.AbstractFileActor;
 import com.intershop.tool.architecture.report.common.messages.FileRequest;
 import com.intershop.tool.architecture.report.jar.messages.GetJarResponse;
 import com.intershop.tool.architecture.report.jar.model.Jar;
 import com.intershop.tool.architecture.report.jar.model.JarFileVisitor;
 import com.intershop.tool.architecture.report.project.model.ProjectRef;
 
-import akka.actor.UntypedActor;
-
-public class JarActor extends UntypedActor
+public class JarActor extends AbstractFileActor
 {
     @Override
-    public void onReceive(Object message) throws Exception
-    {
-        if (message instanceof FileRequest)
-        {
-            FileRequest jarRef = (FileRequest)message;
-            onReceive(jarRef);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
-    }
-
-    private void onReceive(FileRequest request) throws IOException
+    protected void receive(FileRequest request)
     {
         JarFileVisitor javaVisitor = new JarFileVisitor(request.getProjectRef());
         File jarFile = new File(request.getFileName());

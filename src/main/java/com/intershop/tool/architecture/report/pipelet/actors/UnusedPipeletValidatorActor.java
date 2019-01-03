@@ -14,53 +14,38 @@ import com.intershop.tool.architecture.report.java.validation.unused.ValidateUnu
 import com.intershop.tool.architecture.report.pipelet.validation.UsedPipeletPredicate;
 import com.intershop.tool.architecture.report.pipeline.messages.PipelineResponse;
 
-import akka.actor.UntypedActor;
+import akka.actor.AbstractActor;
 
 /**
  * BusinessObjectValidatorActor receives validation events for business objects. The received messages contains business
  * objects only.
  */
-public class UnusedPipeletValidatorActor extends UntypedActor
+public class UnusedPipeletValidatorActor extends AbstractActor
 {
     private static final UsedPipeletPredicate PREDICATE = new UsedPipeletPredicate();
     private static AkkaWaitingMessages<JavaClassRequest> waiting = new AkkaWaitingMessages<>();
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof GetJarResponse)
-        {
-            GetJarResponse request = (GetJarResponse)message;
-            receive(request);
-        }
-        if (message instanceof JavaClassRequest)
-        {
-            JavaClassRequest request = (JavaClassRequest)message;
-            receive(request);
-        }
-        if (message instanceof PipelineResponse)
-        {
-            PipelineResponse request = (PipelineResponse)message;
-            receive(request);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            PREDICATE.finished();
-            waiting.resend();
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
+        return receiveBuilder()
+                        .match(GetJarResponse.class, this::receive)
+                        .match(JavaClassRequest.class, this::receive)
+                        .match(PipelineResponse.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            PREDICATE.finished();
+                            waiting.resend();
+                            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
+                        })
+                        .build();
     }
 
-    private static void receive(PipelineResponse request)
+    private void receive(PipelineResponse request)
     {
         request.getPipeline().getPipeletRefs().stream().forEach(r -> PREDICATE.registerUsage(r));
     }
 
-    private static void receive(GetJarResponse request)
+    private void receive(GetJarResponse request)
     {
         request.getJar().getPipeletDesciptor().stream().forEach(d -> PREDICATE.registerMapping(d));
     }

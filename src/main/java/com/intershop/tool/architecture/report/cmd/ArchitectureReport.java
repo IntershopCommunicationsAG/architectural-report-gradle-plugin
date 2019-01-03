@@ -104,7 +104,7 @@ public class ArchitectureReport
         }
         finally
         {
-            system.shutdown();
+            system.terminate();
         }
         return buildFailed;
     }

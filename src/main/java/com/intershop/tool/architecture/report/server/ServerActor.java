@@ -59,10 +59,10 @@ import com.intershop.tool.architecture.report.project.messages.GetProjectsReques
 import com.intershop.tool.architecture.report.project.messages.GetProjectsResponse;
 import com.intershop.tool.architecture.report.project.model.ProjectRef;
 
+import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
-import akka.actor.UntypedActor;
 
-public class ServerActor extends UntypedActor
+public class ServerActor extends AbstractActor
 {
     private ActorRef terminateActorRef = null;
     private final ReliableMessageActorRef<GetProjectsRequest> ivyActor= new ReliableMessageActorRef<>(getContext(), IvyActor.class, getSelf());
@@ -87,93 +87,30 @@ public class ServerActor extends UntypedActor
     private List<String> keySelector = Collections.emptyList();
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof CommandLineArguments)
-        {
-            receive((CommandLineArguments)message);
-        }
-        else if (message instanceof GetJarsResponse)
-        {
-            receive((GetJarsResponse)message);
-        }
-        else if (message instanceof GetPipelinesResponse)
-        {
-            receive((GetPipelinesResponse)message);
-        }
-        else if (message instanceof GetJarResponse)
-        {
-            receive((GetJarResponse)message);
-        }
-        else if (message instanceof IsPersistenceResponse)
-        {
-            receive((IsPersistenceResponse)message);
-        }
-        else if (message instanceof IsPipeletResponse)
-        {
-            receive((IsPipeletResponse)message);
-        }
-        else if (message instanceof IsBusinessObjectResponse)
-        {
-            receive((IsBusinessObjectResponse)message);
-        }
-        else if (message instanceof ValidateBusinessObjectResponse)
-        {
-            receive((ValidateBusinessObjectResponse)message);
-        }
-        else if (message instanceof PrintResponse)
-        {
-            receive((PrintResponse)message);
-        }
-        else if (message instanceof ValidateCapiResponse)
-        {
-            receive((ValidateCapiResponse)message);
-        }
-        else if (message instanceof ValidateUnusedResponse)
-        {
-            receive((ValidateUnusedResponse)message);
-        }
-        else if (message instanceof PipelineResponse)
-        {
-            receive((PipelineResponse)message);
-        }
-        else if (message instanceof APIDefinitionResponse)
-        {
-            receive((APIDefinitionResponse)message);
-        }
-        else if (message instanceof GetIsmlTemplatesResponse)
-        {
-            receive((GetIsmlTemplatesResponse)message);
-        }
-        else if (message instanceof IsmlValidationResponse)
-        {
-            receive((IsmlValidationResponse)message);
-        }
-        else if (message instanceof PipelineTestResponse)
-        {
-            receive((PipelineTestResponse)message);
-        }
-        else if (message instanceof NewIssuesResponse)
-        {
-            receive((NewIssuesResponse)message);
-        }
-        else if (message instanceof GetProjectsResponse)
-        {
-            receive((GetProjectsResponse) message);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            terminateActorRef = getSender();
-            handleFlushRequest();
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_RESPONSE.equals(message))
-        {
-            handleFlushResponse();
-        }
-        else
-        {
-            unhandled(message);
-        }
+        return receiveBuilder()
+                        .match(CommandLineArguments.class, this::receive)
+                        .match(GetJarsResponse.class, this::receive)
+                        .match(GetPipelinesResponse.class, this::receive)
+                        .match(GetJarResponse.class, this::receive)
+                        .match(IsPersistenceResponse.class, this::receive)
+                        .match(IsPipeletResponse.class, this::receive)
+                        .match(IsBusinessObjectResponse.class, this::receive)
+                        .match(ValidateBusinessObjectResponse.class, this::receive)
+                        .match(PrintResponse.class, this::receive)
+                        .match(ValidateCapiResponse.class, this::receive)
+                        .match(ValidateUnusedResponse.class, this::receive)
+                        .match(PipelineResponse.class, this::receive)
+                        .match(APIDefinitionResponse.class, this::receive)
+                        .match(GetIsmlTemplatesResponse.class, this::receive)
+                        .match(IsmlValidationResponse.class, this::receive)
+                        .match(PipelineTestResponse.class, this::receive)
+                        .match(NewIssuesResponse.class, this::receive)
+                        .match(GetProjectsResponse.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> handleFlushRequest())
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_RESPONSE, message -> handleFlushResponse())
+                        .build();
     }
 
     private void receive(NewIssuesResponse message)
@@ -370,12 +307,13 @@ public class ServerActor extends UntypedActor
         }
         else
         {
-            handleFlushRequest();
+            workingActors.getFirst().flush();
         }
     }
 
     private void handleFlushRequest()
     {
+        terminateActorRef = getSender();
         workingActors.getFirst().flush();
     }
 }

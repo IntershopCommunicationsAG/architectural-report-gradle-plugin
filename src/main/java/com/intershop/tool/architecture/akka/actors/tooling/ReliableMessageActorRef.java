@@ -5,9 +5,9 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import akka.actor.UntypedActorContext;
 
 /**
  * Akka actor reference to an actor, which handles one type of message. This
@@ -25,7 +25,7 @@ public class ReliableMessageActorRef<T>
     private final AkkaWaitingMessages<T> waitingMessages = new AkkaWaitingMessages<>();
     private boolean isFinished = false;
 
-    public ReliableMessageActorRef(UntypedActorContext context, Class<?> receiverClass, ActorRef sender)
+    public ReliableMessageActorRef(ActorContext context, Class<?> receiverClass, ActorRef sender)
     {
         this.name = receiverClass.getSimpleName();
         this.receiver = context.actorOf(Props.create(receiverClass));

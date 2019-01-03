@@ -14,12 +14,12 @@ import com.intershop.tool.architecture.report.java.model.JavaClassRequest;
 import com.intershop.tool.architecture.report.java.validation.po.IsPersistenceResponse;
 import com.intershop.tool.architecture.report.java.validation.po.PersistenceClassPredicate;
 
-import akka.actor.UntypedActor;
+import akka.actor.AbstractActor;
 
 /**
  * BusinessObjectValidatorActor receives validation events for business objects. The received messages contains business objects only.
  */
-public class BusinessObjectValidatorActor extends UntypedActor
+public class BusinessObjectValidatorActor extends AbstractActor
 {
     private final Map<String, Boolean> persistentClasses = new HashMap<>();
     private static final PersistenceClassPredicate staticPersistencePredicate = new PersistenceClassPredicate();
@@ -43,29 +43,18 @@ public class BusinessObjectValidatorActor extends UntypedActor
     private static AkkaWaitingMessages<JavaClassRequest> waiting = new AkkaWaitingMessages<>();
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof IsPersistenceResponse)
-        {
-            IsPersistenceResponse request = (IsPersistenceResponse)message;
-            onReceive(request);
-        }
-        else if (message instanceof JavaClassRequest)
-        {
-            JavaClassRequest request = (JavaClassRequest)message;
-            onReceive(request);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
+        return receiveBuilder()
+                        .match(IsPersistenceResponse.class, this::receive)
+                        .match(JavaClassRequest.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
+                        })
+                        .build();
     }
 
-    private void onReceive(JavaClassRequest request)
+    private void receive(JavaClassRequest request)
     {
         ValidationResult issues = predicate.apply(request);
         if (ResultType.WAIT.equals(issues.getResultType()))
@@ -78,7 +67,7 @@ public class BusinessObjectValidatorActor extends UntypedActor
         }
     }
 
-    private void onReceive(IsPersistenceResponse response)
+    private void receive(IsPersistenceResponse response)
     {
         persistentClasses.put(response.getRequest().getJavaClass().getClassName(), response.isPersistent());
         // new persistence information received, waiting business objects could be validated now

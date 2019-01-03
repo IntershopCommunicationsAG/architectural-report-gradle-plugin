@@ -16,9 +16,9 @@ import com.intershop.tool.architecture.report.pipeline.model.PipelineFinder;
 import com.intershop.tool.architecture.report.project.messages.GetJarsRequest;
 import com.intershop.tool.architecture.report.project.messages.GetJarsResponse;
 
-import akka.actor.UntypedActor;
+import akka.actor.AbstractActor;
 
-public class ProjectActor extends UntypedActor
+public class ProjectActor extends AbstractActor
 {
     private File cartridgesDirectory = null;
     private JarFinder jarFinder = new JarFinder();
@@ -26,32 +26,22 @@ public class ProjectActor extends UntypedActor
     private IsmlFinder ismlFinder = new IsmlFinder();
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof CommandLineArguments)
-        {
-            cartridgesDirectory = new File(((CommandLineArguments)message).getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY));
-        }
-        else if (message instanceof GetJarsRequest)
-        {
-            receive((GetJarsRequest)message);
-        }
-        else if (message instanceof GetPipelinesRequest)
-        {
-            receive((GetPipelinesRequest)message);
-        }
-        else if (message instanceof GetIsmlTemplatesRequest)
-        {
-            receive((GetIsmlTemplatesRequest)message);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
+        return receiveBuilder()
+                        .match(CommandLineArguments.class, this::receive)
+                        .match(GetJarsRequest.class, this::receive)
+                        .match(GetPipelinesRequest.class, this::receive)
+                        .match(GetIsmlTemplatesRequest.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
+                        })
+                        .build();
+    }
+
+    private void receive(CommandLineArguments message)
+    {
+        cartridgesDirectory = new File(message.getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY));
     }
 
     private void receive(GetPipelinesRequest request)

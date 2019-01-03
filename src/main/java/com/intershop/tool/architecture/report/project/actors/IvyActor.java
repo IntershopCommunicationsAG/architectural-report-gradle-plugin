@@ -13,28 +13,22 @@ import com.intershop.tool.architecture.report.project.model.IvyVisitor;
 import com.intershop.tool.architecture.report.project.model.LibDefinitionMapper;
 import com.intershop.tool.architecture.report.project.model.ProjectRef;
 
-import akka.actor.UntypedActor;
+import akka.actor.AbstractActor;
 
-public class IvyActor extends UntypedActor
+public class IvyActor extends AbstractActor
 {
     private static final IvyVisitor IVY_VISITOR = new IvyVisitor();
     private static final LibDefinitionMapper DEFINITION_MAPPER = new LibDefinitionMapper();
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof GetProjectsRequest)
-        {
-            receive((GetProjectsRequest)message);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
+        return receiveBuilder()
+                        .match(GetProjectsRequest.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
+                        })
+                        .build();
     }
 
     private void receive(GetProjectsRequest message)

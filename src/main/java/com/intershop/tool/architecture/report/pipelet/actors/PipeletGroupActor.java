@@ -10,36 +10,29 @@ import com.intershop.tool.architecture.akka.actors.tooling.AkkaMessage;
 import com.intershop.tool.architecture.report.common.model.Issue;
 import com.intershop.tool.architecture.report.java.validation.unused.ValidateUnusedResponse;
 
-import akka.actor.UntypedActor;
+import akka.actor.AbstractActor;
 
 /**
  * BusinessObjectValidatorActor receives validation events for business objects. The received messages contains business
  * objects only.
  */
-public class PipeletGroupActor extends UntypedActor
+public class PipeletGroupActor extends AbstractActor
 {
     private static final Map<String, List<Issue>> issuesOfProject = new HashMap<>();
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof ValidateUnusedResponse)
-        {
-            ValidateUnusedResponse request = (ValidateUnusedResponse)message;
-            receive(request);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            finish();
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
+        return receiveBuilder()
+                        .match(ValidateUnusedResponse.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            finish();
+                            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
+                        })
+                        .build();
     }
 
-    private static void receive(ValidateUnusedResponse request)
+    private void receive(ValidateUnusedResponse request)
     {
         String projectName = request.getRequest().getProjectRef().getName();
         List<Issue> existingList = issuesOfProject.get(projectName);
@@ -59,5 +52,6 @@ public class PipeletGroupActor extends UntypedActor
         {
             getSender().tell(new ValidateUnusedResponse(null, entry.getValue()), getSelf());
         }
+        issuesOfProject.clear();
     }
 }

@@ -17,9 +17,9 @@ import com.intershop.tool.architecture.report.pipeline.messages.PipelineTestResp
 import com.intershop.tool.architecture.report.pipeline.model.Pipeline;
 import com.intershop.tool.architecture.report.project.model.ProjectRef;
 
-import akka.actor.UntypedActor;
+import akka.actor.AbstractActor;
 
-public class PipelineTestActor extends UntypedActor
+public class PipelineTestActor extends AbstractActor
 {
     private static Set<String> EXISTING_START_NODES = new HashSet<>();
     private static Map<String, ExistingPipelineRef> EXISTING_PIPELINE_REFS = new HashMap<>();
@@ -37,25 +37,17 @@ public class PipelineTestActor extends UntypedActor
     }
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof PipelineTestRequest)
-        {
-            PipelineTestRequest request = (PipelineTestRequest)message;
-            onReceive(request);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            processNonExistingPipelineRefs();
-            EXISTING_START_NODES.clear();
-            EXISTING_PIPELINE_REFS.clear();
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
-
+        return receiveBuilder()
+                        .match(PipelineTestRequest.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            processNonExistingPipelineRefs();
+                            EXISTING_START_NODES.clear();
+                            EXISTING_PIPELINE_REFS.clear();
+                            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
+                        })
+                        .build();
     }
 
     private void processNonExistingPipelineRefs()
@@ -70,7 +62,7 @@ public class PipelineTestActor extends UntypedActor
         getSender().tell(new NewIssuesResponse(issues), getSelf());
     }
 
-    public void onReceive(PipelineTestRequest message)
+    private void receive(PipelineTestRequest message)
     {
         collectStartNodes(message.getPipeline());
         collectPipelineRefs(message);

@@ -28,13 +28,13 @@ import com.intershop.tool.architecture.report.common.model.XMLLoaderException;
 import com.intershop.tool.architecture.report.common.model.XmlLoader;
 import com.intershop.tool.architecture.versions.UpdateStrategy;
 
-import akka.actor.UntypedActor;
+import akka.actor.AbstractActor;
 
 /**
  * BusinessObjectValidatorActor receives validation events for business objects.
  * The received messages contains business objects only.
  */
-public class DefinitionCollectorActor extends UntypedActor
+public class DefinitionCollectorActor extends AbstractActor
 {
     private static final List<Definition> definitions = new ArrayList<>();
     private static final Set<Definition> baseline = new HashSet<>();
@@ -45,27 +45,16 @@ public class DefinitionCollectorActor extends UntypedActor
     private boolean taskStarted = false;
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof APIDefinitionRequest)
-        {
-            APIDefinitionRequest request = (APIDefinitionRequest)message;
-            receive(request);
-        }
-        else if (message instanceof CommandLineArguments)
-        {
-            CommandLineArguments request = (CommandLineArguments)message;
-            receive(request);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            finish();
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
+        return receiveBuilder()
+                        .match(CommandLineArguments.class, this::receive)
+                        .match(APIDefinitionRequest.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            finish();
+                            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
+                        })
+                        .build();
     }
 
     private void receive(CommandLineArguments request)
@@ -97,7 +86,7 @@ public class DefinitionCollectorActor extends UntypedActor
         }
     }
 
-    private static void receive(APIDefinitionRequest request)
+    private void receive(APIDefinitionRequest request)
     {
         request.getDefinitions().stream().forEach(d -> registerDefinition(d));
     }

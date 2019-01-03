@@ -1,5 +1,6 @@
 package com.intershop.tool.architecture.report.common.actors;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intershop.tool.architecture.akka.actors.tooling.AkkaMessage;
@@ -31,10 +33,11 @@ import com.intershop.tool.architecture.report.common.model.JiraIssuesVisitor;
 import com.intershop.tool.architecture.report.common.model.URILoader;
 import com.intershop.tool.architecture.report.common.model.XMLLoaderException;
 
-import akka.actor.UntypedActor;
+import akka.actor.AbstractActor;
 
-public class IssuePrinterActor extends UntypedActor
+public class IssuePrinterActor extends AbstractActor
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(IssuePrinterActor.class);
     private ArchitectureReportOutputFolder folderLocations;
     /**
      * set of issue hash keys
@@ -45,32 +48,20 @@ public class IssuePrinterActor extends UntypedActor
     private Collection<String> keySelector = new ArrayList<>();
 
     @Override
-    public void onReceive(Object message) throws Exception
+    public Receive createReceive()
     {
-        if (message instanceof CommandLineArguments)
-        {
-            receive((CommandLineArguments) message);
-        }
-        else if (message instanceof PrintIssueRequest)
-        {
-            receive((PrintIssueRequest)message);
-        }
-        else if (message instanceof PrintFixedIssueRequest)
-        {
-            receive((PrintFixedIssueRequest)message);
-        }
-        else if (message instanceof PrintNewIssuesRequest)
-        {
-            receive((PrintNewIssuesRequest)message);
-        }
-        else if (AkkaMessage.TERMINATE.FLUSH_REQUEST.equals(message))
-        {
-            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
-        }
-        else
-        {
-            unhandled(message);
-        }
+        return receiveBuilder()
+                        .match(CommandLineArguments.class, this::receive)
+                        .match(PrintIssueRequest.class, this::receive)
+                        .match(PrintFixedIssueRequest.class, this::receive)
+                        .match(PrintNewIssuesRequest.class, this::receive)
+                        .match(PrintIssueRequest.class, this::receive)
+                        .match(PrintIssueRequest.class, this::receive)
+                        .match(PrintIssueRequest.class, this::receive)
+                        .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
+                        })
+                        .build();
     }
 
     private void receive(CommandLineArguments message) throws IOException
@@ -115,11 +106,12 @@ public class IssuePrinterActor extends UntypedActor
 
     private void receive(PrintNewIssuesRequest message) throws FileNotFoundException
     {
-        if (!keySelector.isEmpty())
-        {
-            List<Issue> filteredIssues = newIssues.stream().filter(i -> keySelector.contains(i.getKey()))
+        List<Issue> filteredIssues = keySelector.isEmpty() ? new ArrayList<>(newIssues) : newIssues.stream().filter(i -> keySelector.contains(i.getKey()))
                             .collect(Collectors.toList());
-            try (Formatter formatter = new Formatter(folderLocations.getNewIssuesFile()))
+        File newIssuesFile = folderLocations.getNewIssuesFile();
+        if (!filteredIssues.isEmpty())
+        {
+            try (Formatter formatter = new Formatter(newIssuesFile))
             {
                 formatter.format("<jira-issues>\n<jira>\n");
                 for (Issue issue : filteredIssues)
@@ -132,12 +124,9 @@ public class IssuePrinterActor extends UntypedActor
                 formatter.format("</jira>\n</jira-issues>\n");
                 formatter.flush();
             }
-            getSender().tell(new PrintResponse(message, filteredIssues), getSelf());
+            LOGGER.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
         }
-        else
-        {
-            getSender().tell(new PrintResponse(message), getSelf());
-        }
+        getSender().tell(new PrintResponse(message, filteredIssues), getSelf());
     }
 
     private static Map<String, JiraIssue> getExistingIssues(String jiraIssueLocation) throws IOException
