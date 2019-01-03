@@ -2,6 +2,7 @@ package com.intershop.tool.architecture.report.server;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,6 +84,7 @@ public class ServerActor extends UntypedActor
     private final ReliableMessageActorRef<PrintRequest> printActor = new ReliableMessageActorRef<>(getContext(),IssuePrinterActor.class, getSelf());
 
     private final LinkedList<ReliableMessageActorRef<?>> workingActors = new LinkedList<>(Arrays.asList(ivyActor, ismlFinder, jarFinder, pipelineFinder, jarActor, pipelineLoader, persistenceActor, boFilterActor, boValidatorActor, capiValidatorActor, pipeletFilterActor, unusedPipeletActor, groupPipeletActor, definitionCollectorActor, ismlActor, pipelineTester, printActor));
+    private List<String> keySelector = Collections.emptyList();
 
     @Override
     public void onReceive(Object message) throws Exception
@@ -293,6 +295,11 @@ public class ServerActor extends UntypedActor
 
     private void receive(CommandLineArguments info)
     {
+        String keys = info.getArgument(ArchitectureReportConstants.ARG_KEYS);
+        if (keys != null)
+        {
+            keySelector = Arrays.asList(keys.split(","));
+        }
         jarFinder.tellOtherMessage(info);
         pipelineFinder.tellOtherMessage(info);
         ismlFinder.tellOtherMessage(info);
@@ -301,16 +308,38 @@ public class ServerActor extends UntypedActor
         ivyActor.tell(new GetProjectsRequest(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE)));
     }
 
+    private boolean isIsmlCheckEnabled()
+    {
+        return keySelector.isEmpty() || keySelector.contains(ArchitectureReportConstants.KEY_XSS);
+    }
+
+    private boolean isPipelineCheckEnabled()
+    {
+        return keySelector.isEmpty() || keySelector.contains(ArchitectureReportConstants.KEY_INVALID_PIPELINEREF);
+    }
+
     private void receive(GetProjectsResponse message)
     {
         ivyActor.receive(message.getRequest());
-        for(ProjectRef project : message.getProjects())
+        message.getProjects().forEach(project -> jarFinder.tell(new GetJarsRequest(project)));
+        if (isPipelineCheckEnabled())
         {
-            jarFinder.tell(new GetJarsRequest(project));
-            pipelineFinder.tell(new GetPipelinesRequest(project));
-            ismlFinder.tell(new GetIsmlTemplatesRequest(project));
+            message.getProjects().forEach(project -> pipelineFinder.tell(new GetPipelinesRequest(project)));
         }
-        definitionCollectorActor.tell(new APIDefinitionRequest(message.getDefinitions()));
+        else
+        {
+            LoggerFactory.getLogger(getClass()).info("PIPELINES IGNORED");
+        }
+        if (isIsmlCheckEnabled())
+        {
+            message.getProjects().forEach(project -> ismlFinder.tell(new GetIsmlTemplatesRequest(project)));
+        }
+        else
+        {
+            LoggerFactory.getLogger(getClass()).info("ISML IGNORED");
+        }
+        message.getProjects().forEach(
+                        project -> definitionCollectorActor.tell(new APIDefinitionRequest(message.getDefinitions())));
     }
 
     private boolean flushPrint = false;
