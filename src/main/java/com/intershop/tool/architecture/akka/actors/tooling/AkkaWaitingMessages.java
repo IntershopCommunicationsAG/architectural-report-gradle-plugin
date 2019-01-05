@@ -11,6 +11,11 @@ public class AkkaWaitingMessages<T>
 {
     private final Map<T, AkkaMessage<T>> waiting = new HashMap<>();
 
+    public void clear()
+    {
+        waiting.clear();
+    }
+
     public AkkaMessage<T> put(T message, ActorRef sender, ActorRef receiver)
     {
         AkkaMessage<T> akkaMessage = new AkkaMessage<T>(message, sender, receiver);

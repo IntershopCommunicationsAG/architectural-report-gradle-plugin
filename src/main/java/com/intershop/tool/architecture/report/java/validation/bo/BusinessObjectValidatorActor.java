@@ -42,6 +42,13 @@ public class BusinessObjectValidatorActor extends AbstractActor
     private final BusinessObjectAPIValidator predicate = new BusinessObjectAPIValidator(persistencePredicate, t -> ResultType.TRUE);
     private static AkkaWaitingMessages<JavaClassRequest> waiting = new AkkaWaitingMessages<>();
 
+    public void clear()
+    {
+        waiting.clear();
+        staticPersistencePredicate.clear();
+        persistentClasses.clear();
+    }
+
     @Override
     public Receive createReceive()
     {
@@ -49,6 +56,7 @@ public class BusinessObjectValidatorActor extends AbstractActor
                         .match(IsPersistenceResponse.class, this::receive)
                         .match(JavaClassRequest.class, this::receive)
                         .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            clear();
                             getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
                         })
                         .build();

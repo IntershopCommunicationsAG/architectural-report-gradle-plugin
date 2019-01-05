@@ -24,7 +24,7 @@ plugins {
 // release configuration
 group = 'com.intershop.gradle.architectural.report'
 description 'Gradle architectural report plugin'
-version = '1.1.7'
+version = '1.1.8'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -140,7 +140,7 @@ dependencies {
     compile 'javax.inject:javax.inject:1'
     compile 'commons-io:commons-io:2.6'
     compile 'com.typesafe.akka:akka-actor_2.11:2.5.19'
-    compile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
+    compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
 
     runtime 'com.typesafe.akka:akka-remote_2.11:2.5.19'
     runtime 'org.apache.cxf:cxf-rt-rs-client:3.1.17'

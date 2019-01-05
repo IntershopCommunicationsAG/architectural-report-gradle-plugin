@@ -36,18 +36,23 @@ public class PersistenceClassPredicate implements Function<String, ResultType>
      * "com.intershop.beehive.orm"
      */
     private final ConcurrentHashMap<String, String> persistentClasses = new ConcurrentHashMap<String, String>();
-    {
-        for (String className : pClasses)
-        {
-            persistentClasses.put(className, className);
-        }
-    }
 
     /**
      * contains all known non persistent classes
      */
     private final ConcurrentHashMap<String, String> transientClasses = new ConcurrentHashMap<String, String>();
     {
+        clear();
+    }
+
+    public void clear()
+    {
+        persistentClasses.clear();
+        for (String className : pClasses)
+        {
+            persistentClasses.put(className, className);
+        }
+        transientClasses.clear();
         transientClasses.put("java.lang.Object", "java.lang.Object");
     }
 
