@@ -118,6 +118,7 @@ public class DefinitionCollectorActor extends AbstractActor
                 LoggerFactory.getLogger(getClass()).warn("Can't export definition files", e);
             }
             getSender().tell(message, getSelf());
+            definitions.clear();
         }
         else
         {

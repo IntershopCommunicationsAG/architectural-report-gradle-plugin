@@ -39,13 +39,20 @@ public class IssuePrinterActor extends AbstractActor
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(IssuePrinterActor.class);
     private ArchitectureReportOutputFolder folderLocations;
+
     /**
      * set of issue hash keys
      */
     private static final Set<String> detectedIssues = new HashSet<>();
     private static final Set<Issue> newIssues = new HashSet<>();
-    private Map<String, JiraIssue> hashToIssueMap = new HashMap<>();
+    private Map<String, JiraIssue> existingIssues = new HashMap<>();
     private Collection<String> keySelector = new ArrayList<>();
+
+    private static void clear()
+    {
+        detectedIssues.clear();
+        newIssues.clear();
+    }
 
     @Override
     public Receive createReceive()
@@ -56,9 +63,8 @@ public class IssuePrinterActor extends AbstractActor
                         .match(PrintFixedIssueRequest.class, this::receive)
                         .match(PrintNewIssuesRequest.class, this::receive)
                         .match(PrintIssueRequest.class, this::receive)
-                        .match(PrintIssueRequest.class, this::receive)
-                        .match(PrintIssueRequest.class, this::receive)
                         .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
+                            clear();
                             getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
                         })
                         .build();
@@ -67,7 +73,7 @@ public class IssuePrinterActor extends AbstractActor
     private void receive(CommandLineArguments message) throws IOException
     {
         folderLocations = new ArchitectureReportOutputFolder(message.getArgument(ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY));
-        hashToIssueMap = getExistingIssues(message.getArgument(ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE));
+        existingIssues = getExistingIssues(message.getArgument(ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE));
         String keys = message.getArgument(ArchitectureReportConstants.ARG_KEYS);
         keySelector = keys == null ? Collections.emptyList() : Arrays.asList(keys.split(","));
     }
@@ -76,7 +82,7 @@ public class IssuePrinterActor extends AbstractActor
     {
         try (Formatter formatter = new Formatter(folderLocations.getFixedIssuesFile()))
         {
-            for (JiraIssue existingIssue : hashToIssueMap.values())
+            for (JiraIssue existingIssue : existingIssues.values())
             {
                 if (!detectedIssues.contains(existingIssue.getKey()))
                 {
@@ -92,7 +98,7 @@ public class IssuePrinterActor extends AbstractActor
     {
         for (Issue issue : message.getIssues())
         {
-            if (hashToIssueMap.containsKey(issue.getHash()))
+            if (existingIssues.containsKey(issue.getHash()))
             {
                 detectedIssues.add(issue.getHash());
             }
