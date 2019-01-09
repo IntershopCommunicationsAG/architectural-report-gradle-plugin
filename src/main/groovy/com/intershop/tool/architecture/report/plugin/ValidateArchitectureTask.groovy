@@ -63,14 +63,11 @@ class ValidateArchitectureTask extends DefaultTask {
     @OutputDirectory
     File reportsDir
 
-    @Input @Optional
     boolean useExternalProcess = true;
 
-        /**
+    /**
      * Additional arguments
      */
-    @Optional
-    @Input
     List<String> addVmArgs = []
 
     /**
@@ -102,7 +99,6 @@ class ValidateArchitectureTask extends DefaultTask {
             JavaExecHandleBuilder javaExec = new JavaExecHandleBuilder(getFileResolver())
             FileCollection classPath = getProject().getConfigurations().getAt(ArchitectureReportExtension.AR_EXTENSION_NAME)
             getJavaOptions().copyTo(javaExec)
-            System.out.print classPath
             javaExec.setClasspath(classPath).setMain(MAIN_CLASS_NAME).setArgs(getArguments()).build().start().waitForFinish().assertNormalExitValue()
         } else {
             try

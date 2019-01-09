@@ -109,23 +109,21 @@ public class IssuePrinterActor extends AbstractActor
         List<Issue> filteredIssues = keySelector.isEmpty() ? new ArrayList<>(newIssues) : newIssues.stream().filter(i -> keySelector.contains(i.getKey()))
                             .collect(Collectors.toList());
         File newIssuesFile = folderLocations.getNewIssuesFile();
-        if (!filteredIssues.isEmpty())
+        // write file also in case of no error to define the target of the task
+        try (Formatter formatter = new Formatter(newIssuesFile))
         {
-            try (Formatter formatter = new Formatter(newIssuesFile))
+            formatter.format("<jira-issues>\n<jira>\n");
+            for (Issue issue : filteredIssues)
             {
-                formatter.format("<jira-issues>\n<jira>\n");
-                for (Issue issue : filteredIssues)
-                {
-                    formatter.format(
-                                    "<jira-issue project-id=\"%s\" type=\"%s\" jira-id=\"XXXX\" key=\"%s\">%s</jira-issue>\n",
-                                    issue.getProjectRef().getIdentifier(), issue.getKey(), issue.getHash(),
-                                    issue.getParametersString());
-                }
-                formatter.format("</jira>\n</jira-issues>\n");
-                formatter.flush();
+                formatter.format(
+                                "<jira-issue project-id=\"%s\" type=\"%s\" jira-id=\"XXXX\" key=\"%s\">%s</jira-issue>\n",
+                                issue.getProjectRef().getIdentifier(), issue.getKey(), issue.getHash(),
+                                issue.getParametersString());
             }
-            LOGGER.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
+            formatter.format("</jira>\n</jira-issues>\n");
+            formatter.flush();
         }
+        LOGGER.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
         getSender().tell(new PrintResponse(message, filteredIssues), getSelf());
         newIssues.clear();
     }
