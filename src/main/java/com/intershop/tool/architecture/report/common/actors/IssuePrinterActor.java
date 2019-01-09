@@ -48,12 +48,6 @@ public class IssuePrinterActor extends AbstractActor
     private Map<String, JiraIssue> existingIssues = new HashMap<>();
     private Collection<String> keySelector = new ArrayList<>();
 
-    private static void clear()
-    {
-        detectedIssues.clear();
-        newIssues.clear();
-    }
-
     @Override
     public Receive createReceive()
     {
@@ -64,7 +58,6 @@ public class IssuePrinterActor extends AbstractActor
                         .match(PrintNewIssuesRequest.class, this::receive)
                         .match(PrintIssueRequest.class, this::receive)
                         .matchEquals(AkkaMessage.TERMINATE.FLUSH_REQUEST, message -> {
-                            clear();
                             getSender().tell(AkkaMessage.TERMINATE.FLUSH_RESPONSE, getSelf());
                         })
                         .build();
@@ -92,6 +85,7 @@ public class IssuePrinterActor extends AbstractActor
             formatter.flush();
         }
         getSender().tell(new PrintResponse(message), getSelf());
+        detectedIssues.clear();
     }
 
     private void receive(PrintIssueRequest message) throws IOException
@@ -133,6 +127,7 @@ public class IssuePrinterActor extends AbstractActor
             LOGGER.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
         }
         getSender().tell(new PrintResponse(message, filteredIssues), getSelf());
+        newIssues.clear();
     }
 
     private static Map<String, JiraIssue> getExistingIssues(String jiraIssueLocation) throws IOException

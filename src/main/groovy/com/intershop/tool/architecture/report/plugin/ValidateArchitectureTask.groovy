@@ -15,16 +15,26 @@
  */
 package com.intershop.tool.architecture.report.plugin
 
-import com.intershop.tool.architecture.report.plugin.ArchitectureReportExtension
+import java.util.concurrent.TimeoutException
+
+import javax.inject.Inject
+
+import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Optional
+import org.gradle.process.JavaForkOptions
+import org.gradle.process.internal.DefaultJavaForkOptions
+import org.gradle.process.internal.JavaExecHandleBuilder
+
 import com.intershop.tool.architecture.report.cmd.ArchitectureReport
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants
 
+import groovy.ui.SystemOutputInterceptor
 import groovy.util.logging.Slf4j
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.ConfigurableFileTree
-import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.*
-import org.gradle.api.GradleException
 
 /**
  * Task for api validation
@@ -32,7 +42,8 @@ import org.gradle.api.GradleException
 @Slf4j
 class ValidateArchitectureTask extends DefaultTask {
 
-	final static String TASK_DESCRIPTION = 'validate architecture'
+    final static String TASK_DESCRIPTION = 'validate architecture'
+    private static final String MAIN_CLASS_NAME = "com.intershop.tool.architecture.report.cmd.ArchitectureReport";
 
     @InputFile
     File ivyFile
@@ -52,11 +63,82 @@ class ValidateArchitectureTask extends DefaultTask {
     @OutputDirectory
     File reportsDir
 
+    @Input @Optional
+    boolean useExternalProcess = true;
+
+        /**
+     * Additional arguments
+     */
+    @Optional
+    @Input
+    List<String> addVmArgs = []
+
+    /**
+     * Java fork options for the Java task.
+     */
+    JavaForkOptions javaOptions
+
+    @Inject
+    FileResolver getFileResolver() {
+        throw new UnsupportedOperationException()
+    }
+
+    /**
+     * Set Java fork options.
+     *
+     * @return JavaForkOptions
+     */
+    JavaForkOptions getJavaOptions() {
+        if (javaOptions == null) {
+            javaOptions = new DefaultJavaForkOptions(getFileResolver())
+        }
+        return javaOptions
+    }
+
     @TaskAction
     void validateAPI() {
-        if (ArchitectureReport.validateArchitecture(getReportsDir(), getIvyFile(), getCartridgesDir(), getBaselineFile(), getKnownIssuesFile(), getKeySelector()))
+        if (useExternalProcess)
         {
-            throw new GradleException("Build contains architectural issues.");
+            JavaExecHandleBuilder javaExec = new JavaExecHandleBuilder(getFileResolver())
+            FileCollection classPath = getProject().getConfigurations().getAt(ArchitectureReportExtension.AR_EXTENSION_NAME)
+            getJavaOptions().copyTo(javaExec)
+            System.out.print classPath
+            javaExec.setClasspath(classPath).setMain(MAIN_CLASS_NAME).setArgs(getArguments()).build().start().waitForFinish().assertNormalExitValue()
+        } else {
+            try
+            {
+                if (ArchitectureReport.validateArchitecture(getReportsDir(), getIvyFile(), getCartridgesDir(), getBaselineFile(), getKnownIssuesFile(), getKeySelector()))
+                {
+                    throw new GradleException("Build contains architectural issues.");
+                }
+            } catch(Exception e)
+            {
+                throw new GradleException("Validation failed with execption:.", e);
+            }
         }
+    }
+
+    private static void addArgument(List<String> arguments, String optionName, String value) {
+        if (value) {
+            arguments << '-' + optionName
+            arguments << "${value}" // + ' ' + value
+        }
+    }
+
+    private List<String> getArguments() {
+        List<String> arguments = getAddVmArgs()
+        addArgument(arguments, ArchitectureReportConstants.ARG_IVYFILE, getIvyFile().getAbsolutePath());
+        addArgument(arguments, ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY, getCartridgesDir().getAbsolutePath());
+        if (getBaselineFile() != null)
+        {
+            addArgument(arguments, ArchitectureReportConstants.ARG_BASELINE, getBaselineFile().toURI().toString());
+        }
+        addArgument(arguments, ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY, getReportsDir().getAbsolutePath());
+        if(getKnownIssuesFile() != null)
+        {
+            addArgument(arguments, ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE, getKnownIssuesFile().toURI().toString());
+        }
+        addArgument(arguments, ArchitectureReportConstants.ARG_KEYS, String.join(",", getKeySelector()))
+        return arguments
     }
 }

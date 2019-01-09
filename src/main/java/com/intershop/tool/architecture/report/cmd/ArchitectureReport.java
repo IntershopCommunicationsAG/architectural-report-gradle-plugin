@@ -37,8 +37,15 @@ public class ArchitectureReport
      */
     public static void main(String[] args)
     {
-        if (ArchitectureReport.validateArchitecture(args))
+        try
         {
+            if (ArchitectureReport.validateArchitecture(args))
+            {
+                System.exit(3);
+            }
+        } catch (TimeoutException e) {
+            System.exit(2);
+        } catch (Exception e) {
             System.exit(1);
         }
     }
@@ -51,8 +58,9 @@ public class ArchitectureReport
      * @param knownIssuesFile file contains known issues (will be ignored)
      * @param keySelector list of keys, which will be validated
      * @return true in case validation is failing
+     * @throws TimeoutException
      */
-    public static boolean validateArchitecture(File outputDirectory, File ivyFile, File cartridgesDirectory, File baselineFile, File knownIssuesFile, List<String> keySelector)
+    public static boolean validateArchitecture(File outputDirectory, File ivyFile, File cartridgesDirectory, File baselineFile, File knownIssuesFile, List<String> keySelector) throws TimeoutException
     {
         CommandLineArguments info = new CommandLineArguments();
         info.setArgument(ArchitectureReportConstants.ARG_IVYFILE, ivyFile.getAbsolutePath());
@@ -73,14 +81,15 @@ public class ArchitectureReport
     /**
      * @param args program arguments
      * @return true in case validation is failing
+     * @throws TimeoutException
      */
-    public static boolean validateArchitecture(String... args)
+    public static boolean validateArchitecture(String... args) throws TimeoutException
     {
         CommandLineArguments info = new CommandLineArguments(args);
         return validateArchitecture(info);
     }
 
-    public static boolean validateArchitecture(CommandLineArguments info)
+    public static boolean validateArchitecture(CommandLineArguments info) throws TimeoutException
     {
         final ActorSystem system = ActorSystem.create("ArchitectureReport");
         // Create the 'greeter' actor
@@ -97,22 +106,12 @@ public class ArchitectureReport
                 // wait until messages are processed
             }
         }
-        catch(TimeoutException e)
-        {
-            LOGGER.error("Error during architecture report", e);
-            buildFailed = true;
-        }
         finally
         {
             Future<Terminated> isTerminated = system.terminate();
             while (!isTerminated.isCompleted() && !buildFinished)
             {
-                try {
-                    processResponse(inbox);
-                }
-                catch (TimeoutException e) {
-                    // nothing to do
-                }
+                processResponse(inbox);
             }
         }
         return buildFailed;

@@ -24,7 +24,9 @@ plugins {
 // release configuration
 group = 'com.intershop.gradle.architectural.report'
 description 'Gradle architectural report plugin'
-version = '1.1.8'
+
+// adapt external loading at ArchitectureReportPlugin and README.md too
+version = '1.2.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

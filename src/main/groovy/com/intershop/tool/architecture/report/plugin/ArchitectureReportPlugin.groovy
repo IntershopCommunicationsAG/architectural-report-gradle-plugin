@@ -20,10 +20,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.reporting.ReportingExtension
-import org.gradle.api.tasks.SourceSet
 
 /**
  * Plugin implementation
@@ -46,6 +43,35 @@ class ArchitectureReportPlugin implements Plugin<Project> {
             validateTask.description = ValidateArchitectureTask.TASK_DESCRIPTION
         }
         configureValidateArchitectureTask(project, validateTask)
+        createConfiguration(project)
+    }
+
+    private void createConfiguration(Project project)
+    {
+        Configuration configuration = project.getConfigurations().findByName(ArchitectureReportExtension.AR_EXTENSION_NAME)
+            ?: project.getConfigurations().create(ArchitectureReportExtension.AR_EXTENSION_NAME)
+        if(configuration.getAllDependencies().isEmpty()) {
+            configuration
+                    .setTransitive(true)
+                    .setDescription("Validate architecture with architecture report")
+                    .defaultDependencies { dependencies ->
+                DependencyHandler dependencyHandler = project.getDependencies()
+
+                dependencies.add(dependencyHandler.create('com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:1.2.0'))
+                dependencies.add(dependencyHandler.create('org.slf4j:slf4j-api:1.7.25'))
+                dependencies.add(dependencyHandler.create('org.ow2.asm:asm:7.0'))
+                dependencies.add(dependencyHandler.create('javax.inject:javax.inject:1'))
+                dependencies.add(dependencyHandler.create('commons-io:commons-io:2.6'))
+                dependencies.add(dependencyHandler.create('com.typesafe.akka:akka-actor_2.11:2.5.19'))
+                dependencies.add(dependencyHandler.create('javax.ws.rs:javax.ws.rs-api:2.0.1'))
+
+                dependencies.add(dependencyHandler.create('com.typesafe.akka:akka-remote_2.11:2.5.19'))
+                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-rs-client:3.1.17'))
+                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-transports-http:3.1.17'))
+                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-transports-local:3.1.17'))
+                dependencies.add(dependencyHandler.create('ch.qos.logback:logback-classic:1.2.3'))
+            }
+        }
     }
 
     /**
@@ -63,5 +89,7 @@ class ArchitectureReportPlugin implements Plugin<Project> {
         task.conventionMapping.baselineFile = { extension.baselineFile }
         task.conventionMapping.knownIssuesFile = { extension.knownIssuesFile }
         task.conventionMapping.keySelector = { extension.keySelector }
+        task.conventionMapping.useExternalProcess = { extension.useExternalProcess }
+        task.conventionMapping.addVmArgs = { extension.addVmArgs }
     }
 }

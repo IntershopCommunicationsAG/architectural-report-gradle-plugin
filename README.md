@@ -12,7 +12,7 @@ Include to build.gradle
 <pre>
 buildscript {
     dependencies {
-        classpath 'com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:1.1.8'
+        classpath 'com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:1.2.0'
     }
 }
 apply plugin: 'com.intershop.gradle.architectural.report'
@@ -53,14 +53,15 @@ Start the architecture report task:
 
 # Configuration
 
-| key             | type         | description                                                                |
-|-----------------|--------------|----------------------------------------------------------------------------|
-| reportsDir      | File         | write reports (new_issues, api_definition, resolved_issues)                |
-| knownIssuesFile | File         | (optional) read known issues from a xml-file, listed issues will be ignored           |
-| keySelector     | List&lt;String&gt; | define keys for validation, other issues will be ignored                        |
-| baselineFile    | File         | (optional) api baseline (previously published api_definition.xml of baseline release) |
-| cartridgesDir   | File         | cartridge directory of ICM server                                          |
-| ivyFile         | File         | ivy.xml file contains server dependencies and build numbers                |
+| key                | type         | description                                                                |
+|--------------------|--------------|----------------------------------------------------------------------------|
+| reportsDir         | File         | write reports (new_issues, api_definition, resolved_issues)                |
+| knownIssuesFile    | File         | (optional) read known issues from a xml-file, listed issues will be ignored           |
+| keySelector        | List&lt;String&gt; | define keys for validation, other issues will be ignored                        |
+| baselineFile       | File         | (optional) api baseline (previously published api_definition.xml of baseline release) |
+| cartridgesDir      | File         | cartridge directory of ICM server                                          |
+| ivyFile            | File         | ivy.xml file contains server dependencies and build numbers                |
+| useExternalProcess | Boolean      | using external java process to execute validation (default: true)          |
 
 # Output
 

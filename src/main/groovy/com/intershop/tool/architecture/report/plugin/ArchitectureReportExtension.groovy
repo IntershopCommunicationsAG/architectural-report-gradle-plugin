@@ -61,4 +61,8 @@ class ArchitectureReportExtension {
     List<String> keySelector
 
     File reportsDir
+
+    Boolean useExternalProcess = true
+
+    List<String> addVmArgs = []
 }
