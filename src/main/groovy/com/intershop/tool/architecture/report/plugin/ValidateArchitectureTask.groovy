@@ -99,6 +99,7 @@ class ValidateArchitectureTask extends DefaultTask {
             JavaExecHandleBuilder javaExec = new JavaExecHandleBuilder(getFileResolver())
             FileCollection classPath = getProject().getConfigurations().getAt(ArchitectureReportExtension.AR_EXTENSION_NAME)
             getJavaOptions().copyTo(javaExec)
+            javaExec.setJvmArgs(getAddVmArgs())
             javaExec.setClasspath(classPath).setMain(MAIN_CLASS_NAME).setArgs(getArguments()).build().start().waitForFinish().assertNormalExitValue()
         } else {
             try
@@ -122,7 +123,7 @@ class ValidateArchitectureTask extends DefaultTask {
     }
 
     private List<String> getArguments() {
-        List<String> arguments = getAddVmArgs()
+        List<String> arguments = []
         addArgument(arguments, ArchitectureReportConstants.ARG_IVYFILE, getIvyFile().getAbsolutePath());
         addArgument(arguments, ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY, getCartridgesDir().getAbsolutePath());
         if (getBaselineFile() != null)
