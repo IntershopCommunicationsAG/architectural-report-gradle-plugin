@@ -5,15 +5,15 @@ import java.util.Set;
 import java.util.function.Function;
 
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
-import com.intershop.tool.architecture.report.common.model.ResultType;
-import com.intershop.tool.architecture.report.common.model.ValidationResult;
-import com.intershop.tool.architecture.report.java.model.JavaClass;
-import com.intershop.tool.architecture.report.java.model.JavaClassRequest;
+import com.intershop.tool.architecture.report.common.issue.ResultType;
+import com.intershop.tool.architecture.report.common.issue.ValidationResult;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
+import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
 
 /**
  * Validates a business object API java class
  */
-public class BusinessObjectAPIValidator implements Function<JavaClassRequest, ValidationResult>
+public class BusinessObjectAPIValidator
 {
     private final Function<String, ResultType> persistentPredicate;
     private final Function<JavaClass, ResultType> businessObjectPredicate;
@@ -33,10 +33,8 @@ public class BusinessObjectAPIValidator implements Function<JavaClassRequest, Va
      *         dependent classes are not resolved yet
      *
      */
-    @Override
-    public ValidationResult apply(JavaClassRequest javaClassRequest)
+    public ValidationResult validate(ProjectRef projectRef, JavaClass javaClass)
     {
-        JavaClass javaClass = javaClassRequest.getJavaClass();
         String className = javaClass.getClassName();
         if (!className.contains(".capi."))
         {
@@ -61,12 +59,12 @@ public class BusinessObjectAPIValidator implements Function<JavaClassRequest, Va
         {
             if (javaClassName.contains(".internal."))
             {
-                return new ValidationResult(javaClassRequest.getProjectRef(), ArchitectureReportConstants.KEY_BO_INTERNAL, className, javaClassName);
+                return new ValidationResult(projectRef, ArchitectureReportConstants.KEY_BO_INTERNAL, className, javaClassName);
             }
             ResultType resultPersistence = persistentPredicate.apply(javaClassName);
             if (ResultType.TRUE.equals(resultPersistence))
             {
-                return new ValidationResult(javaClassRequest.getProjectRef(), ArchitectureReportConstants.KEY_BO_PERSISTENCE, className, javaClassName);
+                return new ValidationResult(projectRef, ArchitectureReportConstants.KEY_BO_PERSISTENCE, className, javaClassName);
             }
             if (ResultType.WAIT.equals(resultPersistence))
             {

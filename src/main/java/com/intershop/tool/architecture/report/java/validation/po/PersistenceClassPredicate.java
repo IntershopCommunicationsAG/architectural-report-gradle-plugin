@@ -7,10 +7,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import com.intershop.tool.architecture.report.common.model.ResultType;
-import com.intershop.tool.architecture.report.java.model.JavaClass;
-import com.intershop.tool.architecture.report.java.model.JavaHelper;
-import com.intershop.tool.architecture.report.java.model.WaitForJavaClassResult;
+import com.intershop.tool.architecture.report.common.issue.ResultType;
+import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
+import com.intershop.tool.architecture.report.java.model.jclass.JavaHelper;
+import com.intershop.tool.architecture.report.java.model.jclass.WaitForJavaClassResult;
 
 /**
  * Stateful predicate, which returns three results: YES, NO and WAIT.

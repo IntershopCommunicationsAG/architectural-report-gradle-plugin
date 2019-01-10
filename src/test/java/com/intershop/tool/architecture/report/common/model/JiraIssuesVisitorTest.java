@@ -7,6 +7,10 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.intershop.tool.architecture.report.common.issue.JiraIssue;
+import com.intershop.tool.architecture.report.common.issue.JiraIssuesVisitor;
+import com.intershop.tool.architecture.report.common.resources.XMLLoaderException;
+
 public class JiraIssuesVisitorTest
 {
 

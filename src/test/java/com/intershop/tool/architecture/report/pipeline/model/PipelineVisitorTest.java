@@ -10,7 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.intershop.tool.architecture.report.common.XMLInputSourceVisitor;
+import com.intershop.tool.architecture.report.common.resources.XMLInputSourceVisitor;
 
 public class PipelineVisitorTest
 {

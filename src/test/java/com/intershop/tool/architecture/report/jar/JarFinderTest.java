@@ -11,6 +11,8 @@ import java.util.Enumeration;
 
 import org.junit.Test;
 
+import com.intershop.tool.architecture.report.java.model.jar.JarFinder;
+
 public class JarFinderTest
 {
     private JarFinder jarFinder = new JarFinder();

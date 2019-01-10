@@ -1,8 +1,7 @@
-package com.intershop.tool.architecture.report.pipeline.model;
+package com.intershop.tool.architecture.report.java.model.pipelet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.Function;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -10,16 +9,14 @@ import org.xml.sax.SAXException;
 
 import com.intershop.tool.architecture.report.common.resources.XMLInputSourceVisitor;
 
-public class PipelineVisitor implements Function<File, Pipeline>
+public class PipeletVisitor
 {
     XMLInputSourceVisitor xmlVisitor = new XMLInputSourceVisitor();
 
-    @Override
-    public Pipeline apply(File file)
+    public PipeletDescriptor apply(String cartridgeName, File file)
     {
-        String name = file.getName();
-        Pipeline result = new Pipeline(name.substring(0, name.length() - 9)); // .pipeline
-        PipelineHandler handler = new PipelineHandler(result);
+        PipeletDescriptor result = new PipeletDescriptor();
+        PipeletHandler handler = new PipeletHandler(cartridgeName, result);
         try
         {
             xmlVisitor.visitXMLInputSource(file, handler);

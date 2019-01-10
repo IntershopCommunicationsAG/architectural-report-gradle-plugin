@@ -11,12 +11,15 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import com.intershop.tool.architecture.report.api.model.actor.DefinitionCollectorIssueCollector;
+import com.intershop.tool.architecture.report.api.model.actor.DefinitionComparer;
 import com.intershop.tool.architecture.report.api.model.definition.APIDefinition;
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
-import com.intershop.tool.architecture.report.common.model.Issue;
-import com.intershop.tool.architecture.report.common.model.ResourceLoader;
-import com.intershop.tool.architecture.report.common.model.XmlLoader;
+import com.intershop.tool.architecture.report.common.issue.Issue;
+import com.intershop.tool.architecture.report.common.project.IvyVisitor;
+import com.intershop.tool.architecture.report.common.project.LibDefinitionMapper;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
+import com.intershop.tool.architecture.report.common.resources.ResourceLoader;
+import com.intershop.tool.architecture.report.common.resources.XmlLoader;
 import com.intershop.tool.architecture.versions.UpdateStrategy;
 
 public class LibValidationTest
@@ -35,7 +38,7 @@ public class LibValidationTest
         try (InputStream is = ResourceLoader.getInputStream("baseline_libs.xml"))
         {
             APIDefinition baselineDefinition = xmlLoader.importXML(is, APIDefinition.class);
-            DefinitionCollectorIssueCollector issueCollector = new DefinitionCollectorIssueCollector(definitions, baselineDefinition.getDefinition(), UpdateStrategy.MINOR);
+            DefinitionComparer issueCollector = new DefinitionComparer(definitions, baselineDefinition.getDefinition(), UpdateStrategy.MINOR);
             List<Issue> issues = issueCollector.getIssues();
             assertEquals("found problem", 1, issues.size());
             assertEquals("correct error of problem", "com.google.guava:guava update incompatible, was version 16.0", issues.get(0).getParametersString());

@@ -26,7 +26,7 @@ group = 'com.intershop.gradle.architectural.report'
 description 'Gradle architectural report plugin'
 
 // adapt external loading at ArchitectureReportPlugin and README.md too
-version = '1.2.1'
+version = '2.0.0'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -141,17 +141,14 @@ dependencies {
     compile 'org.ow2.asm:asm:7.0'
     compile 'javax.inject:javax.inject:1'
     compile 'commons-io:commons-io:2.6'
-    compile 'com.typesafe.akka:akka-actor_2.11:2.5.19'
     compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
 
-    runtime 'com.typesafe.akka:akka-remote_2.11:2.5.19'
     runtime 'org.apache.cxf:cxf-rt-rs-client:3.1.17'
     runtime 'org.apache.cxf:cxf-rt-transports-http:3.1.17'
     runtime 'org.apache.cxf:cxf-rt-transports-local:3.1.17'
     runtime 'ch.qos.logback:logback-classic:1.2.3'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'com.typesafe.akka:akka-testkit_2.11:2.5.19'
 }
 
 repositories {

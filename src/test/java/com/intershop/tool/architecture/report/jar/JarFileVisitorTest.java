@@ -11,10 +11,10 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import com.intershop.tool.architecture.report.jar.model.JarFileVisitor;
-import com.intershop.tool.architecture.report.java.model.JavaClass;
-import com.intershop.tool.architecture.report.pipelet.model.PipeletDescriptor;
-import com.intershop.tool.architecture.report.project.model.ProjectRef;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
+import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
+import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
+import com.intershop.tool.architecture.report.java.model.pipelet.PipeletDescriptor;
 
 public class JarFileVisitorTest
 {

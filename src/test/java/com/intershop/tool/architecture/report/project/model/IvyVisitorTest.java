@@ -9,6 +9,9 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import com.intershop.tool.architecture.report.common.project.IvyVisitor;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
+
 public class IvyVisitorTest
 {
     private static final String TEST_IVY = "ivy.xml";

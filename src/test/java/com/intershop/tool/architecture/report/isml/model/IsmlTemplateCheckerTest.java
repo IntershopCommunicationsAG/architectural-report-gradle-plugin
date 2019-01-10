@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.intershop.tool.architecture.report.common.model.Issue;
-import com.intershop.tool.architecture.report.project.model.ProjectRef;
+import com.intershop.tool.architecture.report.common.issue.Issue;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
 
 public class IsmlTemplateCheckerTest
 {

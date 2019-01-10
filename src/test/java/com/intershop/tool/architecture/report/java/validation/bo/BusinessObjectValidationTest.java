@@ -10,11 +10,10 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
-import com.intershop.tool.architecture.report.common.model.ResultType;
-import com.intershop.tool.architecture.report.jar.model.JarFileVisitor;
-import com.intershop.tool.architecture.report.java.model.JavaClass;
-import com.intershop.tool.architecture.report.java.model.JavaClassRequest;
-import com.intershop.tool.architecture.report.project.model.ProjectRef;
+import com.intershop.tool.architecture.report.common.issue.ResultType;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
+import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
+import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
 
 public class BusinessObjectValidationTest
 {
@@ -39,12 +38,12 @@ public class BusinessObjectValidationTest
             if (wrongClasses.contains(javaClass.getClassName()))
             {
                 assertEquals("CatalogBORepositoryExtensionFactory", ResultType.FALSE,
-                                underTest.apply(new JavaClassRequest(javaClass, PROJECT_REF)).getResultType());
+                                underTest.validate(PROJECT_REF, javaClass).getResultType());
             }
             else
             {
                 assertEquals("business object is fine:" + javaClass.getClassName(), ResultType.TRUE,
-                                underTest.apply(new JavaClassRequest(javaClass, PROJECT_REF)).getResultType());
+                                underTest.validate(PROJECT_REF, javaClass).getResultType());
             }
         }
     }

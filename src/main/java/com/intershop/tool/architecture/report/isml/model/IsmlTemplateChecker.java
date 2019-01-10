@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 import org.slf4j.LoggerFactory;
 
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
-import com.intershop.tool.architecture.report.common.model.Issue;
-import com.intershop.tool.architecture.report.project.model.ProjectRef;
+import com.intershop.tool.architecture.report.common.issue.Issue;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
 
 public class IsmlTemplateChecker
 {
