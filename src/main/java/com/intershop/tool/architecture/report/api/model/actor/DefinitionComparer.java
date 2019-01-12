@@ -102,7 +102,7 @@ public class DefinitionComparer
         touchedDefinitions.forEach(d -> touchedClasses.put(d.getSource(), d.getProjectRef()));
         return touchedClasses.entrySet()
                         .stream().map(entry -> new Issue(entry.getValue(),
-                                        ArchitectureReportConstants.KEY_API_VIOLATION, entry.getKey()))
+                                        ArchitectureReportConstants.KEY_JAVA_API_VIOLATION, entry.getKey()))
                         .collect(Collectors.toList());
     }
 

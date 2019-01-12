@@ -20,25 +20,26 @@ import com.intershop.tool.architecture.report.isml.model.IsmlTemplateChecker;
  */
 public class IsmlTemplateCollector implements ProjectProcessor
 {
-    private final IsmlFinder ismlFinder = new IsmlFinder();
     private final CommandLineArguments info;
+    private final ProjectRef projectRef;
 
-    public IsmlTemplateCollector(CommandLineArguments info)
+    public IsmlTemplateCollector(CommandLineArguments info, ProjectRef projectRef)
     {
         this.info = info;
+        this.projectRef = projectRef;
     }
 
     @Override
-    public void process(ProjectRef projectRef, ProjectProcessorResult result)
+    public void process(ProjectProcessorResult result)
     {
         // nothing todo
     }
 
     @Override
-    public List<Issue> validate(ProjectRef projectRef, ProjectProcessorResult projectResults)
+    public List<Issue> validate(ProjectProcessorResult projectResults)
     {
         File cartridgesDirectory = new File(info.getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY));
-        Collection<File> files = ismlFinder.apply(new File(cartridgesDirectory, projectRef.getName() + "/release/templates"));
+        Collection<File> files = new IsmlFinder().apply(new File(cartridgesDirectory, projectRef.getName() + "/release/templates"));
         List<Issue> result = new ArrayList<>();
         files.forEach(f -> result.addAll(validate(projectRef, f)));
         return result;

@@ -6,6 +6,6 @@ import com.intershop.tool.architecture.report.common.issue.Issue;
 
 public interface ProjectProcessor
 {
-    void process(ProjectRef projectRef, ProjectProcessorResult projectResult);
-    List<Issue> validate(ProjectRef projectRef, ProjectProcessorResult projectResult);
+    void process(ProjectProcessorResult projectResult);
+    List<Issue> validate(ProjectProcessorResult projectResult);
 }

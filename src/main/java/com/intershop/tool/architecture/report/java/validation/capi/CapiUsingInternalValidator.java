@@ -3,6 +3,7 @@ package com.intershop.tool.architecture.report.java.validation.capi;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.common.issue.Issue;
 import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
@@ -20,14 +21,14 @@ public class CapiUsingInternalValidator
     {
         List<Issue> issues = new ArrayList<>();
         String className = javaClass.getClassName();
-        if (className.contains(".capi."))
+        if (className.contains(".capi.") && !className.endsWith("Test") && !className.contains("tests") )
         {
             List<String> testClasses = new ArrayList<>(javaClass.getUsageRefs());
             for (String javaClassName : testClasses)
             {
                 if (javaClassName.contains(".internal."))
                 {
-                    issues.add(new Issue(projectRef, "com.intershop.capi.internal", className, javaClassName));
+                    issues.add(new Issue(projectRef, ArchitectureReportConstants.KEY_JAVA_CAPI_INTERNAL, className, javaClassName));
                 }
             }
         }

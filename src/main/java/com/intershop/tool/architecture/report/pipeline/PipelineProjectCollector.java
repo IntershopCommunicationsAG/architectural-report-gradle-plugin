@@ -18,27 +18,29 @@ import com.intershop.tool.architecture.report.pipeline.validation.PipelineProces
 
 public class PipelineProjectCollector implements ProjectProcessor
 {
-    private final Function<File, Pipeline> converter = new PipelineVisitor();
-    private final PipelineFinder finder = new PipelineFinder();
-    private final PipelineProcessor processor = new PipelineProcessor();
     private final CommandLineArguments info;
+    private final ProjectRef projectRef;
 
-    public PipelineProjectCollector(CommandLineArguments info)
+    public PipelineProjectCollector(CommandLineArguments info, ProjectRef projectRef)
     {
         this.info = info;
+        this.projectRef = projectRef;
     }
 
     @Override
-    public List<Issue> validate(ProjectRef projectRef, ProjectProcessorResult unused)
+    public List<Issue> validate(ProjectProcessorResult unused)
     {
         File cartridgesDirectory = new File(info.getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY));
+        PipelineFinder finder = new PipelineFinder();
         Collection<File> files = finder.apply(new File(cartridgesDirectory, projectRef.getName() + "/release/pipelines"));
+        Function<File, Pipeline> converter = new PipelineVisitor();
+        PipelineProcessor processor = new PipelineProcessor();
         files.forEach(f -> processor.process(projectRef, converter.apply(f)));
         return processor.collectIssues(projectRef);
     }
 
     @Override
-    public void process(ProjectRef projectRef, ProjectProcessorResult result)
+    public void process(ProjectProcessorResult result)
     {
         // no preparation needed
     }

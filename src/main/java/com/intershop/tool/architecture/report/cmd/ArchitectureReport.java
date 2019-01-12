@@ -30,8 +30,7 @@ public class ArchitectureReport
     {
         try
         {
-            CommandLineArguments info = new CommandLineArguments(args);
-            if (ArchitectureReport.validateArchitecture(info))
+            if (ArchitectureReport.validateArchitecture(args))
             {
                 System.exit(3);
             }
@@ -48,17 +47,18 @@ public class ArchitectureReport
      * @return true in case validation is failing
      * @throws FileNotFoundException
      */
-    public static boolean validateArchitecture(CommandLineArguments args) throws FileNotFoundException
+    public static boolean validateArchitecture(String[] args) throws FileNotFoundException
     {
-        IssueCollector collector = new ServerCollector(args);
+        CommandLineArguments info = new CommandLineArguments(args);
+        IssueCollector collector = new ServerCollector(info);
         List<Issue> allIssues = collector.validate();
-        IssueFilter filter = new IssueFilter(args);
+        IssueFilter filter = new IssueFilter(info);
         List<Issue> filteredIssues = filter.filterIssues(allIssues);
         if (filteredIssues.isEmpty())
         {
             return false;
         }
-        IssuePrinter printer = new IssuePrinter(args);
+        IssuePrinter printer = new IssuePrinter(info);
         printer.printIssues(filteredIssues);
         return true;
     }

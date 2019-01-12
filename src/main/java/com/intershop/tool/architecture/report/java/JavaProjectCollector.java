@@ -17,28 +17,32 @@ import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.java.model.jar.Jar;
 import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
 import com.intershop.tool.architecture.report.java.model.jar.JarFinder;
+import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
+import com.intershop.tool.architecture.report.java.validation.capi.CapiUsingInternalValidator;
 
 public class JavaProjectCollector implements ProjectProcessor
 {
-    private JarFinder jarFinder = new JarFinder();
     private final CommandLineArguments info;
+    private final ProjectRef projectRef;
+    private List<Jar> jars = Collections.emptyList();
 
-    public JavaProjectCollector(CommandLineArguments info)
+    public JavaProjectCollector(CommandLineArguments info, ProjectRef projectRef)
     {
         this.info = info;
+        this.projectRef = projectRef;
     }
 
     @Override
-    public void process(ProjectRef projectRef, ProjectProcessorResult result)
+    public void process(ProjectProcessorResult result)
     {
         File cartridgesDirectory = new File(info.getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY));
-        Collection<File> files = jarFinder.apply(new File(cartridgesDirectory, projectRef.getName() + "/release/lib"));
+        Collection<File> files = new JarFinder().apply(new File(cartridgesDirectory, projectRef.getName() + "/release/lib"));
         JarFileVisitor javaVisitor = new JarFileVisitor(projectRef);
-        List<Jar> jars = files.stream().map(f ->  javaVisitor.visitFile(f)).collect(Collectors.toList());
-        jars.forEach(jarFile -> process(jarFile, projectRef, result));
+        jars = files.stream().map(f ->  javaVisitor.visitFile(f)).collect(Collectors.toList());
+        jars.forEach(jarFile -> process(jarFile, result));
     }
 
-    private void process(Jar jar, ProjectRef projectRef, ProjectProcessorResult result)
+    private void process(Jar jar, ProjectProcessorResult result)
     {
         List<Definition> definitions = new ArrayList<>();
         jar.getClasses().stream().forEach(jc -> {
@@ -49,8 +53,23 @@ public class JavaProjectCollector implements ProjectProcessor
     }
 
     @Override
-    public List<Issue> validate(ProjectRef projectRef, ProjectProcessorResult projectResult)
+    public List<Issue> validate(ProjectProcessorResult projectResult)
     {
-        return Collections.emptyList();
+        List<Issue> result = new ArrayList<>(); 
+        jars.forEach(jarFile -> result.addAll(process(jarFile, projectRef)));
+        return result;
+    }
+
+    private Collection<Issue> process(Jar jarFile, ProjectRef projectRef)
+    {
+        List<Issue> result = new ArrayList<>(); 
+        jarFile.getClasses().forEach(jc -> result.addAll(process(jc, projectRef)));
+        return result;
+    }
+
+    private static CapiUsingInternalValidator capiClassValidator = new CapiUsingInternalValidator();
+    private Collection<Issue> process(JavaClass javaClass, ProjectRef projectRef)
+    {
+        return capiClassValidator.validate(projectRef, javaClass);
     }
 }
