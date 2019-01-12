@@ -2,7 +2,7 @@ package com.intershop.tool.architecture.report.project.actors;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.intershop.tool.architecture.akka.actors.tooling.AkkaMessage;
@@ -34,7 +34,7 @@ public class IvyActor extends AbstractActor
     private void receive(GetProjectsRequest message)
     {
         Collection<ProjectRef> projects = IVY_VISITOR.apply(new File(message.getIvyFile()));
-        List<Definition> definitions = projects.stream().map(DEFINITION_MAPPER).collect(Collectors.toList());
+        Set<Definition> definitions = projects.stream().map(DEFINITION_MAPPER).collect(Collectors.toSet());
         getSender().tell(new GetProjectsResponse(message, projects, definitions), getSelf());
     }
 }

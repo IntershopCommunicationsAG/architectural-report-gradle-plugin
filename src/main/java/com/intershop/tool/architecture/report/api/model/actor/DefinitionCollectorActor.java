@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -36,7 +34,7 @@ import akka.actor.AbstractActor;
  */
 public class DefinitionCollectorActor extends AbstractActor
 {
-    private static final List<Definition> definitions = new ArrayList<>();
+    private static final Set<Definition> definitions = new HashSet<>();
     private static final Set<Definition> baseline = new HashSet<>();
 
     private ArchitectureReportOutputFolder folderLocations;

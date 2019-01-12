@@ -1,7 +1,6 @@
 package com.intershop.tool.architecture.report.project.messages;
 
 import java.util.Collection;
-import java.util.List;
 
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
 import com.intershop.tool.architecture.report.project.model.ProjectRef;
@@ -10,14 +9,14 @@ public class GetProjectsResponse
 {
     private final GetProjectsRequest request;
     private final Collection<ProjectRef> projects;
-    private List<Definition> definitions;
+    private Collection<Definition> definitions;
 
     public GetProjectsResponse(GetProjectsRequest request, Collection<ProjectRef> projects,
-                    List<Definition> definitions)
+                    Collection<Definition> definitions)
     {
         this.projects = projects;
         this.request = request;
-        this.setDefinitions(definitions);
+        this.definitions = definitions;
     }
 
     public GetProjectsRequest getRequest()
@@ -30,13 +29,8 @@ public class GetProjectsResponse
         return projects;
     }
 
-    public List<Definition> getDefinitions()
+    public Collection<Definition> getDefinitions()
     {
         return definitions;
-    }
-
-    public void setDefinitions(List<Definition> definitions)
-    {
-        this.definitions = definitions;
     }
 }
