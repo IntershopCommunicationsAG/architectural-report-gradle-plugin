@@ -1,8 +1,11 @@
 package com.intershop.tool.architecture.report.cmd;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
+import com.intershop.tool.architecture.report.common.issue.Issue;
 import com.intershop.tool.architecture.report.common.issue.IssueCollector;
+import com.intershop.tool.architecture.report.common.issue.IssueFilter;
 import com.intershop.tool.architecture.report.common.issue.IssuePrinter;
 import com.intershop.tool.architecture.report.server.ServerCollector;
 
@@ -27,7 +30,8 @@ public class ArchitectureReport
     {
         try
         {
-            if (ArchitectureReport.validateArchitecture(args))
+            CommandLineArguments info = new CommandLineArguments(args);
+            if (ArchitectureReport.validateArchitecture(info))
             {
                 System.exit(3);
             }
@@ -44,11 +48,18 @@ public class ArchitectureReport
      * @return true in case validation is failing
      * @throws FileNotFoundException
      */
-    public static boolean validateArchitecture(String... args) throws FileNotFoundException
+    public static boolean validateArchitecture(CommandLineArguments args) throws FileNotFoundException
     {
-        CommandLineArguments info = new CommandLineArguments(args);
-        IssueCollector collector = new ServerCollector(info);
-        IssuePrinter printer = new IssuePrinter(info);
-        return printer.printIssues(collector.validate());
+        IssueCollector collector = new ServerCollector(args);
+        List<Issue> allIssues = collector.validate();
+        IssueFilter filter = new IssueFilter(args);
+        List<Issue> filteredIssues = filter.filterIssues(allIssues);
+        if (filteredIssues.isEmpty())
+        {
+            return false;
+        }
+        IssuePrinter printer = new IssuePrinter(args);
+        printer.printIssues(filteredIssues);
+        return true;
     }
 }
