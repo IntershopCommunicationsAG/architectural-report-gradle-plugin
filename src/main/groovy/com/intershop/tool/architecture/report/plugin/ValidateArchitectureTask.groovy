@@ -136,6 +136,9 @@ class ValidateArchitectureTask extends DefaultTask {
             addArgument(arguments, ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE, getKnownIssuesFile().toURI().toString());
         }
         addArgument(arguments, ArchitectureReportConstants.ARG_KEYS, String.join(",", getKeySelector()))
+        addArgument(arguments, ArchitectureReportConstants.ARG_GROUP, project.group)
+        addArgument(arguments, ArchitectureReportConstants.ARG_ARTIFACT, project.name)
+        addArgument(arguments, ArchitectureReportConstants.ARG_VERSION, project.version)
         return arguments
     }
 }

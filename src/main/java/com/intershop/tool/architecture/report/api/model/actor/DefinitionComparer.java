@@ -30,11 +30,14 @@ public class DefinitionComparer
     private final Collection<Definition> baseline;
     private final UpdateStrategy strategy;
     private final Collection<Definition> touchedDefinitions;
-    public DefinitionComparer(Collection<Definition> definitions, Collection<Definition> baseline, UpdateStrategy strategy)
+    private final String group;
+
+    public DefinitionComparer(ProjectRef currentProject, Collection<Definition> definitions, Collection<Definition> baseline, UpdateStrategy strategy)
     {
         this.baseline = Collections.unmodifiableCollection(baseline);
         this.definitions = Collections.unmodifiableCollection(definitions);
         this.strategy = strategy;
+        this.group = currentProject.getGroup();
         Set<Definition> apiBaseline = new HashSet<>(baseline);
         apiBaseline.removeAll(definitions);
         touchedDefinitions = apiBaseline.stream().filter(d -> !API_SOURCE_IVY_XML.equals(d.getSource())).collect(Collectors.toList())
@@ -60,7 +63,7 @@ public class DefinitionComparer
                         .forEach(d -> libs.put(getArtifact(d.getSignature()), getVersion(d.getSignature())));
         for (Definition d : definitions)
         {
-            if (API_SOURCE_IVY_XML.equals(d.getSource()))
+            if (API_SOURCE_IVY_XML.equals(d.getSource()) && !group.equals(getGroup(d.getSignature())))
             {
                 String artifact = getArtifact(d.getSignature());
                 String version = getVersion(d.getSignature());
@@ -94,6 +97,11 @@ public class DefinitionComparer
     private static String getArtifact(String signature)
     {
         return signature.split("=")[0];
+    }
+
+    private static String getGroup(String signature)
+    {
+        return getArtifact(signature).split(":")[0];
     }
 
     private List<Issue> getAPIIssues()

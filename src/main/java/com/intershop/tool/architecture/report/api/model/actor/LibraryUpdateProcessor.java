@@ -36,8 +36,8 @@ import com.intershop.tool.architecture.versions.UpdateStrategy;
 public class LibraryUpdateProcessor implements GlobalProcessor
 {
     private static final IvyVisitor IVY_VISITOR = new IvyVisitor();
-    private static final LibDefinitionMapper DEFINITION_MAPPER = new LibDefinitionMapper();
     private final CommandLineArguments info;
+    private final ProjectRef serverProject;
 
     private static class Configuration
     {
@@ -49,6 +49,10 @@ public class LibraryUpdateProcessor implements GlobalProcessor
     public LibraryUpdateProcessor(CommandLineArguments info)
     {
         this.info = info;
+        this.serverProject = new ProjectRef(
+                        info.getArgument(ArchitectureReportConstants.ARG_GROUP),
+                        info.getArgument(ArchitectureReportConstants.ARG_ARTIFACT),
+                        info.getArgument(ArchitectureReportConstants.ARG_VERSION));
     }
 
     public void process(ProjectProcessorResult projectResult)
@@ -63,7 +67,7 @@ public class LibraryUpdateProcessor implements GlobalProcessor
     {
         Configuration config = getConfiguration();
         Collection<Definition> definitions = projectResult.definitions;
-        DefinitionComparer issueCollector = new DefinitionComparer(definitions, config.baseline, config.strategy);
+        DefinitionComparer issueCollector = new DefinitionComparer(serverProject, definitions, config.baseline, config.strategy);
         try
         {
             exportDefinition(config.folderLocations.getApiDefinitionFile(), definitions);
@@ -79,7 +83,8 @@ public class LibraryUpdateProcessor implements GlobalProcessor
     private List<Definition> getDefinitions()
     {
         Collection<ProjectRef> projects = IVY_VISITOR.apply(new File(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE)));
-        return projects.stream().map(DEFINITION_MAPPER).collect(Collectors.toList());
+        LibDefinitionMapper definitionMapper = new LibDefinitionMapper(serverProject);
+        return projects.stream().map(definitionMapper).collect(Collectors.toList());
     }
 
     private Configuration getConfiguration()

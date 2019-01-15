@@ -12,7 +12,7 @@ Include to build.gradle
 <pre>
 buildscript {
     dependencies {
-        classpath 'com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:1.2.1'
+        classpath 'com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:2.0.1'
     }
 }
 apply plugin: 'com.intershop.gradle.architectural.report'

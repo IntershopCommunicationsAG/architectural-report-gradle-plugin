@@ -26,7 +26,8 @@ public class LibValidationTest
 {
     private static final String TEST_IVY = "ivy_currentlibs.xml";
     private static final IvyVisitor ivyVisitor = new IvyVisitor();
-    private static final LibDefinitionMapper DEFINITION_MAPPER = new LibDefinitionMapper();
+    private static final ProjectRef testProjectRef = new ProjectRef("com.intershop.tool.architecture", "report", "LOCAL");
+    private static final LibDefinitionMapper DEFINITION_MAPPER = new LibDefinitionMapper(testProjectRef);
 
     @Test
     public void test() throws IOException
@@ -38,7 +39,7 @@ public class LibValidationTest
         try (InputStream is = ResourceLoader.getInputStream("baseline_libs.xml"))
         {
             APIDefinition baselineDefinition = xmlLoader.importXML(is, APIDefinition.class);
-            DefinitionComparer issueCollector = new DefinitionComparer(definitions, baselineDefinition.getDefinition(), UpdateStrategy.MINOR);
+            DefinitionComparer issueCollector = new DefinitionComparer(testProjectRef, definitions, baselineDefinition.getDefinition(), UpdateStrategy.MINOR);
             List<Issue> issues = issueCollector.getIssues();
             assertEquals("found problem", 1, issues.size());
             assertEquals("correct error of problem", "com.google.guava:guava update incompatible, was version 16.0", issues.get(0).getParametersString());
