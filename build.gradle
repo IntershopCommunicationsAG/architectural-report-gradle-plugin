@@ -154,12 +154,3 @@ dependencies {
 repositories {
     jcenter()
 }
-
-publishing {
-    repositories {
-        maven {
-            // url 'file:///d:/Server/gradle_home/.localRepo'
-            url 'file:///D:/Source/ish/gradle_repo'
-        }
-    }
-}
