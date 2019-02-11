@@ -3,6 +3,8 @@ package com.intershop.tool.architecture.report.cmd;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+
 import com.intershop.tool.architecture.report.common.issue.Issue;
 import com.intershop.tool.architecture.report.common.issue.IssueCollector;
 import com.intershop.tool.architecture.report.common.issue.IssueFilter;
@@ -37,6 +39,7 @@ public class ArchitectureReport
         }
         catch(Exception e)
         {
+            LoggerFactory.getLogger(ArchitectureReport.class).error("Architecture report failed.", e);
             System.exit(1);
         }
     }

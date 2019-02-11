@@ -40,8 +40,7 @@ public class DefinitionComparer
         this.group = currentProject.getGroup();
         Set<Definition> apiBaseline = new HashSet<>(baseline);
         apiBaseline.removeAll(definitions);
-        touchedDefinitions = apiBaseline.stream().filter(d -> !API_SOURCE_IVY_XML.equals(d.getSource())).collect(Collectors.toList())
-;
+        touchedDefinitions = apiBaseline.stream().filter(d -> !API_SOURCE_IVY_XML.equals(d.getSource())).collect(Collectors.toList());
     }
 
     public List<Issue> getIssues()

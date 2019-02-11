@@ -22,7 +22,7 @@ architectureReport {
     cartridgesDir = new File (deployServer.targetDirectory, '/share/system/cartridges')
     baselineFile = new File (rootProject.projectDir, 'api_definition_baseline.xml')
     knownIssuesFile = new File(rootProject.projectDir, 'known_issues.xml')
-    keySelector = ['com.intershop.api.violation']
+    keySelector = ['com.intershop.java.api.violation']
 }
 </pre>
 
@@ -41,6 +41,12 @@ Start the architecture report task:
 
 | key                                        | description                                                                  |
 |--------------------------------------------|------------------------------------------------------------------------------|
+| com.intershop.java.api.violation           | api differences to an api baseline                                           |
+| com.intershop.java.capi.internal           | validate that capi doesn't use internal classses                             |
+| com.intershop.library.update               | new version contains major third party library update                        |
+| com.intershop.library.new                  | new version contains a new third party library                               |
+
+# Disabled Validation Keys
 | com.intershop.api.violation                | api differences to an api baseline                                           |
 | com.intershop.isml.xss                     | possible XSS issues in isml (Intershop Markup (Template) Language) templates |
 | com.intershop.businessobject.persistence   | references to persistence layer inside of business object api                |
@@ -48,8 +54,6 @@ Start the architecture report task:
 | com.intershop.pipelet.unused               | pipelet can be removed / not longer used                                     |
 | com.intershop.pipelet.used.deprecated      | pipelet is deprecated, but still in use by pipelines                         |
 | com.intershop.pipeline.invalid.pipelineref | pipeline contains references to non existing pipeline start nodes            |
-| com.intershop.library.update               | new version contains major third party library update                        |
-| com.intershop.library.new                  | new version contains a new third party library                               |
 
 # Configuration
 

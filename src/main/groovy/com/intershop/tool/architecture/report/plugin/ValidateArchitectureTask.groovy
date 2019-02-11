@@ -104,7 +104,7 @@ class ValidateArchitectureTask extends DefaultTask {
         } else {
             try
             {
-                if (ArchitectureReport.validateArchitecture(getReportsDir(), getIvyFile(), getCartridgesDir(), getBaselineFile(), getKnownIssuesFile(), getKeySelector()))
+                if (ArchitectureReport.validateArchitecture(getArguments()))
                 {
                     throw new GradleException("Build contains architectural issues.");
                 }
