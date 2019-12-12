@@ -57,7 +57,7 @@ class ArchitectureReportPlugin implements Plugin<Project> {
                     .defaultDependencies { dependencies ->
                 DependencyHandler dependencyHandler = project.getDependencies()
 
-                dependencies.add(dependencyHandler.create('com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:2.0.1'))
+                dependencies.add(dependencyHandler.create('com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:2.0.2'))
                 dependencies.add(dependencyHandler.create('org.slf4j:slf4j-api:1.7.25'))
                 dependencies.add(dependencyHandler.create('org.ow2.asm:asm:7.0'))
                 dependencies.add(dependencyHandler.create('javax.inject:javax.inject:1'))
