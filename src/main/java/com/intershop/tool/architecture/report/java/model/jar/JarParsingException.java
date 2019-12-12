@@ -8,4 +8,9 @@ public class JarParsingException extends RuntimeException
     {
         super(e);
     }
+
+    public JarParsingException(String message, Throwable e)
+    {
+        super(message, e);
+    }
 }

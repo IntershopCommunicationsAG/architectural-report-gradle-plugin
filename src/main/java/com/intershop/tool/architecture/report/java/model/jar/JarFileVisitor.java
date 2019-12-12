@@ -60,7 +60,7 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
         return visitFile(jarFile).getPipeletDesciptor();
     }
 
-    public Jar visitFile(File file) throws JarParsingException
+    public Jar visitFile(File file)
     {
         Jar result = new Jar(projectRef);
         try (JarFile jarFile = new JarFile(file))
@@ -88,7 +88,12 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
                 if (jarEntry.getName().endsWith(".xml"))
                 {
                     PipeletDescriptor descriptor = new PipeletDescriptor();
-                    xmlVisitor.visitXMLInputSource(jarFile.getInputStream(jarEntry), new PipeletHandler(projectRef.getName(), descriptor));
+                    try
+                    {
+                        xmlVisitor.visitXMLInputSource(jarFile.getInputStream(jarEntry), new PipeletHandler(projectRef.getName(), descriptor));
+                    } catch (SAXException e) {
+                        throw new IOException("Parsing xml of '" + jarEntry.getName() + "'", e);
+                    }
                     if (descriptor.getReferenceName() != null)
                     {
                         result.getPipeletDesciptor().add(descriptor);
@@ -96,9 +101,9 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
                 }
             }
         }
-        catch(SAXException | ParserConfigurationException | IOException e)
+        catch(ParserConfigurationException | IOException e)
         {
-            throw new JarParsingException(e);
+            throw new JarParsingException("Loading jar failed '"+file.getAbsolutePath()+"'", e);
         }
         return result;
     }
