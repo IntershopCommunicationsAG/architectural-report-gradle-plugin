@@ -84,6 +84,9 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
                         ClassReader cr = new ClassReader(in);
                         result.add(apply(cr));
                     }
+                    catch (IllegalArgumentException e) {
+                        throw new IOException("Can't read jar entry: " + jarEntry.getName(), e);
+                    }
                 }
                 if (jarEntry.getName().endsWith(".xml"))
                 {
