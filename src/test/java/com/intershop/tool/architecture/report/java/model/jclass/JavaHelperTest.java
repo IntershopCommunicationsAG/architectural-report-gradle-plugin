@@ -7,8 +7,6 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import com.intershop.tool.architecture.report.java.model.jclass.JavaHelper;
-
 public class JavaHelperTest
 {
     private static final String TEST_SIGNATURE = "Lcom.intershop.component.catalog.capi.CatalogType;)Ljava.util.Collection<+Lcom.intershop.component.catalog.capi.CatalogBO;>";

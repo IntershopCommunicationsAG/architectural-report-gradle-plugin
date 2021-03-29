@@ -13,7 +13,6 @@ import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
 import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
 import com.intershop.tool.architecture.report.java.model.jclass.WaitForJavaClassResult;
-import com.intershop.tool.architecture.report.java.validation.po.PersistenceClassPredicate;
 
 public class PersistenceClassPredicateTest
 {

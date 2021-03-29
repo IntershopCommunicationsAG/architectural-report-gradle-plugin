@@ -20,8 +20,6 @@ import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.common.resources.ResourceLoader;
 import com.intershop.tool.architecture.report.common.resources.XmlLoader;
 import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
-import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
-import com.intershop.tool.architecture.report.java.model.jclass.JavaClassVisitor;
 
 public class JavaClassVisitorTest
 {
