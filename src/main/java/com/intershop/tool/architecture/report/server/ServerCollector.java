@@ -16,6 +16,7 @@ import com.intershop.tool.architecture.report.common.project.ProjectProcessor;
 import com.intershop.tool.architecture.report.common.project.ProjectProcessorResult;
 import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.isml.IsmlTemplateCollector;
+import com.intershop.tool.architecture.report.java.JavaApplicationProcessor;
 import com.intershop.tool.architecture.report.java.JavaProjectCollector;
 import com.intershop.tool.architecture.report.pipeline.PipelineProjectCollector;
 
@@ -31,10 +32,11 @@ public class ServerCollector implements IssueCollector
     }
     
 
-    private List<GlobalProcessor> getGlobalProcessor()
+    private List<GlobalProcessor> getGlobalProcessors()
     {
         List<GlobalProcessor> result = new ArrayList<>();
         result.add(new LibraryUpdateProcessor(info));
+        result.add(new JavaApplicationProcessor(info));
         return result;
     }
 
@@ -50,20 +52,24 @@ public class ServerCollector implements IssueCollector
     public List<Issue> validate()
     {
         List<Issue> result = new ArrayList<>();
-        List<GlobalProcessor> globalProcessors = getGlobalProcessor();
+        List<GlobalProcessor> globalProcessors = getGlobalProcessors();
 
         ProjectProcessorResult projectResults = new ProjectProcessorResult();
         // process globals
         globalProcessors.forEach(c -> c.process(projectResults));
-        Collection<ProjectRef> projects = IVY_VISITOR.apply(new File(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE)));
-
-        List<ProjectProcessor> projectProcessors = new ArrayList<>();
-        projects.forEach(p -> {
-            projectProcessors.addAll(getProjectProcessor(p));
-        });
-        // process projects
-        projectProcessors.forEach(c -> c.process(projectResults));
-        projectProcessors.forEach(c -> result.addAll(c.validate(projectResults)));
+        
+        if (info.getArgument(ArchitectureReportConstants.ARG_IVYFILE) != null)
+        {
+            Collection<ProjectRef> projects = IVY_VISITOR.apply(new File(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE)));
+    
+            List<ProjectProcessor> projectProcessors = new ArrayList<>();
+            projects.forEach(p -> {
+                projectProcessors.addAll(getProjectProcessor(p));
+            });
+            // process projects
+            projectProcessors.forEach(c -> c.process(projectResults));
+            projectProcessors.forEach(c -> result.addAll(c.validate(projectResults)));
+        }
         // collect globals
         globalProcessors.forEach(c -> result.addAll(c.validate(projectResults)));
         return result;

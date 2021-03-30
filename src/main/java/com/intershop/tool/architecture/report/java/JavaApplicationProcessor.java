@@ -7,11 +7,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 import com.intershop.tool.architecture.report.common.issue.Issue;
-import com.intershop.tool.architecture.report.common.project.ProjectProcessor;
+import com.intershop.tool.architecture.report.common.project.GlobalProcessor;
 import com.intershop.tool.architecture.report.common.project.ProjectProcessorResult;
 import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.java.model.jar.Jar;
@@ -20,28 +23,36 @@ import com.intershop.tool.architecture.report.java.model.jar.JarFinder;
 import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
 import com.intershop.tool.architecture.report.java.validation.capi.CapiUsingInternalValidator;
 
-public class JavaProjectCollector implements ProjectProcessor
+public class JavaApplicationProcessor implements GlobalProcessor
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaApplicationProcessor.class);
     private final CommandLineArguments info;
-    private final ProjectRef projectRef;
+    private final ProjectRef serverProject;
     private List<Jar> jars = Collections.emptyList();
 
-    public JavaProjectCollector(CommandLineArguments info, ProjectRef projectRef)
+    public JavaApplicationProcessor(CommandLineArguments info)
     {
         this.info = info;
-        this.projectRef = projectRef;
+        this.serverProject = new ProjectRef(
+                        info.getArgument(ArchitectureReportConstants.ARG_GROUP),
+                        info.getArgument(ArchitectureReportConstants.ARG_ARTIFACT),
+                        info.getArgument(ArchitectureReportConstants.ARG_VERSION));
     }
 
     @Override
     public void process(ProjectProcessorResult result)
     {
-        if (info.getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY) == null || info.getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY).isEmpty())
+        if (info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH) == null || info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH).isEmpty())
         {
             return;
         }
-        File cartridgesDirectory = new File(info.getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY));
-        Collection<File> files = new JarFinder().apply(new File(cartridgesDirectory, projectRef.getName() + "/release/lib"));
-        JarFileVisitor javaVisitor = new JarFileVisitor(projectRef);
+        LOGGER.info("{}", info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH));
+        Collection<File> files = new ArrayList<>();
+        for (String entry : info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH).split(";"))
+        {
+            files.addAll(new JarFinder().apply(new File(entry)));
+        }
+        JarFileVisitor javaVisitor = new JarFileVisitor(serverProject);
         jars = files.stream().map(f ->  javaVisitor.visitFile(f)).collect(Collectors.toList());
         jars.forEach(jarFile -> process(jarFile, result));
     }
@@ -52,7 +63,7 @@ public class JavaProjectCollector implements ProjectProcessor
         jar.getClasses().stream().forEach(jc -> {
             definitions.addAll(jc.getApiDefinition());
         });
-        definitions.forEach(d -> d.setProjectRef(projectRef));
+        definitions.forEach(d -> d.setProjectRef(serverProject));
         result.definitions.addAll(definitions);
     }
 
@@ -60,7 +71,7 @@ public class JavaProjectCollector implements ProjectProcessor
     public List<Issue> validate(ProjectProcessorResult projectResult)
     {
         List<Issue> result = new ArrayList<>(); 
-        jars.forEach(jarFile -> result.addAll(process(jarFile, projectRef)));
+        jars.forEach(jarFile -> result.addAll(process(jarFile, serverProject)));
         return result;
     }
 

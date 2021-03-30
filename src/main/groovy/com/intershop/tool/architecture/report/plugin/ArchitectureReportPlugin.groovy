@@ -79,9 +79,8 @@ class ArchitectureReportPlugin implements Plugin<Project> {
      * @param task
      */
     private void configureValidateArchitectureTask(Project project, ValidateArchitectureTask task) {
-        ReportingExtension reportingExtension = project.extensions.getByType(ReportingExtension)
         ArchitectureReportExtension extension = project.extensions.findByType(ArchitectureReportExtension) ?:  project.extensions.create(ArchitectureReportExtension.AR_EXTENSION_NAME, ArchitectureReportExtension, project)
-        task.conventionMapping.reportsDir = { extension.reportsDir == null ? reportingExtension.file(ArchitectureReportExtension.REPORTS_NAME) : extension.reportsDir }
+        task.conventionMapping.reportsDir = { extension.reportsDir == null ? project.extensions.getByType(ReportingExtension).file(ArchitectureReportExtension.REPORTS_NAME) : extension.reportsDir }
         task.conventionMapping.ivyFile = { extension.ivyFile }
         task.conventionMapping.cartridgesDir = { extension.cartridgesDir }
         task.conventionMapping.baselineFile = { extension.baselineFile }
@@ -89,5 +88,6 @@ class ArchitectureReportPlugin implements Plugin<Project> {
         task.conventionMapping.keySelector = { extension.keySelector }
         task.conventionMapping.useExternalProcess = { extension.useExternalProcess }
         task.conventionMapping.addVmArgs = { extension.addVmArgs }
+        task.conventionMapping.classPath = { extension.classPath }
     }
 }

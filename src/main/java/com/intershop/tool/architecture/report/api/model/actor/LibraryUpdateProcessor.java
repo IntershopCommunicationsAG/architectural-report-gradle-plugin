@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,6 +83,10 @@ public class LibraryUpdateProcessor implements GlobalProcessor
 
     private List<Definition> getDefinitions()
     {
+        if (info.getArgument(ArchitectureReportConstants.ARG_IVYFILE) == null)
+        {
+            return Collections.emptyList();
+        }
         Collection<ProjectRef> projects = IVY_VISITOR.apply(new File(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE)));
         LibDefinitionMapper definitionMapper = new LibDefinitionMapper(serverProject);
         return projects.stream().map(definitionMapper).collect(Collectors.toList());

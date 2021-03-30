@@ -23,6 +23,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
@@ -45,10 +46,10 @@ class ValidateArchitectureTask extends DefaultTask {
     final static String TASK_DESCRIPTION = 'validate architecture'
     private static final String MAIN_CLASS_NAME = "com.intershop.tool.architecture.report.cmd.ArchitectureReport";
 
-    @InputFile
+    @InputFile @Optional
     File ivyFile
 
-    @InputDirectory
+    @InputDirectory @Optional
     File cartridgesDir
 
     @Input @Optional
@@ -57,7 +58,10 @@ class ValidateArchitectureTask extends DefaultTask {
     @Input @Optional
     File knownIssuesFile
 
-    @Input
+    @Input @Optional
+    ConfigurableFileCollection classPath
+
+    @Input @Optional
     List<String> keySelector
 
     @OutputDirectory
@@ -110,7 +114,7 @@ class ValidateArchitectureTask extends DefaultTask {
                 }
             } catch(Exception e)
             {
-                throw new GradleException("Validation failed with execption:.", e);
+                throw new GradleException("Validation failed with exception:.", e);
             }
         }
     }
@@ -139,6 +143,7 @@ class ValidateArchitectureTask extends DefaultTask {
         addArgument(arguments, ArchitectureReportConstants.ARG_GROUP, project.group)
         addArgument(arguments, ArchitectureReportConstants.ARG_ARTIFACT, project.name)
         addArgument(arguments, ArchitectureReportConstants.ARG_VERSION, project.version)
+        addArgument(arguments, ArchitectureReportConstants.ARG_CLASSPATH, String.join(";", classPath.getFrom().getFiles()))
         return arguments
     }
 }

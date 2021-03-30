@@ -27,7 +27,7 @@ description 'Gradle architectural report plugin'
 
 // adapt external loading at ArchitectureReportPlugin and README.md too
 // IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
-version = '2.0.2'
+version = '3.0.0-LOCAL'
 // IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
 
 sourceCompatibility = 1.8
@@ -155,4 +155,13 @@ dependencies {
 
 repositories {
     jcenter()
+}
+
+publishing {
+	repositories {
+	    maven {
+            url 'file:///d:/Server/gradle_home/.localRepo'
+			// url 'file:///D:/Source/ish/gradle_repo'
+        }
+	}
 }

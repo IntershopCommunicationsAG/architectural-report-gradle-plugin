@@ -17,6 +17,7 @@ package com.intershop.tool.architecture.report.plugin
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 
 /**
  * This extension provides the container for all architecture report related configurations.
@@ -65,4 +66,6 @@ class ArchitectureReportExtension {
     Boolean useExternalProcess = true
 
     List<String> addVmArgs = []
+
+    ConfigurableFileCollection classPath
 }
