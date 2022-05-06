@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Test;
 
