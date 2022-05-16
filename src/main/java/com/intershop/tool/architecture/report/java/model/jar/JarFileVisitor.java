@@ -57,7 +57,7 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
 
     public Collection<PipeletDescriptor> getPipeletDescriptors(File jarFile)
     {
-        return visitFile(jarFile).getPipeletDesciptor();
+        return visitFile(jarFile).getPipeletDescriptor();
     }
 
     public Jar visitFile(File file)
@@ -70,7 +70,7 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
             {
                 JarEntry jarEntry = entries.nextElement();
 
-                // ignore directories and non class files
+                // ignore directories and non-class files
                 if (jarEntry.isDirectory())
                 {
                     continue;
@@ -99,7 +99,7 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
                     }
                     if (descriptor.getReferenceName() != null)
                     {
-                        result.getPipeletDesciptor().add(descriptor);
+                        result.getPipeletDescriptor().add(descriptor);
                     }
                 }
             }
