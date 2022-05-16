@@ -1,7 +1,7 @@
 /*
  * JarFileVisitor.java
  *
- * Copyright (c) 2010 Intershop Communications AG
+ * Copyright (c) 2022 Intershop Communications AG
  */
 package com.intershop.tool.architecture.report.java.model.jar;
 
@@ -77,6 +77,11 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
                 {
                     continue;
                 }
+                // ignore Java module descriptor
+                if (jarEntry.getName().endsWith("module-info.class"))
+                {
+                    continue;
+                }
                 if (jarEntry.getName().endsWith(".class"))
                 {
                     String className = jarEntry.getName().replace('/', '.'); // including ".class"
@@ -116,17 +121,17 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
     @Override
     public JavaClass apply(ClassReader cr)
     {
-        JavaClass result = new JavaClass(getNormalizedClassName(cr.getClassName()),
-                        getNormalizedClassName(cr.getSuperName()));
         try
         {
+            JavaClass result = new JavaClass(getNormalizedClassName(cr.getClassName()),
+                            getNormalizedClassName(cr.getSuperName()));
             cr.accept(new JavaClassVisitor(result), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+            return result;
         }
         catch(Exception e)
         {
             throw new RuntimeException("Can't read class: " + getNormalizedClassName(cr.getClassName()), e);
         }
-        return result;
     }
 
     private static String getNormalizedClassName(String className)
