@@ -31,6 +31,9 @@ plugins {
     id("idea")
     id("eclipse")
 
+    // artifact signing - necessary on Maven Central
+    id("signing")
+
     // plugin for publishing to Gradle Portal
     id("maven-publish")
     id("com.gradle.plugin-publish") version "0.21.0"
@@ -38,7 +41,7 @@ plugins {
 
 // release configuration
 group = "com.intershop.gradle.architectural.report"
-description "Gradle architectural report plugin"
+description = "Gradle architectural report plugin"
 
 // adapt external loading at ArchitectureReportPlugin and README.md too
 // IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
@@ -138,6 +141,10 @@ gradlePlugin {
             displayName = project.description
         }
     }
+}
+
+signing {
+    sign(publishing.publications["intershopMvn"])
 }
 
 dependencies {
