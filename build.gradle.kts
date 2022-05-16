@@ -70,6 +70,10 @@ tasks {
         }
     }
 
+    withType<Test> {
+        useJUnitPlatform()
+    }
+
     withType<JacocoReport> {
         reports {
             xml.required.set(true) // coveralls plugin depends on xml format report
@@ -166,7 +170,8 @@ dependencies {
     runtimeOnly("org.apache.cxf:cxf-rt-transports-local:3.1.17")
     runtimeOnly("ch.qos.logback:logback-classic:1.2.3")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.8.2")
     testImplementation("com.intershop.gradle.test:test-gradle-plugin:4.1.1")
 }
 
