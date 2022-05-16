@@ -95,7 +95,7 @@ public class JarFileVisitor implements Function<ClassReader, JavaClass>
                         throw new IOException("Can't read jar entry: " + jarEntry.getName(), e);
                     }
                 }
-                if (jarEntry.getName().endsWith(".xml"))
+                if (jarEntry.getName().endsWith(".xml") && jarEntry.getName().contains("pipelet"))
                 {
                     PipeletDescriptor descriptor = new PipeletDescriptor();
                     try
