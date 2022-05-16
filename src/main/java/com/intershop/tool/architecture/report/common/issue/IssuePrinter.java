@@ -16,19 +16,10 @@ import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 public class IssuePrinter
 {
     private static final Logger logger = LoggerFactory.getLogger(IssuePrinter.class);
-    private static final Comparator<? super Issue> ISSUE_COMPARATOR =(a,b) -> {
-        int diff = a.getProjectRef().getIdentifier().compareTo(b.getProjectRef().getIdentifier());
-        if (diff != 0)
-        {
-            return diff;
-        }
-        diff = a.getKey().compareTo(b.getKey());
-        if (diff != 0)
-        {
-            return diff;
-        }
-        return a.getParametersString().compareTo(b.getParametersString());
-    };
+    private static final Comparator<? super Issue> ISSUE_COMPARATOR = Comparator.comparing(
+                                    (Issue a) -> a.getProjectRef().getIdentifier())
+                    .thenComparing(Issue::getKey)
+                    .thenComparing(Issue::getParametersString);
 
     private final CommandLineArguments info;
 
@@ -38,7 +29,7 @@ public class IssuePrinter
     }
 
     /**
-     * @param issues
+     * @param issues List of issues
      */
     public void printIssues(List<Issue> issues)
     {
