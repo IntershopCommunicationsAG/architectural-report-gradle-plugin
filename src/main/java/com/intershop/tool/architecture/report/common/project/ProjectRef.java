@@ -73,10 +73,18 @@ public class ProjectRef implements Serializable
         return group + ":" + name;
     }
 
+    /**
+     * @return "group:name:version" of project
+     */
+    public String getFullIdentifier()
+    {
+        return group + ":" + name + ":" + version;
+    }
+
     @Override
     public String toString()
     {
-        return getIdentifier();
+        return getFullIdentifier();
     }
 
     public int compareTo(ProjectRef other)
