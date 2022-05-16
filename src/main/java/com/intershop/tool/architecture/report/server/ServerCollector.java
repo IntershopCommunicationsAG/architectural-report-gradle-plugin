@@ -30,7 +30,6 @@ public class ServerCollector implements IssueCollector
     {
         this.info = info;
     }
-    
 
     private List<GlobalProcessor> getGlobalProcessors()
     {
@@ -63,9 +62,7 @@ public class ServerCollector implements IssueCollector
             Collection<ProjectRef> projects = IVY_VISITOR.apply(new File(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE)));
     
             List<ProjectProcessor> projectProcessors = new ArrayList<>();
-            projects.forEach(p -> {
-                projectProcessors.addAll(getProjectProcessor(p));
-            });
+            projects.forEach(p -> projectProcessors.addAll(getProjectProcessor(p)));
             // process projects
             projectProcessors.forEach(c -> c.process(projectResults));
             projectProcessors.forEach(c -> result.addAll(c.validate(projectResults)));

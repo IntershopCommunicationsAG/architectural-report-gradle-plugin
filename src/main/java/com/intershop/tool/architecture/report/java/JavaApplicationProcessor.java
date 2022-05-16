@@ -60,9 +60,7 @@ public class JavaApplicationProcessor implements GlobalProcessor
     private void process(Jar jar, ProjectProcessorResult result)
     {
         List<Definition> definitions = new ArrayList<>();
-        jar.getClasses().stream().forEach(jc -> {
-            definitions.addAll(jc.getApiDefinition());
-        });
+        jar.getClasses().forEach(jc -> definitions.addAll(jc.getApiDefinition()));
         definitions.forEach(d -> d.setProjectRef(serverProject));
         result.definitions.addAll(definitions);
     }

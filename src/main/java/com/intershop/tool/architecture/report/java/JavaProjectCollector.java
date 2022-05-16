@@ -42,16 +42,14 @@ public class JavaProjectCollector implements ProjectProcessor
         File cartridgesDirectory = new File(info.getArgument(ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY));
         Collection<File> files = new JarFinder().apply(new File(cartridgesDirectory, projectRef.getName() + "/release/lib"));
         JarFileVisitor javaVisitor = new JarFileVisitor(projectRef);
-        jars = files.stream().map(f ->  javaVisitor.visitFile(f)).collect(Collectors.toList());
+        jars = files.stream().map(javaVisitor::visitFile).collect(Collectors.toList());
         jars.forEach(jarFile -> process(jarFile, result));
     }
 
     private void process(Jar jar, ProjectProcessorResult result)
     {
         List<Definition> definitions = new ArrayList<>();
-        jar.getClasses().stream().forEach(jc -> {
-            definitions.addAll(jc.getApiDefinition());
-        });
+        jar.getClasses().forEach(jc -> definitions.addAll(jc.getApiDefinition()));
         definitions.forEach(d -> d.setProjectRef(projectRef));
         result.definitions.addAll(definitions);
     }
@@ -71,7 +69,7 @@ public class JavaProjectCollector implements ProjectProcessor
         return result;
     }
 
-    private static CapiUsingInternalValidator capiClassValidator = new CapiUsingInternalValidator();
+    private static final CapiUsingInternalValidator capiClassValidator = new CapiUsingInternalValidator();
     private Collection<Issue> process(JavaClass javaClass, ProjectRef projectRef)
     {
         return capiClassValidator.validate(projectRef, javaClass);
