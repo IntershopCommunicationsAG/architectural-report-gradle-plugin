@@ -20,7 +20,7 @@ import com.intershop.tool.architecture.report.api.model.definition.Definition;
  */
 public class JavaClassVisitor extends ClassVisitor
 {
-    private static final int API_VERSION = Opcodes.ASM5;
+    private static final int API_VERSION = Opcodes.ASM9;
     private final JavaClass javaClass;
     private String currentClassName = null;
 
@@ -257,7 +257,7 @@ public class JavaClassVisitor extends ClassVisitor
         }
 
         @Override
-        public void visitMethodInsn(int opcode, String owner, String name, String signature)
+        public void visitMethodInsn(int opcode, String owner, String name, String signature, boolean isInterface)
         {
             for (String rt : JavaHelper.splitSignature(signature))
             {

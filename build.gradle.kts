@@ -143,7 +143,7 @@ dependencies {
     implementation(gradleApi())
 
     implementation("org.slf4j:slf4j-api:1.7.36")
-    implementation("org.ow2.asm:asm:7.0")
+    implementation("org.ow2.asm:asm:9.3")
     implementation("javax.inject:javax.inject:1")
     implementation("commons-io:commons-io:2.7")
     implementation("javax.ws.rs:javax.ws.rs-api:2.0.1")
