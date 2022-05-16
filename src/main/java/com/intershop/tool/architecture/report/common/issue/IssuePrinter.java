@@ -15,7 +15,7 @@ import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 
 public class IssuePrinter
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IssuePrinter.class);
+    private static final Logger logger = LoggerFactory.getLogger(IssuePrinter.class);
     private static final Comparator<? super Issue> ISSUE_COMPARATOR =(a,b) -> {
         int diff = a.getProjectRef().getIdentifier().compareTo(b.getProjectRef().getIdentifier());
         if (diff != 0)
@@ -62,8 +62,8 @@ public class IssuePrinter
         }
         catch(FileNotFoundException e)
         {
-            LOGGER.error("Can't write errors at " + newIssuesFile.getAbsolutePath(), e);
+            logger.error("Can't write errors at " + newIssuesFile.getAbsolutePath(), e);
         }
-        LOGGER.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
+        logger.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
     }
 }

@@ -20,7 +20,7 @@ import com.intershop.tool.architecture.report.common.resources.XMLLoaderExceptio
 
 public class IssueFilter
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IssueFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(IssueFilter.class);
 
     private final CommandLineArguments info;
 
@@ -61,7 +61,7 @@ public class IssueFilter
         }
         catch(XMLLoaderException|IOException e)
         {
-            LOGGER.warn("Can't load issues file: " + jiraIssueLocation, e);
+            logger.warn("Can't load issues file: " + jiraIssueLocation, e);
         }
         return result;
     }
