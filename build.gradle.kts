@@ -87,26 +87,12 @@ tasks {
     withType<Copy> {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
-
-    register<Jar>("sourceJar") {
-        description = "Creates a JAR that contains the source code."
-
-        from(sourceSets.getByName("main").allSource)
-        archiveClassifier.set("sources")
-    }
-
-    register<Jar>("javaDoc") {
-        archiveClassifier.set("javadoc")
-    }
 }
 
 publishing {
     publications {
         create<MavenPublication>("intershopMvn") {
             from(components["java"])
-            // TODO
-            //artifact(tasks["sourcesJar"])
-            //artifact(tasks["javadocJar"])
 
             pom {
                 name.set(project.name)
