@@ -51,7 +51,7 @@ public class JavaApplicationProcessor implements GlobalProcessor
         Collection<File> jarFiles = new JarFileListVisitor().apply(listFile);
 
         JarFileVisitor javaVisitor = new JarFileVisitor(serverProject);
-        jars = jarFiles.stream().map(f ->  javaVisitor.visitFile(f)).collect(Collectors.toList());
+        jars = jarFiles.parallelStream().map(javaVisitor::visitFile).collect(Collectors.toList());
         jars.forEach(jarFile -> process(jarFile, result));
     }
 
