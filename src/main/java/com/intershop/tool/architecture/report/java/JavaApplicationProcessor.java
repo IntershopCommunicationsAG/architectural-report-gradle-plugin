@@ -1,15 +1,5 @@
 package com.intershop.tool.architecture.report.java;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
@@ -18,14 +8,23 @@ import com.intershop.tool.architecture.report.common.project.GlobalProcessor;
 import com.intershop.tool.architecture.report.common.project.ProjectProcessorResult;
 import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.java.model.jar.Jar;
+import com.intershop.tool.architecture.report.java.model.jar.JarFileListVisitor;
 import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
-import com.intershop.tool.architecture.report.java.model.jar.JarFinder;
 import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
 import com.intershop.tool.architecture.report.java.validation.capi.CapiUsingInternalValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class JavaApplicationProcessor implements GlobalProcessor
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JavaApplicationProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(JavaApplicationProcessor.class);
     private final CommandLineArguments info;
     private final ProjectRef serverProject;
     private List<Jar> jars = Collections.emptyList();
@@ -42,18 +41,17 @@ public class JavaApplicationProcessor implements GlobalProcessor
     @Override
     public void process(ProjectProcessorResult result)
     {
-        if (info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH) == null || info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH).isEmpty())
-        {
+        if (info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH_FILES_LIST_FILE) == null ||
+            info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH_FILES_LIST_FILE).isEmpty()) {
             return;
         }
-        LOGGER.info("{}", info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH));
-        Collection<File> files = new ArrayList<>();
-        for (String entry : info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH).split(";"))
-        {
-            files.addAll(new JarFinder().apply(new File(entry)));
-        }
+        logger.info("Classpath files list: {}", info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH_FILES_LIST_FILE));
+        File listFile = new File(info.getArgument(ArchitectureReportConstants.ARG_CLASSPATH_FILES_LIST_FILE));
+        // Only return collection of JAR files from list
+        Collection<File> jarFiles = new JarFileListVisitor().apply(listFile);
+
         JarFileVisitor javaVisitor = new JarFileVisitor(serverProject);
-        jars = files.stream().map(f ->  javaVisitor.visitFile(f)).collect(Collectors.toList());
+        jars = jarFiles.stream().map(f ->  javaVisitor.visitFile(f)).collect(Collectors.toList());
         jars.forEach(jarFile -> process(jarFile, result));
     }
 
@@ -80,7 +78,7 @@ public class JavaApplicationProcessor implements GlobalProcessor
         return result;
     }
 
-    private static CapiUsingInternalValidator capiClassValidator = new CapiUsingInternalValidator();
+    private static final CapiUsingInternalValidator capiClassValidator = new CapiUsingInternalValidator();
     private Collection<Issue> process(JavaClass javaClass, ProjectRef projectRef)
     {
         return capiClassValidator.validate(projectRef, javaClass);
