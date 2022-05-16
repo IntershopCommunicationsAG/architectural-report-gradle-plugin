@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <apiDefinition>
     <!--  equal element was not found -->
-    <definition artifact="LIBRARY" source="ivy.xml">
+    <definition artifact="LIBRARY" source="dependencies.txt">
         <projectRef group="SERVER" name="SERVER" version="LOCAL"/>
         <signature>antlr:antlr=2.7.7</signature>
     </definition>
     <!--  major update was found -->
-    <definition artifact="LIBRARY" source="ivy.xml">
+    <definition artifact="LIBRARY" source="dependencies.txt">
         <projectRef group="SERVER" name="SERVER" version="LOCAL"/>
         <signature>com.google.guava:guava=16.0</signature>
     </definition>
     <!--  removed element was not found -->
-    <definition artifact="LIBRARY" source="ivy.xml">
+    <definition artifact="LIBRARY" source="dependencies.txt">
         <projectRef group="SERVER" name="SERVER" version="LOCAL"/>
         <signature>aopalliance:aopalliance1=1.0</signature>
     </definition>
     <!--  patch update was not found -->
-    <definition artifact="LIBRARY" source="ivy.xml">
+    <definition artifact="LIBRARY" source="dependencies.txt">
         <projectRef group="SERVER" name="SERVER" version="LOCAL"/>
         <signature>ch.qos.logback:logback-classic=1.0.12</signature>
     </definition>
     <!--  intershop update was not found -->
-    <definition artifact="LIBRARY" source="ivy.xml">
+    <definition artifact="LIBRARY" source="dependencies.txt">
         <projectRef group="SERVER" name="SERVER" version="LOCAL"/>
         <signature>com.intershop:bc_pricing=7.6.0.0.20140909220007</signature>
     </definition>

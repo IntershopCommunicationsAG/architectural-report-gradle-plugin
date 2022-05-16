@@ -9,31 +9,29 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.intershop.tool.architecture.report.common.project.*;
 import org.junit.Test;
 
 import com.intershop.tool.architecture.report.api.model.actor.DefinitionComparer;
 import com.intershop.tool.architecture.report.api.model.definition.APIDefinition;
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
 import com.intershop.tool.architecture.report.common.issue.Issue;
-import com.intershop.tool.architecture.report.common.project.IvyVisitor;
-import com.intershop.tool.architecture.report.common.project.LibDefinitionMapper;
-import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.common.resources.ResourceLoader;
 import com.intershop.tool.architecture.report.common.resources.XmlLoader;
 import com.intershop.tool.architecture.versions.UpdateStrategy;
 
 public class LibValidationTest
 {
-    private static final String TEST_IVY = "ivy_currentlibs.xml";
-    private static final IvyVisitor ivyVisitor = new IvyVisitor();
+    private static final String TEST_DEPENDENCIES = "current-dependencies.txt";
+    private static final DependencyListVisitor dependencyListVisitor = new DependencyListVisitor();
     private static final ProjectRef testProjectRef = new ProjectRef("com.intershop.tool.architecture", "report", "LOCAL");
     private static final LibDefinitionMapper DEFINITION_MAPPER = new LibDefinitionMapper(testProjectRef);
 
     @Test
     public void test() throws IOException
     {
-        File file = new File(getClass().getClassLoader().getResource(TEST_IVY).getFile());
-        Collection<ProjectRef> projects = ivyVisitor.apply(file);
+        File file = new File(getClass().getClassLoader().getResource(TEST_DEPENDENCIES).getFile());
+        Collection<ProjectRef> projects = dependencyListVisitor.apply(file);
         List<Definition> definitions = projects.stream().map(DEFINITION_MAPPER).collect(Collectors.toList());
         XmlLoader xmlLoader = new XmlLoader();
         try (InputStream is = ResourceLoader.getInputStream("baseline_libs.xml"))

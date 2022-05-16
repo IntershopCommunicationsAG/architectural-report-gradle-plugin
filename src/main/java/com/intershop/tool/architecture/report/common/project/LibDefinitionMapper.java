@@ -7,7 +7,7 @@ import com.intershop.tool.architecture.report.api.model.definition.Definition;
 
 public class LibDefinitionMapper implements Function<ProjectRef, Definition>
 {
-    public static final String API_SOURCE_IVY_XML = "ivy.xml";
+    public static final String API_SOURCE_DEPENDENCIES_TXT = "dependencies.txt";
     private final ProjectRef serverProject;
 
     public LibDefinitionMapper(ProjectRef serverProject)
@@ -21,7 +21,7 @@ public class LibDefinitionMapper implements Function<ProjectRef, Definition>
         Definition apiDef = new Definition();
         apiDef.setProjectRef(serverProject);
         apiDef.setArtifact(Artifact.LIBRARY);
-        apiDef.setSource(API_SOURCE_IVY_XML);
+        apiDef.setSource(API_SOURCE_DEPENDENCIES_TXT);
         apiDef.setSignature(project.getIdentifier() + "=" + project.getSemanticVersion());
         return apiDef;
     }
