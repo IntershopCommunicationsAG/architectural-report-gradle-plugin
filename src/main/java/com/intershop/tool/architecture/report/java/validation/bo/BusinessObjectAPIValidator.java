@@ -26,6 +26,8 @@ public class BusinessObjectAPIValidator
     }
 
     /**
+     * @param projectRef Project reference
+     * @param javaClass Java class
      * @return {@link ResultType#TRUE} if class is valid (means no business
      *         object, internal or clean capi business object) <br>
      *         {@link ResultType#FALSE} if class is dirty capi business object <br>

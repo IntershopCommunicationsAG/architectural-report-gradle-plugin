@@ -153,9 +153,9 @@ public class SemanticVersions
 
     /**
      * Verify compatibility of a new version with a given update strategy
-     * @param oldVersion
-     * @param newVersion
-     * @param strategy
+     * @param oldVersion Old version
+     * @param newVersion New version
+     * @param strategy Update strategy
      * @return true in case the new version is compatible (e.g. MINOR update requested 1.2.3 a minor update of 1.1.1)
      */
     public static boolean getIsCompatibleVersion(SemanticVersion oldVersion, SemanticVersion newVersion, UpdateStrategy strategy)

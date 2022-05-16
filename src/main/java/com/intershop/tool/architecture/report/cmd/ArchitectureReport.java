@@ -45,10 +45,8 @@ public class ArchitectureReport
     }
 
     /**
-     * @param args
-     *            program arguments
+     * @param args program arguments
      * @return true in case validation is failing
-     * @throws FileNotFoundException
      */
     public static boolean validateArchitecture(String[] args) throws FileNotFoundException
     {
