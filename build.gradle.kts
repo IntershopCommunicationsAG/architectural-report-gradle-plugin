@@ -45,7 +45,7 @@ description = "Gradle architectural report plugin"
 
 // adapt external loading at ArchitectureReportPlugin and README.md too
 // IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
-version = "3.0.0-LOCAL"
+version = "3.0.0-SNAPSHOT"
 // IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
 
 // set correct project status
