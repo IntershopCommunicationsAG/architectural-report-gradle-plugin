@@ -41,13 +41,13 @@ public class IssuePrinter
         {
             try (Formatter formatter = new Formatter(newIssuesFile))
             {
-                formatter.format("<jira-issues>\n<jira>\n");
+                formatter.format("<azure>\n\t<board>\n");
                 for (Issue issue : issues)
                 {
-                    formatter.format("<jira-issue project-id=\"%s\" type=\"%s\" jira-id=\"XXXX\" key=\"%s\">%s</jira-issue>\n",
+                    formatter.format("\t\t<issue project-id=\"%s\" type=\"%s\" work-item-id=\"XXXX\" key=\"%s\">%s</issue>\n",
                                     issue.getProjectRef().getIdentifier(), issue.getKey(), issue.getHash(), issue.getParametersString());
                 }
-                formatter.format("</jira>\n</jira-issues>\n");
+                formatter.format("\t</board>\n</azure>\n");
                 formatter.flush();
             }
         }

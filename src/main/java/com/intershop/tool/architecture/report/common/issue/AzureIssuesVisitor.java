@@ -13,15 +13,15 @@ import org.xml.sax.SAXException;
 import com.intershop.tool.architecture.report.common.resources.XMLInputSourceVisitor;
 import com.intershop.tool.architecture.report.common.resources.XMLLoaderException;
 
-public class JiraIssuesVisitor implements Function<InputStream, List<JiraIssue>>
+public class AzureIssuesVisitor implements Function<InputStream, List<AzureIssue>>
 {
     XMLInputSourceVisitor xmlVisitor = new XMLInputSourceVisitor();
 
     @Override
-    public List<JiraIssue> apply(InputStream io)
+    public List<AzureIssue> apply(InputStream io)
     {
-        List<JiraIssue> result = new ArrayList<>();
-        JiraIssuesHandler handler = new JiraIssuesHandler(result);
+        List<AzureIssue> result = new ArrayList<>();
+        AzureIssuesHandler handler = new AzureIssuesHandler(result);
         try
         {
             xmlVisitor.visitXMLInputSource(io, handler);

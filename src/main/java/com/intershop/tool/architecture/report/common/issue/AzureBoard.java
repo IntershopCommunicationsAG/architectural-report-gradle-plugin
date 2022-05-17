@@ -1,19 +1,19 @@
 package com.intershop.tool.architecture.report.common.issue;
 
 /**
- * Represents a Jira instance which contains Jira issues.
+ * Represents an Azure board instance which contains issues.
  */
-public class Jira
+public class AzureBoard
 {
-    private String name;
-    private String url;
+    private final String name;
+    private final String url;
 
     /**
      * The constructor.
-     * @param name name of jira server
-     * @param url url to jira server
+     * @param name Name of Azure board
+     * @param url URL to Azure board
      */
-    public Jira(String name, String url)
+    public AzureBoard(String name, String url)
     {
         this.name = name;
         this.url = url;
