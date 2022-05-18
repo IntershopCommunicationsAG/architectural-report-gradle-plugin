@@ -20,6 +20,7 @@ import com.intershop.tool.architecture.report.tasks.ValidateArchitectureTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import java.util.*
 
 /**
  * Plugin implementation.
@@ -68,13 +69,19 @@ class ArchitectureReportPlugin : Plugin<Project> {
             ?: project.configurations.create(ArchitectureReportExtension.AR_EXTENSION_NAME)
 
         if (configuration.allDependencies.isEmpty()) {
+            // Get version of AR plugin itself to add the versioned plugin as dependency to the applied project
+            val props = javaClass.classLoader.getResourceAsStream("version.properties").use {
+                Properties().apply { load(it) }
+            }
+            val pluginVersion = props.getProperty("version")
+
             configuration
                 .setTransitive(true)
                 .setDescription("Validate architecture with architecture report")
                 .defaultDependencies { dependencies ->
                     val dependencyHandler = project.dependencies
 
-                    dependencies.add(dependencyHandler.create("com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:${project.version}"))
+                    dependencies.add(dependencyHandler.create("com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:${pluginVersion}"))
                     dependencies.add(dependencyHandler.create("org.slf4j:slf4j-api:1.7.36"))
                     dependencies.add(dependencyHandler.create("org.ow2.asm:asm:9.3"))
                     dependencies.add(dependencyHandler.create("javax.inject:javax.inject:1"))

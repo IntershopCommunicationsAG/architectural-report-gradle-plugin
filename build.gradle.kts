@@ -80,10 +80,24 @@ jacoco {
 }
 
 tasks {
+    register("generateResources") {
+        // Generate properties file with plugin version to access this information in plugin itself
+        val versionPropertyFile = file("${buildDir}/generated/version.properties")
+        outputs.file(versionPropertyFile)
+        doLast {
+            mkdir(versionPropertyFile.parentFile)
+            versionPropertyFile.writeText("version=${project.version}")
+        }
+    }
+
     withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = JavaVersion.VERSION_11.toString()
         }
+    }
+
+    withType<ProcessResources> {
+        from(files(getTasksByName("generateResources", false)))
     }
 
     withType<Test> {
