@@ -1,6 +1,5 @@
 package com.intershop.tool.architecture.report.cmd;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class ArchitectureReport
      * @param args program arguments
      * @return true in case validation is failing
      */
-    public static boolean validateArchitecture(String[] args) throws FileNotFoundException
+    public static boolean validateArchitecture(String[] args)
     {
         CommandLineArguments info = new CommandLineArguments(args);
         IssueCollector collector = new ServerCollector(info);
