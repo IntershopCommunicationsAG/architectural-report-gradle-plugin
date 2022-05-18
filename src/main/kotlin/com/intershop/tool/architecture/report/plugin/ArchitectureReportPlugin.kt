@@ -66,6 +66,7 @@ class ArchitectureReportPlugin : Plugin<Project> {
     private fun createConfiguration(project: Project) {
         val configuration = project.configurations.findByName(ArchitectureReportExtension.AR_EXTENSION_NAME)
             ?: project.configurations.create(ArchitectureReportExtension.AR_EXTENSION_NAME)
+
         if (configuration.allDependencies.isEmpty()) {
             configuration
                 .setTransitive(true)
@@ -73,7 +74,7 @@ class ArchitectureReportPlugin : Plugin<Project> {
                 .defaultDependencies { dependencies ->
                     val dependencyHandler = project.dependencies
 
-                    dependencies.add(dependencyHandler.create("com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:3.0.0-LOCAL"))
+                    dependencies.add(dependencyHandler.create("com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:${project.version}"))
                     dependencies.add(dependencyHandler.create("org.slf4j:slf4j-api:1.7.36"))
                     dependencies.add(dependencyHandler.create("org.ow2.asm:asm:9.3"))
                     dependencies.add(dependencyHandler.create("javax.inject:javax.inject:1"))

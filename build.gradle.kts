@@ -37,16 +37,25 @@ plugins {
     // plugin for publishing to Gradle Portal
     id("maven-publish")
     id("com.gradle.plugin-publish") version "0.21.0"
+
+    // intershop version plugin
+    id("com.intershop.gradle.scmversion") version "6.2.0"
+}
+
+scm {
+    version {
+        type = "threeDigits"
+        initialVersion = "1.0.0"
+    }
 }
 
 // release configuration
 group = "com.intershop.gradle.architectural.report"
 description = "Gradle architectural report plugin"
 
-// adapt external loading at ArchitectureReportPlugin and README.md too
-// IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
-version = "3.0.0-SNAPSHOT"
-// IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
+// IMPORTANT version referenced at README.md, adapt it there
+version = scm.version.version
+// IMPORTANT version referenced at README.md, adapt it there
 
 // set correct project status
 if (project.version.toString().endsWith("-SNAPSHOT")) {
@@ -152,7 +161,8 @@ gradlePlugin {
         register("ArchitectureReportPlugin") {
             id = "com.intershop.gradle.architectural.report"
             implementationClass = "com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin"
-            displayName = project.description
+            displayName = project.displayName
+            description = project.description
         }
     }
 }
