@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/IntershopCommunicationsAG/architectural-report-gradle-plugin.svg?branch=master)](https://travis-ci.org/IntershopCommunicationsAG/architectural-report-gradle-plugin)
+[![Build Status](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions/workflows/build.yml)
 
 # Introduction
 
