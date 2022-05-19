@@ -15,20 +15,11 @@ import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 
 public class IssuePrinter
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IssuePrinter.class);
-    private static final Comparator<? super Issue> ISSUE_COMPARATOR =(a,b) -> {
-        int diff = a.getProjectRef().getIdentifier().compareTo(b.getProjectRef().getIdentifier());
-        if (diff != 0)
-        {
-            return diff;
-        }
-        diff = a.getKey().compareTo(b.getKey());
-        if (diff != 0)
-        {
-            return diff;
-        }
-        return a.getParametersString().compareTo(b.getParametersString());
-    };
+    private static final Logger logger = LoggerFactory.getLogger(IssuePrinter.class);
+    private static final Comparator<? super Issue> ISSUE_COMPARATOR = Comparator.comparing(
+                                    (Issue a) -> a.getProjectRef().getIdentifier())
+                    .thenComparing(Issue::getKey)
+                    .thenComparing(Issue::getParametersString);
 
     private final CommandLineArguments info;
 
@@ -38,7 +29,7 @@ public class IssuePrinter
     }
 
     /**
-     * @param issues
+     * @param issues List of issues
      */
     public void printIssues(List<Issue> issues)
     {
@@ -50,20 +41,20 @@ public class IssuePrinter
         {
             try (Formatter formatter = new Formatter(newIssuesFile))
             {
-                formatter.format("<jira-issues>\n<jira>\n");
+                formatter.format("<azure>\n\t<board>\n");
                 for (Issue issue : issues)
                 {
-                    formatter.format("<jira-issue project-id=\"%s\" type=\"%s\" jira-id=\"XXXX\" key=\"%s\">%s</jira-issue>\n",
+                    formatter.format("\t\t<issue project-id=\"%s\" type=\"%s\" work-item-id=\"XXXX\" key=\"%s\">%s</issue>\n",
                                     issue.getProjectRef().getIdentifier(), issue.getKey(), issue.getHash(), issue.getParametersString());
                 }
-                formatter.format("</jira>\n</jira-issues>\n");
+                formatter.format("\t</board>\n</azure>\n");
                 formatter.flush();
             }
         }
         catch(FileNotFoundException e)
         {
-            LOGGER.error("Can't write errors at " + newIssuesFile.getAbsolutePath(), e);
+            logger.error("Can't write errors at " + newIssuesFile.getAbsolutePath(), e);
         }
-        LOGGER.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
+        logger.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
     }
 }

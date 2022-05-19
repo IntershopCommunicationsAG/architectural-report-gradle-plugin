@@ -1,6 +1,7 @@
 # Gradle Files
 .gradle
 build/
+.idea
 
 # backup files
 **/*~

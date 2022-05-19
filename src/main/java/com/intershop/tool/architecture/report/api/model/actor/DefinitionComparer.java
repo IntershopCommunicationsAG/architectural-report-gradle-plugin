@@ -1,15 +1,5 @@
 package com.intershop.tool.architecture.report.api.model.actor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.common.issue.Issue;
@@ -19,13 +9,16 @@ import com.intershop.tool.architecture.versions.SemanticVersion;
 import com.intershop.tool.architecture.versions.SemanticVersions;
 import com.intershop.tool.architecture.versions.UpdateStrategy;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * BusinessObjectValidatorActor receives validation events for business objects.
  * The received messages contains business objects only.
  */
 public class DefinitionComparer
 {
-    private static final Object API_SOURCE_IVY_XML = LibDefinitionMapper.API_SOURCE_IVY_XML;
+    private static final Object API_SOURCE_DEPENDENCIES_TXT = LibDefinitionMapper.API_SOURCE_DEPENDENCIES_TXT;
     private final Collection<Definition> definitions;
     private final Collection<Definition> baseline;
     private final UpdateStrategy strategy;
@@ -40,7 +33,7 @@ public class DefinitionComparer
         this.group = currentProject.getGroup();
         Set<Definition> apiBaseline = new HashSet<>(baseline);
         apiBaseline.removeAll(definitions);
-        touchedDefinitions = apiBaseline.stream().filter(d -> !API_SOURCE_IVY_XML.equals(d.getSource())).collect(Collectors.toList());
+        touchedDefinitions = apiBaseline.stream().filter(d -> !API_SOURCE_DEPENDENCIES_TXT.equals(d.getSource())).collect(Collectors.toList());
     }
 
     public List<Issue> getIssues()
@@ -58,11 +51,11 @@ public class DefinitionComparer
             return issues;
         }
         Map<String, String> libs = new HashMap<>();
-        baseline.stream().filter(d -> API_SOURCE_IVY_XML.equals(d.getSource()))
+        baseline.stream().filter(d -> API_SOURCE_DEPENDENCIES_TXT.equals(d.getSource()))
                         .forEach(d -> libs.put(getArtifact(d.getSignature()), getVersion(d.getSignature())));
         for (Definition d : definitions)
         {
-            if (API_SOURCE_IVY_XML.equals(d.getSource()) && !group.equals(getGroup(d.getSignature())))
+            if (API_SOURCE_DEPENDENCIES_TXT.equals(d.getSource()) && !group.equals(getGroup(d.getSignature())))
             {
                 String artifact = getArtifact(d.getSignature());
                 String version = getVersion(d.getSignature());

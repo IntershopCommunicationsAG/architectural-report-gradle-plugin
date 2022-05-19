@@ -1,7 +1,7 @@
 package com.intershop.tool.architecture.report.api.model.definition;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import com.intershop.tool.architecture.report.common.project.ProjectRef;
 

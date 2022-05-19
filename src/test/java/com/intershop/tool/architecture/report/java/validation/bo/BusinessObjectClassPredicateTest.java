@@ -15,7 +15,6 @@ import com.intershop.tool.architecture.report.common.issue.ResultType;
 import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
 import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
-import com.intershop.tool.architecture.report.java.validation.bo.BusinessObjectPredicate;
 
 public class BusinessObjectClassPredicateTest
 {

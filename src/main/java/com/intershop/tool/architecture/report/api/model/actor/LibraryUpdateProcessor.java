@@ -1,18 +1,5 @@
 package com.intershop.tool.architecture.report.api.model.actor;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXBException;
-
-import org.slf4j.LoggerFactory;
-
 import com.intershop.tool.architecture.report.api.model.definition.APIDefinition;
 import com.intershop.tool.architecture.report.api.model.definition.Definition;
 import com.intershop.tool.architecture.report.api.model.definition.DefinitionSorting;
@@ -20,30 +7,39 @@ import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportOutputFolder;
 import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 import com.intershop.tool.architecture.report.common.issue.Issue;
-import com.intershop.tool.architecture.report.common.project.GlobalProcessor;
-import com.intershop.tool.architecture.report.common.project.IvyVisitor;
-import com.intershop.tool.architecture.report.common.project.LibDefinitionMapper;
-import com.intershop.tool.architecture.report.common.project.ProjectProcessorResult;
-import com.intershop.tool.architecture.report.common.project.ProjectRef;
+import com.intershop.tool.architecture.report.common.project.*;
 import com.intershop.tool.architecture.report.common.resources.URILoader;
 import com.intershop.tool.architecture.report.common.resources.XMLLoaderException;
 import com.intershop.tool.architecture.report.common.resources.XmlLoader;
 import com.intershop.tool.architecture.versions.UpdateStrategy;
+import jakarta.xml.bind.JAXBException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Validates Modification of Java Classes
  */
 public class LibraryUpdateProcessor implements GlobalProcessor
 {
-    private static final IvyVisitor IVY_VISITOR = new IvyVisitor();
+    private static final Logger logger = LoggerFactory.getLogger(LibraryUpdateProcessor.class);
     private final CommandLineArguments info;
     private final ProjectRef serverProject;
 
     private static class Configuration
     {
         private ArchitectureReportOutputFolder folderLocations;
-        private List<Definition> baseline = new ArrayList<>();
         private UpdateStrategy strategy = UpdateStrategy.MINOR;
+        private final List<Definition> baseline = new ArrayList<>();
     }
 
     public LibraryUpdateProcessor(CommandLineArguments info)
@@ -82,7 +78,14 @@ public class LibraryUpdateProcessor implements GlobalProcessor
 
     private List<Definition> getDefinitions()
     {
-        Collection<ProjectRef> projects = IVY_VISITOR.apply(new File(info.getArgument(ArchitectureReportConstants.ARG_IVYFILE)));
+        if (info.getArgument(ArchitectureReportConstants.ARG_DEPENDENCIES_FILE) == null) {
+            return Collections.emptyList();
+        }
+
+        logger.info("Processing dependencies from file: {}", info.getArgument(ArchitectureReportConstants.ARG_DEPENDENCIES_FILE));
+        File dependenciesListFile = new File(info.getArgument(ArchitectureReportConstants.ARG_DEPENDENCIES_FILE));
+        Collection<ProjectRef> projects = new DependencyListVisitor().apply(dependenciesListFile);
+
         LibDefinitionMapper definitionMapper = new LibDefinitionMapper(serverProject);
         return projects.stream().map(definitionMapper).collect(Collectors.toList());
     }
@@ -103,7 +106,7 @@ public class LibraryUpdateProcessor implements GlobalProcessor
             }
             catch(XMLLoaderException | IOException e)
             {
-                LoggerFactory.getLogger(getClass()).warn("loading api definition failed, location:" + baselineLocation, e);
+                LoggerFactory.getLogger(getClass()).warn("Loading API definition failed, location:" + baselineLocation, e);
             }
         }
         String strategyArg = info.getArgument(ArchitectureReportConstants.ARG_STRATEGY);

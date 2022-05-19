@@ -30,7 +30,8 @@ public class JarFinderTest
             if (!files.isEmpty())
             {
                 assertEquals("found four jars", 2, files.size());
-                assertTrue("contains test_ca", files.stream().filter(ref -> ref.getAbsolutePath().contains("test_ca")).findAny().isPresent());
+                assertTrue("contains test_ca",
+                                files.stream().anyMatch(ref -> ref.getAbsolutePath().contains("test_ca")));
                 found = true;
             }
         }

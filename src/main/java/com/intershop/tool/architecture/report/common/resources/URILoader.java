@@ -31,7 +31,7 @@ public class URILoader
         }
         else
         {
-            throw new IOException("Scheme not support URI '" + uri.toString() + "'.");
+            throw new IOException("Scheme not support URI '" + uri + "'.");
         }
     }
 
@@ -54,7 +54,7 @@ public class URILoader
     {
         URI uri = URI.create(location);
         // try as file name
-        if (uri == null)
+        if (uri.getScheme() == null)
         {
             uri = new File(location).toURI();
         }

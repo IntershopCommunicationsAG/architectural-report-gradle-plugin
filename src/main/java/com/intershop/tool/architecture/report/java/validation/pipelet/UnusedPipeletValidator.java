@@ -32,6 +32,6 @@ public class UnusedPipeletValidator
             mapRegisteredPipelets.put(projectRef, registeredPipelets);
         }
         final List<String> finalPipelets = registeredPipelets;
-        jar.getPipeletDesciptor().stream().forEach(d -> finalPipelets.add(d.getPipeletClassName()));
+        jar.getPipeletDescriptor().stream().forEach(d -> finalPipelets.add(d.getPipeletClassName()));
     }
 }

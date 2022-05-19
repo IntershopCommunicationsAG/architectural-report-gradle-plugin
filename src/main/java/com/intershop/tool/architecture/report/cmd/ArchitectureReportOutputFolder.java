@@ -4,14 +4,9 @@ import java.io.File;
 
 public class ArchitectureReportOutputFolder
 {
-    public static final File DEFAULT_REPORT_DIRECTORY = new File("build/reports/architecture_report");
+    public static final File DEFAULT_REPORT_DIRECTORY = new File("build/reports/architectureReport");
 
     private final File reportDirectory;
-
-    public ArchitectureReportOutputFolder()
-    {
-        this(DEFAULT_REPORT_DIRECTORY);
-    }
 
     public ArchitectureReportOutputFolder(String location)
     {
@@ -21,9 +16,9 @@ public class ArchitectureReportOutputFolder
     public ArchitectureReportOutputFolder(File reportDirectory)
     {
         this.reportDirectory = reportDirectory == null ? DEFAULT_REPORT_DIRECTORY : reportDirectory;
-        if (!reportDirectory.exists())
+        if (!this.reportDirectory.exists())
         {
-            reportDirectory.mkdirs();
+            this.reportDirectory.mkdirs();
         }
     }
 

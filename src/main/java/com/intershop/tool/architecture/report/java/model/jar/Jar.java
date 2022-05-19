@@ -20,8 +20,8 @@ public class Jar implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    private Collection<JavaClass> classes = new ArrayList<>();
-    private Collection<PipeletDescriptor> pipeletDesciptor = new ArrayList<>();
+    private final Collection<JavaClass> classes = new ArrayList<>();
+    private Collection<PipeletDescriptor> pipeletDescriptor = new ArrayList<>();
     private final ProjectRef projectRef;
 
     public Jar(ProjectRef projectRef)
@@ -39,14 +39,14 @@ public class Jar implements Serializable
         classes.add(javaClass);
     }
 
-    public Collection<PipeletDescriptor> getPipeletDesciptor()
+    public Collection<PipeletDescriptor> getPipeletDescriptor()
     {
-        return pipeletDesciptor;
+        return pipeletDescriptor;
     }
 
-    public void setPipeletDesciptor(Collection<PipeletDescriptor> pipeletDesciptor)
+    public void setPipeletDescriptor(Collection<PipeletDescriptor> pipeletDescriptor)
     {
-        this.pipeletDesciptor = pipeletDesciptor;
+        this.pipeletDescriptor = pipeletDescriptor;
     }
 
     public ProjectRef getProjectRef()

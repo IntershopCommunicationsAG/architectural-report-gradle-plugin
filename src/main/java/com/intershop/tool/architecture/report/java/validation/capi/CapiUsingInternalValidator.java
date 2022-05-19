@@ -15,7 +15,9 @@ public class CapiUsingInternalValidator
 {
     /**
      * Identifies capi classes with internal references
-     * @param projectRef 
+     * @param projectRef Project reference
+     * @param javaClass Java class
+     * @return List of issues
      */
     public List<Issue> validate(ProjectRef projectRef, JavaClass javaClass)
     {

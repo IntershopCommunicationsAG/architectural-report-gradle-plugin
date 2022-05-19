@@ -1,12 +1,12 @@
 package com.intershop.tool.architecture.report.common.issue;
 
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
+
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import com.intershop.tool.architecture.report.common.project.ProjectRef;
 
 public class Issue implements Serializable
 {
@@ -44,7 +44,7 @@ public class Issue implements Serializable
     }
 
     /**
-     * @return an hash code, which can be used to reference the found issue
+     * @return A hash code, which can be used to reference the found issue
      */
     public String getHash()
     {
@@ -82,7 +82,7 @@ public class Issue implements Serializable
         String stringRepresentation = getIssueString();
         try
         {
-            byte[] bytes = stringRepresentation.getBytes("UTF-8");
+            byte[] bytes = stringRepresentation.getBytes(StandardCharsets.UTF_8);
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] keyBytes = md.digest(bytes);
 
@@ -97,7 +97,7 @@ public class Issue implements Serializable
 
             return s;
         }
-        catch(UnsupportedEncodingException | NoSuchAlgorithmException e)
+        catch(NoSuchAlgorithmException e)
         {
             throw new RuntimeException("Can't create MD5 hash for:" + stringRepresentation, e);
         }

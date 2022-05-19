@@ -2,8 +2,8 @@ package com.intershop.tool.architecture.report.common.project;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import com.intershop.tool.architecture.versions.SemanticVersion;
 
@@ -73,10 +73,18 @@ public class ProjectRef implements Serializable
         return group + ":" + name;
     }
 
+    /**
+     * @return "group:name:version" of project
+     */
+    public String getFullIdentifier()
+    {
+        return group + ":" + name + ":" + version;
+    }
+
     @Override
     public String toString()
     {
-        return getIdentifier();
+        return getFullIdentifier();
     }
 
     public int compareTo(ProjectRef other)

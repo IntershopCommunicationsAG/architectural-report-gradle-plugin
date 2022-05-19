@@ -20,7 +20,7 @@ import com.intershop.tool.architecture.report.common.resources.XMLLoaderExceptio
 
 public class IssueFilter
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IssueFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(IssueFilter.class);
 
     private final CommandLineArguments info;
 
@@ -38,30 +38,30 @@ public class IssueFilter
             List<String> keySelector = Arrays.asList(keys.split(","));
             stream = stream.filter(i -> keySelector.contains(i.getKey()));
         }
-        Map<String, JiraIssue> existingIssues = getExistingIssues();
+        Map<String, AzureIssue> existingIssues = getExistingIssues();
         return stream.filter(i -> !existingIssues.containsKey(i.getHash())).collect(Collectors.toList());
     }
 
-    private Map<String, JiraIssue> getExistingIssues()
+    private Map<String, AzureIssue> getExistingIssues()
     {
-        String jiraIssueLocation = info.getArgument(ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE);
-        if (jiraIssueLocation == null)
+        String azureIssueLocation = info.getArgument(ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE);
+        if (azureIssueLocation == null)
         {
             return Collections.emptyMap();
         }
-        Map<String, JiraIssue> result = new HashMap<>();
+        Map<String, AzureIssue> result = new HashMap<>();
         try
         {
-            InputStream is = URILoader.getInputStream(jiraIssueLocation);
+            InputStream is = URILoader.getInputStream(azureIssueLocation);
             if (is != null)
             {
-                List<JiraIssue> issues = new JiraIssuesVisitor().apply(is);
-                issues.stream().forEach(issue -> result.put(issue.getKey(), issue));
+                List<AzureIssue> issues = new AzureIssuesVisitor().apply(is);
+                issues.forEach(issue -> result.put(issue.getKey(), issue));
             }
         }
         catch(XMLLoaderException|IOException e)
         {
-            LOGGER.warn("Can't load issues file: " + jiraIssueLocation, e);
+            logger.warn("Can't load issues file: " + azureIssueLocation, e);
         }
         return result;
     }

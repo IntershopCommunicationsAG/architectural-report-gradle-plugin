@@ -20,7 +20,7 @@ import com.intershop.tool.architecture.report.api.model.definition.Definition;
  */
 public class JavaClassVisitor extends ClassVisitor
 {
-    private static final int API_VERSION = Opcodes.ASM5;
+    private static final int API_VERSION = Opcodes.ASM9;
     private final JavaClass javaClass;
     private String currentClassName = null;
 
@@ -160,9 +160,9 @@ public class JavaClassVisitor extends ClassVisitor
 
     /* package */ static String getSignature(String className, String name, String desc)
     {
-        String parameterAndReturn[] = desc.split("\\)");
-        String parameter = null;
-        String returnType = null;
+        String[] parameterAndReturn = desc.split("\\)");
+        String parameter;
+        String returnType;
         if (parameterAndReturn.length == 1)
         {
             parameter = ";";
@@ -173,7 +173,7 @@ public class JavaClassVisitor extends ClassVisitor
             parameter = parameterAndReturn[0];
             returnType = parameterAndReturn[1];
         }
-        List<String> parameterList = Arrays.asList(parameter.substring(1).split(";")).stream().map(t -> getNormalizedClassName(t))
+        List<String> parameterList = Arrays.stream(parameter.substring(1).split(";")).map(c -> getNormalizedClassName(c))
                         .collect(Collectors.toList());
         if (name.equals("<init>"))
         {
@@ -257,7 +257,7 @@ public class JavaClassVisitor extends ClassVisitor
         }
 
         @Override
-        public void visitMethodInsn(int opcode, String owner, String name, String signature)
+        public void visitMethodInsn(int opcode, String owner, String name, String signature, boolean isInterface)
         {
             for (String rt : JavaHelper.splitSignature(signature))
             {

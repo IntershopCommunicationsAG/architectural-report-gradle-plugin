@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Test;
 
@@ -20,8 +20,6 @@ import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.common.resources.ResourceLoader;
 import com.intershop.tool.architecture.report.common.resources.XmlLoader;
 import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
-import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
-import com.intershop.tool.architecture.report.java.model.jclass.JavaClassVisitor;
 
 public class JavaClassVisitorTest
 {

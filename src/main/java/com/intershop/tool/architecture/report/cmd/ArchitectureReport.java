@@ -1,6 +1,5 @@
 package com.intershop.tool.architecture.report.cmd;
 
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -17,16 +16,15 @@ public class ArchitectureReport
     /**
      * Execute Architecture report on commandline
      * 
-     * @param args
-     *            command line arguments
-     *            <ul>
-     *            <li>server ivy file:
-     *            d:\Source\ish\gradle_trunk\server\share\ivy.xml</li>
-     *            <li>cartridge directory:
-     *            d:\Source\ish\gradle_trunk\server\share\system\cartridges</li>
-     *            <li>api baseline resource e.g.
-     *            api_definition_baseline_7.7.xml</li>
-     *            </ul>
+     * @param args command line arguments
+     * <ul>
+     *     <li>server dependencies file:
+     *         d:\Source\ish\gradle_trunk\server\share\dependencies.txt</li>
+     *     <li>cartridge directory:
+     *         d:\Source\ish\gradle_trunk\server\share\system\cartridges</li>
+     *     <li>api baseline resource e.g.
+     *         api_definition_baseline_7.7.xml</li>
+     * </ul>
      */
     public static void main(String[] args)
     {
@@ -45,12 +43,10 @@ public class ArchitectureReport
     }
 
     /**
-     * @param args
-     *            program arguments
+     * @param args program arguments
      * @return true in case validation is failing
-     * @throws FileNotFoundException
      */
-    public static boolean validateArchitecture(String[] args) throws FileNotFoundException
+    public static boolean validateArchitecture(String[] args)
     {
         CommandLineArguments info = new CommandLineArguments(args);
         IssueCollector collector = new ServerCollector(info);
