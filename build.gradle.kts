@@ -167,7 +167,7 @@ pluginBundle {
     website = "https://github.com/IntershopCommunicationsAG/${project.name}"
     vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
     description = project.description
-    tags = listOf("intershop", "gradle", "plugin", "validation", "analysis")
+    tags = listOf("intershop", "validation", "analysis")
 }
 
 gradlePlugin {
