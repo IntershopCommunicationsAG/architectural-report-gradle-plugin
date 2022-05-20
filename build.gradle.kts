@@ -142,6 +142,19 @@ publishing {
                     url.set("https://intershop.com")
                 }
 
+                developers {
+                    developer {
+                        id.set("m-raab")
+                        name.set("M. Raab")
+                        email.set("mraab@intershop.de")
+                    }
+                    developer {
+                        id.set("david-b")
+                        name.set("David B.")
+                        email.set("qw906xkrk@mozmail.com")
+                    }
+                }
+
                 scm {
                     connection.set("https://github.com/IntershopCommunicationsAG/${project.name}.git")
                     developerConnection.set("git@github.com:IntershopCommunicationsAG/${project.name}.git")
