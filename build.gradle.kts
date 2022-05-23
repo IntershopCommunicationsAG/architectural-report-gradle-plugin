@@ -146,7 +146,7 @@ publishing {
                     developer {
                         id.set("lead")
                         name.set("David B.")
-                        email.set("qw906xkrk@mozmail.com")
+                        email.set("davidb@intershop.de")
                     }
                 }
 
