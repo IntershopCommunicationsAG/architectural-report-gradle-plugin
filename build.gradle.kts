@@ -144,12 +144,7 @@ publishing {
 
                 developers {
                     developer {
-                        id.set("m-raab")
-                        name.set("M. Raab")
-                        email.set("mraab@intershop.de")
-                    }
-                    developer {
-                        id.set("david-b")
+                        id.set("lead")
                         name.set("David B.")
                         email.set("qw906xkrk@mozmail.com")
                     }
