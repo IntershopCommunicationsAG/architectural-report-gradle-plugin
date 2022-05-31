@@ -52,12 +52,15 @@ public class URILoader
 
     public static InputStream getInputStream(String location) throws IOException
     {
-        URI uri = URI.create(location);
-        // try as file name
-        if (uri.getScheme() == null)
-        {
+        URI uri;
+        try {
+            // Create URI by parsing location
+            uri = URI.create(location);
+        } catch (IllegalArgumentException e) {
+            // Fallback to try as file
             uri = new File(location).toURI();
         }
+
         return getInputStream(uri);
     }
 }
