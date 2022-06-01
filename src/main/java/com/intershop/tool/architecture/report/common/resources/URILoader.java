@@ -52,15 +52,32 @@ public class URILoader
 
     public static InputStream getInputStream(String location) throws IOException
     {
+        return getInputStream(createURIFromString(location));
+    }
+
+    /**
+     * Creates a URI by parsing the location string and fallback
+     * to a file URI if the scheme component was not detected by {@link URI#create(String)}.
+     *
+     * @param location The string to be parsed into a UR
+     * @return New URI
+     */
+    public static URI createURIFromString(String location) {
         URI uri;
         try {
             // Create URI by parsing location
             uri = URI.create(location);
+
+            // Check if required scheme is available
+            if (uri.getScheme() == null)
+            {
+                throw new IllegalArgumentException();
+            }
         } catch (IllegalArgumentException e) {
             // Fallback to try as file
             uri = new File(location).toURI();
         }
 
-        return getInputStream(uri);
+        return uri;
     }
 }
