@@ -2,6 +2,7 @@ package com.intershop.tool.architecture.report.cmd;
 
 import java.util.List;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intershop.tool.architecture.report.common.issue.Issue;
@@ -12,6 +13,7 @@ import com.intershop.tool.architecture.report.server.ServerCollector;
 
 public class ArchitectureReport
 {
+    private static final Logger logger = LoggerFactory.getLogger(ArchitectureReport.class);
 
     /**
      * Execute Architecture report on commandline
@@ -37,7 +39,7 @@ public class ArchitectureReport
         }
         catch(Exception e)
         {
-            LoggerFactory.getLogger(ArchitectureReport.class).error("Architecture report failed.", e);
+            logger.error("Architecture report failed.", e);
             System.exit(1);
         }
     }
@@ -55,6 +57,7 @@ public class ArchitectureReport
         List<Issue> filteredIssues = filter.filterIssues(allIssues);
         if (filteredIssues.isEmpty())
         {
+            logger.info("Architecture report contains no errors.");
             return false;
         }
         IssuePrinter printer = new IssuePrinter(info);
