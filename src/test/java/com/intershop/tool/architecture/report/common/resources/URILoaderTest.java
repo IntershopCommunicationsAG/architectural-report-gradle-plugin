@@ -1,5 +1,7 @@
 package com.intershop.tool.architecture.report.common.resources;
 
+import com.google.common.jimfs.Configuration;
+import com.google.common.jimfs.Jimfs;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -14,9 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class URILoaderTest
 {
     private final static MockWebServer mockWebServer = new MockWebServer();
+
+    private final static FileRepository fileRepository = new FileRepository();
 
     @BeforeAll
     public static void setUp() throws IOException
@@ -82,29 +86,51 @@ public class URILoaderTest
     }
 
     @Test
-    public void testFileURICreationOnWindows()
+    public void testFileURICreationOnWindows() throws IOException
     {
-        // Create URI from string (Windows)
-        String filePath = Paths.get("C:", "file.txt").toAbsolutePath().toString();
-        URI uri = URILoader.createURIFromString(filePath);
-        assertNotNull(uri.getScheme());
-        assertEquals("file", uri.getScheme());
+        try (FileSystem fileSystem = Jimfs.newFileSystem(Configuration.windows())) {
+            // Create file in virtual file system
+            String fileName = "file.txt";
+            Path pathToVirtualStore = fileSystem.getPath("");
 
-        assertNotNull(uri.getPath());
-        assertTrue(uri.getPath().endsWith(filePath), "URI path '" + uri.getPath() + "' does not end with '" + filePath + "'");
+            fileRepository.create(pathToVirtualStore, fileName);
+            Path filePath = pathToVirtualStore.resolve(fileName).toRealPath();
+            assertTrue(Files.exists(filePath));
+
+            // Create URI from string (Windows)
+            URI uri = URILoader.createURIFromString(filePath.toString());
+            assertNotNull(uri.getScheme());
+            assertEquals("file", uri.getScheme());
+
+            assertNotNull(uri.getPath());
+            // C:\work is the default JimFS working directory
+            String expectedPath = "C:\\work\\file.txt";
+            assertTrue(uri.getPath().endsWith(expectedPath), "URI path '" + uri.getPath() + "' does not end with '" + expectedPath + "'");
+        }
     }
 
     @Test
-    public void testFileURICreationOnUnix()
+    public void testFileURICreationOnUnix() throws IOException
     {
-        // Create URI from string (Unix)
-        URI uri = URILoader.createURIFromString("/file.txt");
-        assertNotNull(uri.getScheme());
-        assertEquals("file", uri.getScheme());
+        try (FileSystem fileSystem = Jimfs.newFileSystem(Configuration.unix())) {
+            // Create file in virtual file system
+            String fileName = "file.txt";
+            Path pathToVirtualStore = fileSystem.getPath("");
 
-        String expectedPath = "/file.txt";
-        assertNotNull(uri.getPath());
-        assertTrue(uri.getPath().endsWith(expectedPath), "URI path '" + uri.getPath() + "' does not end with '" + expectedPath + "'");
+            fileRepository.create(pathToVirtualStore, fileName);
+            Path filePath = pathToVirtualStore.resolve(fileName).toRealPath();
+            assertTrue(Files.exists(filePath));
+
+            // Create URI from string (Unix)
+            URI uri = URILoader.createURIFromString(filePath.toString());
+            assertNotNull(uri.getScheme());
+            assertEquals("file", uri.getScheme());
+
+            assertNotNull(uri.getPath());
+            // /work is the default JimFS working directory
+            String expectedPath = "/work/file.txt";
+            assertTrue(uri.getPath().endsWith(expectedPath), "URI path '" + uri.getPath() + "' does not end with '" + expectedPath + "'");
+        }
     }
 
     @Test

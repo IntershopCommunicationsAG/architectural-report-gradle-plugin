@@ -213,6 +213,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
     testImplementation("org.junit.vintage:junit-vintage-engine:5.8.2")
     testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("com.google.jimfs:jimfs:1.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.3")
     testImplementation("com.intershop.gradle.test:test-gradle-plugin:4.1.1")
 }
