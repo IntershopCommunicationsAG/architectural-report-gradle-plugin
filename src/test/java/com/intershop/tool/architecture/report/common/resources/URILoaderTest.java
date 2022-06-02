@@ -25,9 +25,6 @@ public class URILoaderTest
 {
     private final static MockWebServer mockWebServer = new MockWebServer();
 
-    @TempDir
-    private Path tempDir;
-
     @BeforeAll
     public static void setUp() throws IOException
     {
@@ -64,7 +61,7 @@ public class URILoaderTest
     }
 
     @Test
-    public void testInputStreamOfFile() throws IOException
+    public void testInputStreamOfFile(@TempDir Path tempDir) throws IOException
     {
         Path tempFile = Files.createFile(tempDir.resolve("file.txt"));
 
