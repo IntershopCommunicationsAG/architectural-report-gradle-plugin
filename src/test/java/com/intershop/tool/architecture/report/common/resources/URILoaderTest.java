@@ -17,6 +17,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,13 +85,13 @@ public class URILoaderTest
     public void testFileURICreationOnWindows()
     {
         // Create URI from string (Windows)
-        URI uri = URILoader.createURIFromString("C:\\file.txt");
+        String filePath = Paths.get("C:", "file.txt").toAbsolutePath().toString();
+        URI uri = URILoader.createURIFromString(filePath);
         assertNotNull(uri.getScheme());
         assertEquals("file", uri.getScheme());
 
-        String expectedPath = "C:\\file.txt";
         assertNotNull(uri.getPath());
-        assertTrue(uri.getPath().endsWith(expectedPath), "URI path '" + uri.getPath() + "' does not end with '" + expectedPath + "'");
+        assertTrue(uri.getPath().endsWith(filePath), "URI path '" + uri.getPath() + "' does not end with '" + filePath + "'");
     }
 
     @Test
