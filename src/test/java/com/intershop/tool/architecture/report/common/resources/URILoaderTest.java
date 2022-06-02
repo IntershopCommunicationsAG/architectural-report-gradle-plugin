@@ -104,7 +104,7 @@ public class URILoaderTest
 
             assertNotNull(uri.getPath());
             // C:\work is the default JimFS working directory
-            String expectedPath = "C:\\work\\file.txt";
+            String expectedPath = String.join(fileSystem.getSeparator(), "C:", "work", "file.txt");
             assertTrue(uri.getPath().endsWith(expectedPath), "URI path '" + uri.getPath() + "' does not end with '" + expectedPath + "'");
         }
     }
