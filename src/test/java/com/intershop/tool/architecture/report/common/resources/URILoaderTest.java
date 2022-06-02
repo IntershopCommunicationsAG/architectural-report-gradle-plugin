@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,9 +61,10 @@ public class URILoaderTest
     }
 
     @Test
-    public void testInputStreamOfFile(@TempDir Path tempDir) throws IOException
+    public void testInputStreamOfFile() throws IOException
     {
-        Path tempFile = Files.createFile(tempDir.resolve("file.txt"));
+        Path tempFile = Files.createTempFile("file", "txt");
+        tempFile.toFile().deleteOnExit();
 
         InputStream inputStream = URILoader.getInputStream(tempFile.toAbsolutePath().toString());
         assertInstanceOf(InputStream.class, inputStream);
