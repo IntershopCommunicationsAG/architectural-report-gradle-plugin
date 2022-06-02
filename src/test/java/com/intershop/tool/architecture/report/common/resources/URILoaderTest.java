@@ -20,6 +20,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.regex.Matcher;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -105,7 +106,9 @@ public class URILoaderTest
             assertNotNull(uri.getPath());
             // C:\work is the default JimFS working directory
             String expectedPath = String.join(fileSystem.getSeparator(), "C:", "work", "file.txt");
-            assertTrue(uri.getPath().endsWith(expectedPath), "URI path '" + uri.getPath() + "' does not end with '" + expectedPath + "'");
+            // Normalize URI path for assertion
+            String uriPath = uri.getPath().replaceAll("[\\\\|/]", Matcher.quoteReplacement(fileSystem.getSeparator()));
+            assertTrue(uriPath.endsWith(expectedPath), "URI path '" + uriPath + "' does not end with '" + expectedPath + "'");
         }
     }
 
