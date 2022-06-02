@@ -30,7 +30,7 @@ jobs:
         env:
           SIGNINGFILE: ${{ secrets.SIGNINGFILE }}
         run: |
-          gpg --batch --import "${{ secrets.SIGNINGFILE }}"
+          cat <(echo -e "${{ secrets.SIGNINGFILE }}") | gpg --batch --import
           gpg --list-secret-keys --keyid-format LONG
 
       - name: Export gpg file
