@@ -1,16 +1,23 @@
 package com.intershop.tool.architecture.report.common.resources;
 
+import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+
+import okhttp3.mockwebserver.RecordedRequest;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,11 +29,31 @@ public class URILoaderTest
     private Path tempDir;
 
     @BeforeAll
-    public static void setup() {
-        mockWebServer.enqueue(new MockResponse()
-                        .addHeader("Content-Type", "text/plain; charset=utf-8")
-                        .setBody("OK")
-                        .setResponseCode(200));
+    public static void setUp() throws IOException
+    {
+        mockWebServer.setDispatcher(new Dispatcher()
+        {
+            @NotNull
+            @Override
+            public MockResponse dispatch(@NotNull RecordedRequest request)
+            {
+                if (Objects.equals(request.getPath(), "/"))
+                {
+                    return new MockResponse()
+                                    .addHeader("Content-Type", "text/plain; charset=utf-8")
+                                    .setBody("OK")
+                                    .setResponseCode(200);
+                }
+                return new MockResponse().setResponseCode(404);
+            }
+        });
+        mockWebServer.start(InetAddress.getLocalHost(), 0);
+    }
+
+    @AfterAll
+    public static void tearDown() throws IOException
+    {
+        mockWebServer.shutdown();
     }
 
     @Test
