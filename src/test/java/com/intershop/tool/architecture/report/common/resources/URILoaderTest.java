@@ -19,6 +19,7 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 
@@ -141,7 +142,7 @@ public class URILoaderTest
     {
         URI uri = URILoader.createURIFromString(mockWebServer.url("/").toString());
         assertEquals("http", uri.getScheme());
-        assertEquals(mockWebServer.getHostName(), uri.getHost());
+        assertEquals(mockWebServer.getHostName().toUpperCase(Locale.ROOT), uri.getHost().toUpperCase(Locale.ROOT)); // equalsIgnoreCase
         assertEquals(mockWebServer.getPort(), uri.getPort());
         assertEquals("/", uri.getPath());
         assertNull(uri.getFragment());
