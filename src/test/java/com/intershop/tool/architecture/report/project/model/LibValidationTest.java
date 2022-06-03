@@ -9,7 +9,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.intershop.tool.architecture.report.common.project.*;
+import com.intershop.tool.architecture.report.common.project.DependencyListVisitor;
+import com.intershop.tool.architecture.report.common.project.LibDefinitionMapper;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import org.junit.Test;
 
 import com.intershop.tool.architecture.report.api.model.actor.DefinitionComparer;
