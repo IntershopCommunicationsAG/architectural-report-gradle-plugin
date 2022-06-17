@@ -13,8 +13,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * BusinessObjectValidatorActor receives validation events for business objects.
- * The received messages contains business objects only.
+ * Collection of baseline {@link Definition}s are compared to potential altered list of definitions.
+ * Used for new library detection or library SemVer {@link UpdateStrategy} violation as well as for altered API definitions.
  */
 public class DefinitionComparer
 {

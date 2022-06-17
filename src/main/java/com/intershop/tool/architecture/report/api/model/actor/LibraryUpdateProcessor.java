@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Validates Modification of Java Classes
+ * Validates if project contains new libraries or library updates which violate a semantic versioning {@link UpdateStrategy}.
  */
 public class LibraryUpdateProcessor implements GlobalProcessor
 {
