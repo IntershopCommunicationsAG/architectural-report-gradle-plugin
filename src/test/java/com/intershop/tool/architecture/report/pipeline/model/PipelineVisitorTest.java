@@ -1,16 +1,14 @@
 package com.intershop.tool.architecture.report.pipeline.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.junit.Test;
+import com.intershop.tool.architecture.report.common.resources.XMLInputSourceVisitor;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
-import com.intershop.tool.architecture.report.common.resources.XMLInputSourceVisitor;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PipelineVisitorTest
 {
@@ -24,14 +22,13 @@ public class PipelineVisitorTest
         PipelineHandler handler = new PipelineHandler(result);
         xmlVisitor.visitXMLInputSource(getClass().getResourceAsStream("/" + PIPELINE_NAME + ".pipeline"), handler);
         assertTrue(result.getStartNodes().contains("AddProduct"));
-        assertEquals("count start nodes", 19, result.getStartNodes().size());
+        assertEquals(19, result.getStartNodes().size(), "count start nodes");
         // jump node reference
         assertTrue(result.getPipelineRefs().contains("ViewGiftCertificates-ValidateGCWebForm"));
         // dispatch reference
         assertTrue(result.getPipelineRefs().contains("ViewCart-DeletePromotion"));
 
         // direct references, but one JumpTarget could be calculated by resolving dispatch form action
-        assertEquals("count pipeline refs", 83, result.getPipelineRefs().size());
+        assertEquals(83, result.getPipelineRefs().size(), "count pipeline refs");
     }
-
 }

@@ -1,19 +1,19 @@
 package com.intershop.tool.architecture.report.java.validation.bo;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.intershop.tool.architecture.report.common.issue.ResultType;
 import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.java.model.jar.JarFileVisitor;
 import com.intershop.tool.architecture.report.java.model.jclass.JavaClass;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BusinessObjectValidationTest
 {
@@ -37,15 +37,12 @@ public class BusinessObjectValidationTest
         {
             if (wrongClasses.contains(javaClass.getClassName()))
             {
-                assertEquals("CatalogBORepositoryExtensionFactory", ResultType.FALSE,
-                                underTest.validate(PROJECT_REF, javaClass).getResultType());
+                assertEquals(ResultType.FALSE, underTest.validate(PROJECT_REF, javaClass).getResultType(), "CatalogBORepositoryExtensionFactory");
             }
             else
             {
-                assertEquals("business object is fine:" + javaClass.getClassName(), ResultType.TRUE,
-                                underTest.validate(PROJECT_REF, javaClass).getResultType());
+                assertEquals(ResultType.TRUE, underTest.validate(PROJECT_REF, javaClass).getResultType(), "business object is fine:" + javaClass.getClassName());
             }
         }
     }
-
 }

@@ -1,19 +1,18 @@
 package com.intershop.tool.architecture.report.common.model;
 
-import static org.junit.Assert.assertEquals;
+import com.intershop.tool.architecture.report.common.issue.AzureIssue;
+import com.intershop.tool.architecture.report.common.issue.AzureIssuesVisitor;
+import com.intershop.tool.architecture.report.common.resources.XMLLoaderException;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import org.junit.Test;
-
-import com.intershop.tool.architecture.report.common.issue.AzureIssue;
-import com.intershop.tool.architecture.report.common.issue.AzureIssuesVisitor;
-import com.intershop.tool.architecture.report.common.resources.XMLLoaderException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AzureBoardIssuesVisitorTest
 {
-
     private static final String TEST_ISSUES = "test-issues.xml";
     private static final String TEST_DAMAGED = "test-issues-damaged.xml";
 
@@ -22,15 +21,18 @@ public class AzureBoardIssuesVisitorTest
     {
         AzureIssuesVisitor underTest = new AzureIssuesVisitor();
         List<AzureIssue> result = underTest.apply(getClass().getClassLoader().getResourceAsStream(TEST_ISSUES));
-        assertEquals("correct size", 3, result.size());
-        assertEquals("correct number","ENFINITY-17360", result.get(0).getWorkItemID());
+        assertEquals(3, result.size(), "correct size");
+        assertEquals("ENFINITY-17360", result.get(0).getWorkItemID(), "correct number");
     }
 
-    @Test(expected=XMLLoaderException.class)
-    public void testReadDamagedFile() throws FileNotFoundException
+    @Test
+    public void testReadDamagedFile() throws FileNotFoundException, XMLLoaderException
     {
         AzureIssuesVisitor underTest = new AzureIssuesVisitor();
-        List<AzureIssue> result = underTest.apply(getClass().getClassLoader().getResourceAsStream(TEST_DAMAGED));
-        assertEquals("correct number","ISTOOLS-4069", result.get(0).getWorkItemID());
+        Exception exception = assertThrows(XMLLoaderException.class, () -> {
+            List<AzureIssue> result = underTest.apply(getClass().getClassLoader().getResourceAsStream(TEST_DAMAGED));
+            assertEquals("ISTOOLS-4069", result.get(0).getWorkItemID(), "correct number");
+        });
+        assertEquals("Can't import existing issues", exception.getMessage());
     }
 }

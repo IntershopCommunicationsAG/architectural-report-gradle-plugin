@@ -2,7 +2,6 @@ package com.intershop.tool.architecture.report.jar;
 
 import com.intershop.tool.architecture.report.java.model.jar.JarFileListVisitor;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -14,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JarFileListVisitorTest
 {
@@ -65,6 +66,6 @@ public class JarFileListVisitorTest
     public void testExampleList()
     {
         Collection<File> jarFiles = underTest.apply(JARS_TXT);
-        Assertions.assertEquals(2, jarFiles.size(), "Number of JARs");
+        assertEquals(2, jarFiles.size(), "Number of JARs");
     }
 }

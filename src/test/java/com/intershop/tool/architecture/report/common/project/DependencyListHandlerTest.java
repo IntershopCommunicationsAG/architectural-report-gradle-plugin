@@ -1,14 +1,14 @@
 package com.intershop.tool.architecture.report.common.project;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DependencyListHandlerTest
 {
@@ -23,17 +23,17 @@ public class DependencyListHandlerTest
         Collection<ProjectRef> projects = handler.getProjects();
 
         ProjectRef projectRefSelf = getProjectRef(projects, "ft_icm_as");
-        assertNull("found not allowed project reference in dependency list", projectRefSelf);
-        assertNotNull("cannot find project self reference", handler.getProject());
-        assertEquals("found incorrect full identifier of project", "com.intershop.icm:ft_icm_as:LOCAL", handler.getProject().getFullIdentifier());
+        assertNull(projectRefSelf, "found not allowed project reference in dependency list");
+        assertNotNull(handler.getProject(), "cannot find project self reference");
+        assertEquals("com.intershop.icm:ft_icm_as:LOCAL", handler.getProject().getFullIdentifier(), "found incorrect full identifier of project");
 
         ProjectRef projectRef = getProjectRef(projects, "guice");
         ProjectRef projectSubmoduleRef = getProjectRef(projects, "bc_dashboard");
-        assertEquals("incorrect number of libraries/cartridges", 254, projects.size());
-        assertNotNull("cannot find guice", projectRef);
-        assertEquals("found incorrect version of guice", "5.0.1", projectRef.getVersion());
-        assertNotNull("cannot find bc_dashboard", projectSubmoduleRef);
-        assertEquals("found incorrect version of bc_dashboard", "LOCAL", projectSubmoduleRef.getVersion());
+        assertEquals(254, projects.size(), "incorrect number of libraries/cartridges");
+        assertNotNull(projectRef, "cannot find guice");
+        assertEquals("5.0.1", projectRef.getVersion(), "found incorrect version of guice");
+        assertNotNull(projectSubmoduleRef, "cannot find bc_dashboard");
+        assertEquals("LOCAL", projectSubmoduleRef.getVersion(), "found incorrect version of bc_dashboard");
     }
 
     private static ProjectRef getProjectRef(Collection<ProjectRef> dependencies, String name)
