@@ -19,8 +19,7 @@ public class JarFileVisitorTest
 {
     private static final String CA_JAR = "test_ca.jar";
     private static final String CO_JAR = "test_co.jar";
-
-    private JarFileVisitor underTest = new JarFileVisitor(new ProjectRef("test.group", "test", "1.0"));
+    private final JarFileVisitor underTest = new JarFileVisitor(new ProjectRef("test.group", "test", "1.0"));
 
     @Test
     public void testCatalogJar() throws IOException
@@ -59,12 +58,12 @@ public class JarFileVisitorTest
     private static JavaClass findClass(String className, Collection<JavaClass> classes)
     {
         Optional<JavaClass> findResult = classes.stream().filter(jc -> jc.getClassName().equals(className)).findAny();
-        return findResult.isPresent() ? findResult.get() : null;
+        return findResult.orElse(null);
     }
 
     private static PipeletDescriptor findPipelet(String pipeletRef, Collection<PipeletDescriptor> classes)
     {
         Optional<PipeletDescriptor> findResult = classes.stream().filter(jc -> pipeletRef.equals(jc.getReferenceName())).findAny();
-        return findResult.isPresent() ? findResult.get() : null;
+        return findResult.orElse(null);
     }
 }

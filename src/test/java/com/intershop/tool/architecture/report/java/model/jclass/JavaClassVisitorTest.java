@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class JavaClassVisitorTest
 {
     private static final String TEST_JAR = "test_co.jar";
-    private JarFileVisitor jarVisitor = new JarFileVisitor(new ProjectRef("test.group", "test", "1.0"));
+    private final JarFileVisitor jarVisitor = new JarFileVisitor(new ProjectRef("test.group", "test", "1.0"));
 
     @Test
     public void testFieldAPIDefinition()
@@ -56,7 +56,7 @@ public class JavaClassVisitorTest
         XmlLoader loader = new XmlLoader();
         Collection<JavaClass> classes = jarVisitor.getClasses(TEST_JAR);
         APIDefinition xmlModel = new APIDefinition();
-        classes.stream().forEach(jc -> xmlModel.getDefinition().addAll(jc.getApiDefinition()));
+        classes.forEach(jc -> xmlModel.getDefinition().addAll(jc.getApiDefinition()));
         StringWriter writer = new StringWriter();
         loader.exportXML(xmlModel, writer);
         assertEquals(ResourceLoader.getString("api_definition_test_co.xml").replace("\r", ""), writer.toString().replace("\r", ""), "export correct");

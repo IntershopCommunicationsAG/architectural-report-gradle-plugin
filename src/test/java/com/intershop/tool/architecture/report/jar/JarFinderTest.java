@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JarFinderTest
 {
-    private JarFinder jarFinder = new JarFinder();
+    private final JarFinder jarFinder = new JarFinder();
 
     @Test
     public void test() throws IOException

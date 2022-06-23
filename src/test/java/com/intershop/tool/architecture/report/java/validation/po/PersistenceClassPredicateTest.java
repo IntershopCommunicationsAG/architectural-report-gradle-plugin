@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PersistenceClassPredicateTest
 {
     private static final String TEST_JAR = "test_co.jar";
-    private PersistenceClassPredicate predicate = new PersistenceClassPredicate();
-    private JarFileVisitor jarVisitor = new JarFileVisitor(new ProjectRef("test.group", "test", "1.0"));
+    private final PersistenceClassPredicate predicate = new PersistenceClassPredicate();
+    private final JarFileVisitor jarVisitor = new JarFileVisitor(new ProjectRef("test.group", "test", "1.0"));
 
     @Test
     public void test() throws IOException
@@ -42,7 +42,7 @@ public class PersistenceClassPredicateTest
 
     private Collection<JavaClass> processClasses(Collection<JavaClass> classes)
     {
-        ArrayList<JavaClass> again = new ArrayList<JavaClass>();
+        ArrayList<JavaClass> again = new ArrayList<>();
         for (JavaClass javaClass : classes)
         {
             WaitForJavaClassResult isPersistentResult = predicate.apply(javaClass);

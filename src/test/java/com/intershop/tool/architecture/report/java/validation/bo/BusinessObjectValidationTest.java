@@ -19,8 +19,8 @@ public class BusinessObjectValidationTest
 {
     private static final ProjectRef PROJECT_REF = new ProjectRef("test.group", "test", "1.0");
     private static final String TEST_JAR = "test_ca.jar";
-    private JarFileVisitor jarVisitor = new JarFileVisitor(PROJECT_REF);
-    private List<String> wrongClasses = Arrays.asList("com.intershop.component.catalog.capi.CatalogBORepositoryExtensionFactory",
+    private final JarFileVisitor jarVisitor = new JarFileVisitor(PROJECT_REF);
+    private final List<String> wrongClasses = Arrays.asList("com.intershop.component.catalog.capi.CatalogBORepositoryExtensionFactory",
                     "com.intershop.component.catalog.capi.CatalogCategoryBO");
     @Test
     public void test() throws IOException

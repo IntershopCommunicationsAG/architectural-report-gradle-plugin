@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BusinessObjectClassPredicateTest
 {
     private static final String TEST_JAR = "test_ca.jar";
-    private BusinessObjectPredicate predicate = new BusinessObjectPredicate();
-    private JarFileVisitor jarVisitor = new JarFileVisitor(new ProjectRef("test.group", "test", "1.0"));
+    private final BusinessObjectPredicate predicate = new BusinessObjectPredicate();
+    private final JarFileVisitor jarVisitor = new JarFileVisitor(new ProjectRef("test.group", "test", "1.0"));
 
     @Test
     public void test() throws IOException

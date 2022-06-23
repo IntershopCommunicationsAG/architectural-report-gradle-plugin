@@ -78,5 +78,4 @@ public class LibraryValidationTest
         assertEquals("org.springframework:spring-test", issues.get(0).getParametersString(), "Test of new libraries did not find new library spring-test");
         assertEquals(1, issues.size(), "Test of new libraries expects only one issue");
     }
-
 }
