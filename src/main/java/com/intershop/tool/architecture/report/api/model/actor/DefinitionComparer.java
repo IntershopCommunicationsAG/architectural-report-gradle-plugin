@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 public class DefinitionComparer
 {
     private static final Object API_SOURCE_DEPENDENCIES_TXT = LibDefinitionMapper.API_SOURCE_DEPENDENCIES_TXT;
+    private static final Set<String> INTERNAL_GROUP_NAME_PREFIX_SET = Set.of("com.intershop", "com.intershop.b2b",
+                    "com.intershop.business", "com.intershop.content", "com.intershop.icm", "com.intershop.platform");
     private final Collection<Definition> definitions;
     private final Collection<Definition> baseline;
     private final UpdateStrategy strategy;
@@ -62,15 +64,19 @@ public class DefinitionComparer
                         .forEach(d -> libs.put(getArtifact(d.getSignature()), getVersion(d.getSignature())));
         for (Definition d : definitions)
         {
-            if (API_SOURCE_DEPENDENCIES_TXT.equals(d.getSource()) && !group.equals(getGroup(d.getSignature())))
+            String groupDefinition = getGroup(d.getSignature());
+            if (API_SOURCE_DEPENDENCIES_TXT.equals(d.getSource()) && !group.equals(groupDefinition) &&
+                            INTERNAL_GROUP_NAME_PREFIX_SET.stream().noneMatch(groupDefinition::startsWith))
             {
                 String artifact = getArtifact(d.getSignature());
                 String version = getVersion(d.getSignature());
+                // Detect new library
                 if (!libs.containsKey(artifact))
                 {
                     issues.add(new Issue(d.getProjectRef(), ArchitectureReportConstants.KEY_NEW_LIBRARY, artifact));
                 }
-                else if (!isLibValid(artifact, libs.get(artifact), version))
+                // Check for library version update strategy violation
+                else if (!isLibValid(libs.get(artifact), version))
                 {
                     issues.add(new Issue(d.getProjectRef(), ArchitectureReportConstants.KEY_INVALID_LIBRARY, artifact + " update incompatible, was version " + libs.get(artifact)));
                 }
@@ -79,7 +85,7 @@ public class DefinitionComparer
         return issues;
     }
 
-    private boolean isLibValid(String artifact, String oldVersion, String newVersion)
+    private boolean isLibValid(String oldVersion, String newVersion)
     {
         if (oldVersion.equals(newVersion))
         {
