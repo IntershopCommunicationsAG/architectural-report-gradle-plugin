@@ -68,7 +68,7 @@ public class DefinitionComparer
                 String version = getVersion(d.getSignature());
                 if (!libs.containsKey(artifact))
                 {
-                    issues.add(new Issue(d.getProjectRef(), ArchitectureReportConstants.KEY_NEW_LIBRARY, d.getSignature()));
+                    issues.add(new Issue(d.getProjectRef(), ArchitectureReportConstants.KEY_NEW_LIBRARY, artifact));
                 }
                 else if (!isLibValid(artifact, libs.get(artifact), version))
                 {
