@@ -202,7 +202,7 @@ dependencies {
     implementation("commons-io:commons-io:2.11.0")
     implementation("javax.ws.rs:javax.ws.rs-api:2.1.1")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
-    implementation("org.glassfish.jaxb:jaxb-runtime:3.0.2")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.0")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.4.2")
 
     runtimeOnly("org.apache.cxf:cxf-rt-rs-client:3.5.2")
@@ -214,7 +214,7 @@ dependencies {
     testImplementation("org.junit.vintage:junit-vintage-engine:5.8.2")
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("com.google.jimfs:jimfs:1.2")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.9.3")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
     testImplementation("com.intershop.gradle.test:test-gradle-plugin:4.1.1")
 }
 

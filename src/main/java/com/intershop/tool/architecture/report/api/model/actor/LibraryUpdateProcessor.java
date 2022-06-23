@@ -7,7 +7,11 @@ import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants;
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportOutputFolder;
 import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 import com.intershop.tool.architecture.report.common.issue.Issue;
-import com.intershop.tool.architecture.report.common.project.*;
+import com.intershop.tool.architecture.report.common.project.DependencyListVisitor;
+import com.intershop.tool.architecture.report.common.project.GlobalProcessor;
+import com.intershop.tool.architecture.report.common.project.LibDefinitionMapper;
+import com.intershop.tool.architecture.report.common.project.ProjectProcessorResult;
+import com.intershop.tool.architecture.report.common.project.ProjectRef;
 import com.intershop.tool.architecture.report.common.resources.URILoader;
 import com.intershop.tool.architecture.report.common.resources.XMLLoaderException;
 import com.intershop.tool.architecture.report.common.resources.XmlLoader;
@@ -27,7 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Validates Modification of Java Classes
+ * Validates if project contains new libraries or library updates which violate a semantic versioning {@link UpdateStrategy}.
  */
 public class LibraryUpdateProcessor implements GlobalProcessor
 {

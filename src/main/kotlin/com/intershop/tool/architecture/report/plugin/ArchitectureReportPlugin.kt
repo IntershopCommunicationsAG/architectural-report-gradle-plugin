@@ -88,7 +88,7 @@ class ArchitectureReportPlugin : Plugin<Project> {
                     dependencies.add(dependencyHandler.create("commons-io:commons-io:2.11.0"))
                     dependencies.add(dependencyHandler.create("javax.ws.rs:javax.ws.rs-api:2.1.1"))
                     dependencies.add(dependencyHandler.create("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0"))
-                    dependencies.add(dependencyHandler.create("org.glassfish.jaxb:jaxb-runtime:3.0.2"))
+                    dependencies.add(dependencyHandler.create("org.glassfish.jaxb:jaxb-runtime:4.0.0"))
                     dependencies.add(dependencyHandler.create("com.intershop.gradle.icm:icm-gradle-plugin:5.4.2"))
 
                     dependencies.add(dependencyHandler.create("org.apache.cxf:cxf-rt-rs-client:3.5.2"))

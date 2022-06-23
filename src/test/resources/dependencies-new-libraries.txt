@@ -1,0 +1,9 @@
+self:com.intershop.primetech:primetech:20150916163237
+library:antlr:antlr:2.7.7
+library:com.google.guava:guava:16.0
+library:aopalliance:aopalliance1:1.0
+library:ch.qos.logback:logback-classic:1.0.13
+library:org.springframework:spring-test:5.3.21
+cartridge:com.intershop:bc_pricing:7.6.0.0.20150909220007
+cartridge:com.intershop:new_cartridge:7.6.0.0.20150909220007
+cartridge:com.intershop.b2b:new_cartridge_2:7.6.0.0.20150909220007
