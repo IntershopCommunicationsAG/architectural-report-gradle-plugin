@@ -13,7 +13,7 @@ The plugin can be applied to all Gradle Intershop projects.
 In build.gradle:
 ```groovy
 plugins {
-    id "com.intershop.gradle.architectural.report" version "3.0.3"
+    id "com.intershop.gradle.architectural.report" version "3.0.4"
 }
 
 architectureReport {
@@ -29,7 +29,7 @@ architectureReport {
 In build.gradle.kts:
 ```kotlin
 plugins {
-    id("com.intershop.gradle.architectural.report") version "3.0.3"
+    id("com.intershop.gradle.architectural.report") version "3.0.4"
 }
 
 architectureReport {
