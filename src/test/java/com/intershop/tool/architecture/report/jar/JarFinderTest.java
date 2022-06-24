@@ -1,7 +1,7 @@
 package com.intershop.tool.architecture.report.jar;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.intershop.tool.architecture.report.java.model.jar.JarFinder;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,13 +9,12 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Enumeration;
 
-import org.junit.Test;
-
-import com.intershop.tool.architecture.report.java.model.jar.JarFinder;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JarFinderTest
 {
-    private JarFinder jarFinder = new JarFinder();
+    private final JarFinder jarFinder = new JarFinder();
 
     @Test
     public void test() throws IOException
@@ -29,13 +28,11 @@ public class JarFinderTest
             Collection<File> files = jarFinder.apply(resourceFolder);
             if (!files.isEmpty())
             {
-                assertEquals("found four jars", 2, files.size());
-                assertTrue("contains test_ca",
-                                files.stream().anyMatch(ref -> ref.getAbsolutePath().contains("test_ca")));
+                assertEquals(2, files.size(), "found four jars");
+                assertTrue(files.stream().anyMatch(ref -> ref.getAbsolutePath().contains("test_ca")), "contains test_ca");
                 found = true;
             }
         }
-        assertTrue("No jars found", found);
+        assertTrue(found, "No jars found");
     }
-
 }

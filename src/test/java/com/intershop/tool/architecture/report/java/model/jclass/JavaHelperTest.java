@@ -1,11 +1,11 @@
 package com.intershop.tool.architecture.report.java.model.jclass;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JavaHelperTest
 {
@@ -30,10 +30,10 @@ public class JavaHelperTest
     public void testSimpleSignature()
     {
         Collection<String> result = JavaHelper.splitSignature(TEST_SIGNATURE);
-        assertEquals("only one class", TEST_CLASSNAMES.length, result.size());
+        assertEquals(TEST_CLASSNAMES.length, result.size(), "only one class");
         for (String className : TEST_CLASSNAMES)
         {
-            assertTrue("found: " + className, result.contains(className));
+            assertTrue(result.contains(className), "found: " + className);
         }
     }
 
@@ -41,10 +41,10 @@ public class JavaHelperTest
     public void testExtendsSignature()
     {
         Collection<String> result = JavaHelper.splitSignature(TEST_SIGNATURE_EXTENDS);
-        assertEquals("only one class", TEST_CLASSNAMES_EXTENDS.length, result.size());
+        assertEquals(TEST_CLASSNAMES_EXTENDS.length, result.size(), "only one class");
         for (String className : TEST_CLASSNAMES_EXTENDS)
         {
-            assertTrue("found: " + className, result.contains(className));
+            assertTrue(result.contains(className), "found: " + className);
         }
     }
 
@@ -52,10 +52,10 @@ public class JavaHelperTest
     public void testRuleSignature()
     {
         Collection<String> result = JavaHelper.splitSignature(TEST_SIGNATURE_EXTENDS_RULE);
-        assertEquals("only one class", TEST_CLASSNAMES_EXTENDS_RULE.length, result.size());
+        assertEquals(TEST_CLASSNAMES_EXTENDS_RULE.length, result.size(), "only one class");
         for (String className : TEST_CLASSNAMES_EXTENDS_RULE)
         {
-            assertTrue("found: " + className, result.contains(className));
+            assertTrue(result.contains(className), "found: " + className);
         }
     }
 
@@ -63,10 +63,10 @@ public class JavaHelperTest
     public void testCollectionSignature()
     {
         Collection<String> result = JavaHelper.splitSignature(TEST_COLLECTION_SIGNATURE);
-        assertEquals("only one class", TEST_COLLECTION_SIGNATURE_RESULT.length, result.size());
+        assertEquals(TEST_COLLECTION_SIGNATURE_RESULT.length, result.size(), "only one class");
         for (String className : TEST_COLLECTION_SIGNATURE_RESULT)
         {
-            assertTrue("found: " + className, result.contains(className));
+            assertTrue(result.contains(className), "found: " + className);
         }
     }
 }
