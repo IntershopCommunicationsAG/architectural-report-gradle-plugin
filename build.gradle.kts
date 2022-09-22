@@ -19,27 +19,28 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // project plugins
-    id("base")
-    id("java")
-    id("java-gradle-plugin")
-    id("org.jetbrains.kotlin.jvm") version "1.6.21"
+    // project plugins
+    `java-gradle-plugin`
+    kotlin("jvm") version "1.7.10"
 
     // test coverage
-    id("jacoco")
+    jacoco
 
     // ide plugin
-    id("idea")
-    id("eclipse")
+    idea
+    eclipse
+
+    // publish plugin
+    `maven-publish`
 
     // artifact signing - necessary on Maven Central
-    id("signing")
-
-    // plugin for publishing to Gradle Portal
-    id("maven-publish")
-    id("com.gradle.plugin-publish") version "0.21.0"
+    signing
 
     // intershop version plugin
     id("com.intershop.gradle.scmversion") version "6.2.0"
+
+    // plugin for publishing to Gradle Portal
+    id("com.gradle.plugin-publish") version "1.0.0"
 }
 
 scm {
@@ -65,14 +66,37 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
 val sonatypeUsername: String? by project
 val sonatypePassword: String? by project
 
-java {
-    withSourcesJar()
-    withJavadocJar()
+repositories {
+    gradlePluginPortal()
+    mavenCentral()
 }
 
-configure<JavaPluginExtension> {
+gradlePlugin {
+    plugins {
+        register("ArchitectureReportPlugin") {
+            id = "com.intershop.gradle.architectural.report"
+            implementationClass = "com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin"
+            displayName = project.displayName
+            description = project.description
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    description = project.description
+    tags = listOf("intershop", "validation", "analysis")
+}
+
+java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
+
+// set correct project status
+if (project.version.toString().endsWith("-SNAPSHOT")) {
+    status = "snapshot'"
 }
 
 jacoco {
@@ -80,6 +104,10 @@ jacoco {
 }
 
 tasks {
+    withType<Test> {
+        useJUnitPlatform()
+    }
+
     register("generateResources") {
         // Generate properties file with plugin version to access this information in plugin itself
         val versionPropertyFile = file("${buildDir}/generated/version.properties")
@@ -90,32 +118,34 @@ tasks {
         }
     }
 
-    withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_11.toString()
-        }
+    withType<KotlinCompile>  {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     withType<ProcessResources> {
         from(files(getTasksByName("generateResources", false)))
     }
 
-    withType<Test> {
-        useJUnitPlatform()
-    }
-
     withType<JacocoReport> {
         reports {
-            xml.required.set(true) // coveralls plugin depends on xml format report
+            xml.required.set(true)
             html.required.set(true)
+
+            html.outputLocation.set( File(project.buildDir, "jacocoHtml") )
         }
 
         val jacocoTestReport by tasks
         jacocoTestReport.dependsOn("test")
     }
 
-    withType<Copy> {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    withType<Sign> {
+        val sign = this
+        withType<PublishToMavenLocal> {
+            this.dependsOn(sign)
+        }
+        withType<PublishToMavenRepository> {
+            this.dependsOn(sign)
+        }
     }
 }
 
@@ -171,24 +201,6 @@ publishing {
     }
 }
 
-pluginBundle {
-    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    description = project.description
-    tags = listOf("intershop", "validation", "analysis")
-}
-
-gradlePlugin {
-    plugins {
-        register("ArchitectureReportPlugin") {
-            id = "com.intershop.gradle.architectural.report"
-            implementationClass = "com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin"
-            displayName = project.displayName
-            description = project.description
-        }
-    }
-}
-
 signing {
     sign(publishing.publications["intershopMvn"])
 }
@@ -196,7 +208,7 @@ signing {
 dependencies {
     implementation(gradleApi())
 
-    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation("org.slf4j:slf4j-api:2.0.1")
     implementation("org.ow2.asm:asm:9.3")
     implementation("javax.inject:javax.inject:1")
     implementation("commons-io:commons-io:2.11.0")
@@ -205,20 +217,15 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.0")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.4.2")
 
-    runtimeOnly("org.apache.cxf:cxf-rt-rs-client:3.5.2")
-    runtimeOnly("org.apache.cxf:cxf-rt-transports-http:3.5.2")
-    runtimeOnly("org.apache.cxf:cxf-rt-transports-local:3.5.2")
-    runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
+    runtimeOnly("org.apache.cxf:cxf-rt-rs-client:3.5.3")
+    runtimeOnly("org.apache.cxf:cxf-rt-transports-http:3.5.3")
+    runtimeOnly("org.apache.cxf:cxf-rt-transports-local:3.5.3")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.0")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("com.google.jimfs:jimfs:1.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
-    testImplementation("com.intershop.gradle.test:test-gradle-plugin:4.1.1")
+    //testImplementation("com.intershop.gradle.test:test-gradle-plugin:4.1.2")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    gradlePluginPortal()
-}

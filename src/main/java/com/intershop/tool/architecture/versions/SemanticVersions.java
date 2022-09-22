@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 public class SemanticVersions
 {
+    private SemanticVersions() {}
+
     private static final Comparator<SemanticVersion> COMPARATOR_NEWEST_FIRST = (o1, o2) -> {
         int majorDiff = o2.getMajor() - o1.getMajor();
         if (majorDiff != 0)
@@ -78,7 +80,7 @@ public class SemanticVersions
     /**
      * Find release, where only the patch version is updated. (used for stabilization branches)
      *
-     * @param source
+     * @param current
      *            version
      * @param versions
      *            available version
@@ -87,18 +89,17 @@ public class SemanticVersions
     private static SemanticVersion getNewestPatchVersion(Collection<SemanticVersion> versions, SemanticVersion current)
     {
         Optional<SemanticVersion> firstElement = versions.stream()
-                        .filter(v -> v.isIncrementable())
-                        .filter(v -> v.getMajor() == current.getMajor())
-                        .filter(v -> v.getMinor() == current.getMinor())
-                        .filter(v -> ReleaseType.GA.equals(v.getIncrementState()))
-                        .sorted(COMPARATOR_NEWEST_FIRST).findFirst();
-        return firstElement.isPresent() ? firstElement.get() : current;
+                .filter(SemanticVersion::isIncrementable)
+                .filter(v -> v.getMajor() == current.getMajor())
+                .filter(v -> v.getMinor() == current.getMinor())
+                .filter(v -> ReleaseType.GA.equals(v.getIncrementState())).min(COMPARATOR_NEWEST_FIRST);
+        return firstElement.orElse(current);
     }
 
     /**
      * Find release, where only the patch version is updated. (used for stabilization branches)
      *
-     * @param source
+     * @param current
      *            version
      * @param versions
      *            available version
@@ -107,17 +108,17 @@ public class SemanticVersions
     private static SemanticVersion getNewestMinorVersion(Collection<SemanticVersion> versions, SemanticVersion current)
     {
         Optional<SemanticVersion> firstElement = versions.stream()
-                        .filter(v -> v.isIncrementable())
+                        .filter(SemanticVersion::isIncrementable)
                         .filter(v -> v.getMajor() == current.getMajor())
                         .filter(v -> ReleaseType.GA.equals(v.getIncrementState()))
-                        .sorted(COMPARATOR_NEWEST_FIRST).findFirst();
-        return firstElement.isPresent() ? firstElement.get() : current;
+                        .min(COMPARATOR_NEWEST_FIRST);
+        return firstElement.orElse(current);
     }
 
     /**
      * Find release, where major,minor,patch version can be updated. (used external dependencies for trunk/master)
      *
-     * @param source
+     * @param current
      *            version
      * @param versions
      *            available version
@@ -126,18 +127,18 @@ public class SemanticVersions
     private static SemanticVersion getNewestMajorVersion(Collection<SemanticVersion> versions, SemanticVersion current)
     {
         Optional<SemanticVersion> firstElement = versions.stream()
-                        .filter(v -> v.isIncrementable())
+                        .filter(SemanticVersion::isIncrementable)
                         .filter(v -> v.getIncrement() == 0)
                         .filter(v -> ReleaseType.GA.equals(v.getIncrementState()))
-                        .sorted(COMPARATOR_NEWEST_FIRST).findFirst();
-        return firstElement.isPresent() ? firstElement.get() : current;
+                        .min(COMPARATOR_NEWEST_FIRST);
+        return firstElement.orElse(current);
     }
 
     /**
      * Find any increment, where major,minor,patch,increment can be updated. (used internal dependencies for
      * trunk/master)
      *
-     * @param source
+     * @param current
      *            version
      * @param versions
      *            available version
@@ -146,9 +147,9 @@ public class SemanticVersions
     private static SemanticVersion getNewestAvailableVersion(Collection<SemanticVersion> versions, SemanticVersion current)
     {
         Optional<SemanticVersion> firstElement = versions.stream()
-                        .filter(v -> v.isIncrementable())
-                        .sorted(COMPARATOR_NEWEST_FIRST).findFirst();
-        return firstElement.isPresent() ? firstElement.get() : current;
+                        .filter(SemanticVersion::isIncrementable)
+                        .min(COMPARATOR_NEWEST_FIRST);
+        return firstElement.orElse(current);
     }
 
     /**
@@ -185,7 +186,7 @@ public class SemanticVersions
         {
             return true;
         }
-        if  (oldVersion.getPatch() != newVersion.getPatch())
+        if (oldVersion.getPatch() != newVersion.getPatch())
         {
             return false;
         }
