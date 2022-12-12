@@ -15,6 +15,10 @@ plugins {
 
     // plugin for publishing to Gradle Portal
     id 'maven-publish'
+    
+    // artifact signing - necessary on Maven Central
+    id 'signing'
+
     id 'com.gradle.plugin-publish' version '0.10.0'
 }
 
