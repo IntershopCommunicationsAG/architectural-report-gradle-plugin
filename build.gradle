@@ -93,14 +93,14 @@ publishing {
                 def developers = root.appendNode('developers')
                 
                 def developer1 = developers.appendNode( 'developer' )
-                developer.appendNode( 'id', 'Thomas-Bergmann' )
-                developer.appendNode( 'name', 'Thomas Bergmann' )
-                developer.appendNode( 'email', 'tbergmann@intershop.de' )
+                developer1.appendNode( 'id', 'Thomas-Bergmann' )
+                developer1.appendNode( 'name', 'Thomas Bergmann' )
+                developer1.appendNode( 'email', 'tbergmann@intershop.de' )
 
                 def developer2 = developers.appendNode( 'developer' )
-                developer.appendNode( 'id', 'm-raab' )
-                developer.appendNode( 'name', 'M. Raab' )
-                developer.appendNode( 'email', 'mraab@intershop.de' )
+                developer2.appendNode( 'id', 'm-raab' )
+                developer2.appendNode( 'name', 'M. Raab' )
+                developer2.appendNode( 'email', 'mraab@intershop.de' )
 
                 def pomFile = file("${project.buildDir}/generated-pom.xml")
                 writeTo(pomFile)
