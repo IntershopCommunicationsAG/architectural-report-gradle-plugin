@@ -92,11 +92,12 @@ publishing {
 
                 def developers = root.appendNode('developers')
                 
-                def developer = developers.appendNode( 'developer' )
+                def developer1 = developers.appendNode( 'developer' )
                 developer.appendNode( 'id', 'Thomas-Bergmann' )
                 developer.appendNode( 'name', 'Thomas Bergmann' )
                 developer.appendNode( 'email', 'tbergmann@intershop.de' )
 
+                def developer2 = developers.appendNode( 'developer' )
                 developer.appendNode( 'id', 'm-raab' )
                 developer.appendNode( 'name', 'M. Raab' )
                 developer.appendNode( 'email', 'mraab@intershop.de' )
