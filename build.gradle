@@ -173,17 +173,17 @@ dependencies {
     compile localGroovy()
 
     compile 'org.slf4j:slf4j-api:1.7.36'
-    compile 'org.ow2.asm:asm:7.0'
+    compile 'org.ow2.asm:asm:9.4'
     compile 'javax.inject:javax.inject:1'
     compile 'commons-io:commons-io:2.11.0'
     compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
 
-    runtime 'org.apache.cxf:cxf-rt-rs-client:3.5.4'
-    runtime 'org.apache.cxf:cxf-rt-transports-http:3.5.4'
-    runtime 'org.apache.cxf:cxf-rt-transports-local:3.5.4'
+    runtime 'org.apache.cxf:cxf-rt-rs-client:3.5.5'
+    runtime 'org.apache.cxf:cxf-rt-transports-http:3.5.5'
+    runtime 'org.apache.cxf:cxf-rt-transports-local:3.5.5'
     runtime 'ch.qos.logback:logback-classic:1.2.11'
 
-    testCompile 'junit:junit:4.13'
+    testCompile 'junit:junit:4.13.2'
 }
 
 repositories {
