@@ -52,7 +52,7 @@ jobs:
         env:
           ISHUSERNAME: ${{ secrets.ISHUSERNAME }}
           ISHKEY: ${{ secrets.ISHKEY }}
-          JAVA_OPTS: "-Xmx1024M -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512M"
+          JAVA_OPTS: "-Xmx1024M -XX:ReservedCodeCacheSize=512M"
           GRADLE_OPTS: "-Dorg.gradle.daemon=true"
         run: ./gradlew -PrunOnCI=true test build :publishIntershopMvnPublicationToMavenRepository :publishPlugins -s --scan
       - name: Post Build

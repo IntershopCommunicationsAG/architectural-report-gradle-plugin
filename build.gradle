@@ -19,7 +19,7 @@ plugins {
     // artifact signing - necessary on Maven Central
     id 'signing'
 
-    id 'com.gradle.plugin-publish' version '0.10.0'
+    id 'com.gradle.plugin-publish' version '0.21.0'
 }
 
 // release configuration
@@ -28,7 +28,7 @@ description 'Gradle architectural report plugin'
 
 // adapt external loading at ArchitectureReportPlugin and README.md too
 // IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
-version = '2.1.0'
+version = '2.1.1'
 // IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
 
 sourceCompatibility = 1.8
