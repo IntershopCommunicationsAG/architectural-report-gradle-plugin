@@ -183,7 +183,7 @@ dependencies {
     runtime 'org.apache.cxf:cxf-rt-transports-local:3.5.4'
     runtime 'ch.qos.logback:logback-classic:1.2.11'
 
-    testCompile 'junit:junit:4.13'
+    testCompile 'junit:junit:4.13.2'
 }
 
 repositories {
