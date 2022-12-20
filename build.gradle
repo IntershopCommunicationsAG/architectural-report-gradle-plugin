@@ -19,7 +19,7 @@ plugins {
     // artifact signing - necessary on Maven Central
     id 'signing'
 
-    id 'com.gradle.plugin-publish' version '0.10.0'
+    id 'com.gradle.plugin-publish' version '0.21.0'
 }
 
 // release configuration
