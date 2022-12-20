@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/IntershopCommunicationsAG/architectural-report-gradle-plugin.svg?branch=master)](https://travis-ci.org/IntershopCommunicationsAG/architectural-report-gradle-plugin)
+[![Build Status](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions/workflows/build.yml/badge.svg?branch=SB_2)](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions/workflows/build.yml?query=branch%3ASB_2)
 
 # Introduction
 
@@ -12,7 +12,7 @@ Include to build.gradle
 <pre>
 buildscript {
     dependencies {
-        classpath 'com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:2.0.2'
+        classpath 'com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:2.1.0'
     }
 }
 apply plugin: 'com.intershop.gradle.architectural.report'
@@ -78,7 +78,7 @@ Start the architecture report task:
 
 # License
 
-Copyright 2014-2016 Intershop Communications.
+Copyright 2014-2022 Intershop Communications.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

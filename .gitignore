@@ -12,3 +12,9 @@ bin/
 .project
 .settings
 /bin/
+
+# Visual Studio Code files
+.vscode/
+
+# IntelliJ IDEA files
+.idea/
