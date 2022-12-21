@@ -50,6 +50,10 @@ task groovydocJar(type: Jar) {
     from groovydoc.destinationDir
 }
 
+jar {
+    classifier = null
+}
+
 // additional sources artifact
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
