@@ -29,7 +29,6 @@ description 'Gradle architectural report plugin'
 // adapt external loading at ArchitectureReportPlugin and README.md too
 // IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
 version = '2.1.1'
-// IMPORTANT version referenced at com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -55,6 +54,28 @@ task groovydocJar(type: Jar) {
 // additional sources artifact
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
+}
+
+gradlePlugin {
+    plugins {
+        architecturereport {
+            id = 'com.intershop.gradle.architectural.report'
+            implementationClass = 'com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    description = 'Plugin to verify archtictural changes in ICM'
+
+    plugins {
+        architecturereport {
+            displayName = "icm-architecturalreport-plugin"
+            tags = ['intershop', 'report', 'architecture']
+        }
+    }
 }
 
 publishing {
