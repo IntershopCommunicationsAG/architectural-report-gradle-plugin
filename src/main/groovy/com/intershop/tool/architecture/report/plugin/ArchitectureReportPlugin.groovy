@@ -57,17 +57,17 @@ class ArchitectureReportPlugin implements Plugin<Project> {
                     .defaultDependencies { dependencies ->
                 DependencyHandler dependencyHandler = project.getDependencies()
 
-                dependencies.add(dependencyHandler.create('com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:2.1.1'))
-                dependencies.add(dependencyHandler.create('org.slf4j:slf4j-api:1.7.25'))
-                dependencies.add(dependencyHandler.create('org.ow2.asm:asm:7.0'))
+                dependencies.add(dependencyHandler.create('com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:2.1.0'))
+                dependencies.add(dependencyHandler.create('org.slf4j:slf4j-api:1.7.36'))
+                dependencies.add(dependencyHandler.create('org.ow2.asm:asm:9.4'))
                 dependencies.add(dependencyHandler.create('javax.inject:javax.inject:1'))
-                dependencies.add(dependencyHandler.create('commons-io:commons-io:2.6'))
+                dependencies.add(dependencyHandler.create('commons-io:commons-io:2.11.0'))
                 dependencies.add(dependencyHandler.create('javax.ws.rs:javax.ws.rs-api:2.0.1'))
 
-                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-rs-client:3.1.17'))
-                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-transports-http:3.1.17'))
-                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-transports-local:3.1.17'))
-                dependencies.add(dependencyHandler.create('ch.qos.logback:logback-classic:1.2.3'))
+                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-rs-client:3.5.5'))
+                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-transports-http:3.5.5'))
+                dependencies.add(dependencyHandler.create('org.apache.cxf:cxf-rt-transports-local:3.5.5'))
+                dependencies.add(dependencyHandler.create('ch.qos.logback:logback-classic:1.2.11'))
             }
         }
     }
