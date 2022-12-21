@@ -1,6 +1,5 @@
 plugins {
     // project plugins
-    id 'java'
     id 'java-gradle-plugin'
     id 'groovy'
     // test coverage
