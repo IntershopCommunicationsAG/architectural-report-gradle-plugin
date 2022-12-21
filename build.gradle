@@ -45,18 +45,20 @@ jacocoTestReport {
 }
 
 gradlePlugin {
-    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
-
     plugins {
         architecturereport {
             id = 'com.intershop.gradle.architectural.report'
             implementationClass = 'com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin'
             displayName = "icm-architecturalreport-plugin"
-            tags.set(['intershop', 'report', 'architecture'])
             description = 'Plugin to verify archtictural changes in ICM'
         }
     }
+}
+
+pluginBundle {
+    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
+    tags = ['intershop', 'report', 'architecture']
 }
 
 task groovydocJar(type: Jar) {
