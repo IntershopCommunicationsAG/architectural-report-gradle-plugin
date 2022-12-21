@@ -175,20 +175,6 @@ signing {
     sign configurations.archives
 }
 
-pluginBundle {
-    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    description = project.description
-    tags = ['intershop', 'validation', 'analysis']
-
-    plugins {
-        gradleTestPlugin {
-            id = 'com.intershop.gradle.architectural.report'
-            displayName = project.description
-        }
-    }
-}
-
 dependencies {
     compile gradleApi()
     compile localGroovy()
