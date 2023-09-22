@@ -2,7 +2,6 @@ package com.intershop.tool.architecture.report.common.issue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Comparator;
 import java.util.Formatter;
 import java.util.List;
 
@@ -15,11 +14,7 @@ import com.intershop.tool.architecture.report.cmd.CommandLineArguments;
 
 public class IssuePrinter
 {
-    private static final Logger logger = LoggerFactory.getLogger(IssuePrinter.class);
-    private static final Comparator<? super Issue> ISSUE_COMPARATOR = Comparator.comparing(
-                                    (Issue a) -> a.getProjectRef().getIdentifier())
-                    .thenComparing(Issue::getKey)
-                    .thenComparing(Issue::getParametersString);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IssuePrinter.class);
 
     private final CommandLineArguments info;
 
@@ -33,7 +28,7 @@ public class IssuePrinter
      */
     public void printIssues(List<Issue> issues)
     {
-        issues.sort(ISSUE_COMPARATOR);
+        issues.sort(IssueComparator.getInstance());
         ArchitectureReportOutputFolder folderLocations = new ArchitectureReportOutputFolder(
                         info.getArgument(ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY));
         File newIssuesFile = folderLocations.getNewIssuesFile();
@@ -53,8 +48,8 @@ public class IssuePrinter
         }
         catch(FileNotFoundException e)
         {
-            logger.error("Can't write errors at " + newIssuesFile.getAbsolutePath(), e);
+            LOGGER.error("Can't write errors at " + newIssuesFile.getAbsolutePath(), e);
         }
-        logger.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
+        LOGGER.error("Architecture report contains new errors, see '{}'.", newIssuesFile.getAbsolutePath());
     }
 }

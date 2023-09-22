@@ -2,6 +2,7 @@ package com.intershop.tool.architecture.report.cmd;
 
 import java.util.List;
 
+import com.intershop.tool.architecture.report.common.issue.IssueLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +61,12 @@ public class ArchitectureReport
             logger.info("Architecture report contains no errors.");
             return false;
         }
+
         IssuePrinter printer = new IssuePrinter(info);
         printer.printIssues(filteredIssues);
+
+        new IssueLogger().logIssues(filteredIssues);
+
         return true;
     }
 }
