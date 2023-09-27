@@ -85,15 +85,11 @@ class ArchitectureReportPlugin : Plugin<Project> {
                     dependencies.add(dependencyHandler.create("org.slf4j:slf4j-api:2.0.9"))
                     dependencies.add(dependencyHandler.create("org.ow2.asm:asm:9.5"))
                     dependencies.add(dependencyHandler.create("javax.inject:javax.inject:1"))
-                    dependencies.add(dependencyHandler.create("javax.ws.rs:javax.ws.rs-api:2.1.1"))
                     dependencies.add(dependencyHandler.create("commons-io:commons-io:2.13.0"))
                     dependencies.add(dependencyHandler.create("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1"))
                     dependencies.add(dependencyHandler.create("org.glassfish.jaxb:jaxb-runtime:4.0.3"))
                     dependencies.add(dependencyHandler.create("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0"))
 
-                    dependencies.add(dependencyHandler.create("org.apache.cxf:cxf-rt-rs-client:3.5.2"))
-                    dependencies.add(dependencyHandler.create("org.apache.cxf:cxf-rt-transports-http:3.5.2"))
-                    dependencies.add(dependencyHandler.create("org.apache.cxf:cxf-rt-transports-local:3.5.2"))
                     dependencies.add(dependencyHandler.create("ch.qos.logback:logback-classic:1.4.11"))
                 }
         }

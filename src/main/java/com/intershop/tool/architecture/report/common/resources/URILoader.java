@@ -1,15 +1,16 @@
 package com.intershop.tool.architecture.report.common.resources;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +19,17 @@ public class URILoader
 {
     private static final Logger logger = LoggerFactory.getLogger(URILoader.class);
 
-    public static InputStream getInputStream(URI uri) throws IOException
+    public static InputStream getInputStream(URI uri) throws IOException, InterruptedException
     {
         if (uri.getScheme().startsWith("http"))
         {
-            return getInputStream(ClientBuilder.newClient().target(uri));
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .version(HttpClient.Version.HTTP_2)
+                .timeout(Duration.ofSeconds(30))
+                .GET()
+                .build();
+            return getInputStream(request);
         }
         else if (uri.getScheme().startsWith("file"))
         {
@@ -35,22 +42,23 @@ public class URILoader
         }
     }
 
-    private static InputStream getInputStream(WebTarget webTarget) throws IOException
+    private static InputStream getInputStream(HttpRequest request) throws IOException, InterruptedException
     {
-        Response response = webTarget.request().get();
-        if (Status.OK.getStatusCode() == response.getStatus())
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        if (response.statusCode() == 200)
         {
-            logger.info("URI loaded: '{}'", webTarget.getUri().toString());
-            return (InputStream)response.getEntity();
+            logger.info("URI loaded: '{}'", request.uri());
+            return new ByteArrayInputStream(response.body().getBytes());
         }
         else
         {
-            throw new IOException("Can't get response from URI '" + webTarget.getUri().toString() + "' status="
-                            + response.getStatus() + ".");
+            throw new IOException("Can't get response from URI '" + request.uri() + "' status=" +
+                                  response.statusCode() + ".");
         }
     }
 
-    public static InputStream getInputStream(String location) throws IOException
+    public static InputStream getInputStream(String location) throws IOException, InterruptedException
     {
         return getInputStream(createURIFromString(location));
     }
@@ -62,9 +70,11 @@ public class URILoader
      * @param location The string to be parsed into a UR
      * @return New URI
      */
-    public static URI createURIFromString(String location) {
+    public static URI createURIFromString(String location)
+    {
         URI uri;
-        try {
+        try
+        {
             // Create URI by parsing location
             uri = URI.create(location);
 
@@ -73,7 +83,9 @@ public class URILoader
             {
                 throw new IllegalArgumentException();
             }
-        } catch (IllegalArgumentException e) {
+        }
+        catch(IllegalArgumentException e)
+        {
             // Fallback to try as file
             uri = new File(location).toURI();
         }

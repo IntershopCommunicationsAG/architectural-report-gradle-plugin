@@ -209,15 +209,11 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("org.ow2.asm:asm:9.5")
     implementation("javax.inject:javax.inject:1")
-    implementation("javax.ws.rs:javax.ws.rs-api:2.1.1")
     implementation("commons-io:commons-io:2.13.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.3")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0")
 
-    runtimeOnly("org.apache.cxf:cxf-rt-rs-client:3.5.3")
-    runtimeOnly("org.apache.cxf:cxf-rt-transports-http:3.5.3")
-    runtimeOnly("org.apache.cxf:cxf-rt-transports-local:3.5.3")
     runtimeOnly("ch.qos.logback:logback-classic:1.4.11")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.0")

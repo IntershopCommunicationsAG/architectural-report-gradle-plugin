@@ -75,7 +75,7 @@ public class LibraryUpdateProcessor implements GlobalProcessor
         }
         catch(IOException | JAXBException e)
         {
-            LoggerFactory.getLogger(getClass()).warn("Can't export files", e);
+            logger.warn("Can't export files", e);
         }
         return issueCollector.getIssues();
     }
@@ -108,9 +108,14 @@ public class LibraryUpdateProcessor implements GlobalProcessor
                 APIDefinition baselineDefinition = xmlLoader.importXML(is, APIDefinition.class);
                 result.baseline.addAll(baselineDefinition.getDefinition());
             }
+            catch(InterruptedException e)
+            {
+                logger.warn("Loading API definition '{}' failed due to thread interruption.", baselineLocation, e);
+                Thread.currentThread().interrupt();
+            }
             catch(XMLLoaderException | IOException e)
             {
-                LoggerFactory.getLogger(getClass()).warn("Loading API definition failed, location:" + baselineLocation, e);
+                logger.warn("Loading API definition '{}' failed.", baselineLocation, e);
             }
         }
         String strategyArg = info.getArgument(ArchitectureReportConstants.ARG_STRATEGY);

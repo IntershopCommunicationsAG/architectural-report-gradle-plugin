@@ -65,14 +65,14 @@ public class URILoaderTest
     }
 
     @Test
-    public void testInputStreamOfHttp() throws IOException
+    public void testInputStreamOfHttp() throws IOException, InterruptedException
     {
         InputStream inputStream = URILoader.getInputStream(mockWebServer.url("/").toString());
         assertInstanceOf(InputStream.class, inputStream);
     }
 
     @Test
-    public void testInputStreamOfFile() throws IOException
+    public void testInputStreamOfFile() throws IOException, InterruptedException
     {
         Path tempFile = Files.createTempFile("file", "txt");
         tempFile.toFile().deleteOnExit();
