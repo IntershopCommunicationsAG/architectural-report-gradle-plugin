@@ -220,6 +220,7 @@ dependencies {
     runtimeOnly("org.apache.cxf:cxf-rt-transports-local:3.5.3")
     runtimeOnly("ch.qos.logback:logback-classic:1.4.11")
 
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("com.google.jimfs:jimfs:1.3.0")
