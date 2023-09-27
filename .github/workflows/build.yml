@@ -15,7 +15,7 @@ jobs:
     environment: CIRelease
     strategy:
       matrix:
-        java: [ '11' ]
+        java: [ '11', '17' ]
         os: [ 'ubuntu-latest', 'windows-latest' ]
     runs-on: ${{ matrix.os }}
     name: Build & Test with Java ${{ matrix.Java }} (${{ matrix.os }})
