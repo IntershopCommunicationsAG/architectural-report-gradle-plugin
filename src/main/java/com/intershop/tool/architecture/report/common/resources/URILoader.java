@@ -1,6 +1,5 @@
 package com.intershop.tool.architecture.report.common.resources;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -45,11 +44,11 @@ public class URILoader
     private static InputStream getInputStream(HttpRequest request) throws IOException, InterruptedException
     {
         HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        HttpResponse<InputStream> response = client.send(request, BodyHandlers.ofInputStream());
         if (response.statusCode() == 200)
         {
             logger.info("URI loaded: '{}'", request.uri());
-            return new ByteArrayInputStream(response.body().getBytes());
+            return response.body();
         }
         else
         {
