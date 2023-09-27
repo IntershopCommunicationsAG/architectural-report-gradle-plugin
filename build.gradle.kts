@@ -72,26 +72,25 @@ repositories {
 }
 
 gradlePlugin {
+    website.set("https://github.com/IntershopCommunicationsAG/${project.name}")
+    vcsUrl.set("https://github.com/IntershopCommunicationsAG/${project.name}")
     plugins {
-        register("ArchitectureReportPlugin") {
+        create("ArchitectureReportPlugin") {
             id = "com.intershop.gradle.architectural.report"
             implementationClass = "com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin"
             displayName = project.displayName
             description = project.description
+            tags.set(listOf("intershop", "validation", "analysis"))
         }
     }
-}
-
-pluginBundle {
-    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    description = project.description
-    tags = listOf("intershop", "validation", "analysis")
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 // set correct project status
@@ -110,11 +109,11 @@ tasks {
 
     register("generateResources") {
         // Generate properties file with plugin version to access this information in plugin itself
-        val versionPropertyFile = file("${buildDir}/generated/version.properties")
+        val versionPropertyFile = project.layout.buildDirectory.file("generated/version.properties")
         outputs.file(versionPropertyFile)
         doLast {
-            mkdir(versionPropertyFile.parentFile)
-            versionPropertyFile.writeText("version=${project.version}")
+            mkdir(versionPropertyFile.get().asFile.parentFile)
+            versionPropertyFile.get().asFile.writeText("version=${project.version}")
         }
     }
 
@@ -131,7 +130,7 @@ tasks {
             xml.required.set(true)
             html.required.set(true)
 
-            html.outputLocation.set( File(project.buildDir, "jacocoHtml") )
+            html.outputLocation.set(project.layout.buildDirectory.dir("jacocoHtml"))
         }
 
         val jacocoTestReport by tasks
