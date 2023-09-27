@@ -1,10 +1,16 @@
-[![Build Status](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions/workflows/build.yml)
+# Architectural Report Gradle Plugin
 
-# Introduction
+[![Build Status](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions/workflows/build.yml/badge.svg)](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions/workflows/build.yml)
+[![Latest release](https://badgen.net/github/release/IntershopCommunicationsAG/architectural-report-gradle-plugin/stable)](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/releases)
+[![License](https://badgen.net/github/license/IntershopCommunicationsAG/architectural-report-gradle-plugin)](LICENSE.md)
+[![Automated checks](https://badgen.net/github/checks/IntershopCommunicationsAG/architectural-report-gradle-plugin)](https://github.com/IntershopCommunicationsAG/architectural-report-gradle-plugin/actions)
+[![Dependabot](https://badgen.net/github/dependabot/IntershopCommunicationsAG/architectural-report-gradle-plugin)](.github/dependabot.yml)
+
+## Introduction
 
 This project provides a tool to identify architectural mistakes.
 
-# Usage
+## Usage
 
 The plugin can be applied to all Gradle Intershop projects.
 <details>
@@ -45,13 +51,13 @@ Start the architecture report task:
 ./gradlew validateArchitecture
 ```
 
-# Tasks
+## Tasks
 
 | Task                 | Description                                                      |
 |----------------------|------------------------------------------------------------------|
 | validateArchitecture | Task creates API definition, API diffs, list of collected issues |
 
-# Validation Keys
+## Validation Keys
 
 | Key                              | Description                                           |
 |----------------------------------|-------------------------------------------------------|
@@ -72,7 +78,7 @@ Start the architecture report task:
 | com.intershop.pipeline.invalid.pipelineref | Pipeline contains references to non existing pipeline start nodes            |
 -->
 
-# Configuration
+## Configuration
 
 | Key                    | Type                       | Default value                                                                                                                                      | Description                                                                                                                                                                                                                   |
 |------------------------|----------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -84,7 +90,7 @@ Start the architecture report task:
 | additionalJvmArguments | ListProperty&lt;String&gt; |                                                                                                                                                    | (optional) Additional JVM arguments                                                                                                                                                                                           |
 | reportsDirectory       | DirectoryProperty          | `<project.buildDir>/architectureReport`                                                                                                            | (optional) Directory to write reports (new_issues, api_definition, resolved_issues)                                                                                                                                           |
 
-# Output
+## Output
 
 | File               | Description                                                            |
 |--------------------|------------------------------------------------------------------------|
@@ -93,7 +99,7 @@ Start the architecture report task:
 | fixed_issues.xml   | Issues, which are listed at 'knownIssuesFile', but not longer detected |
 | new_issues.xml     | Issues, which are not listed at 'knownIssuesFile', but detected        |
 
-# License
+## License
 
 Copyright 2014-2022 Intershop Communications.
 
