@@ -53,15 +53,17 @@ public class IssueFilter
         try
         {
             InputStream is = URILoader.getInputStream(azureIssueLocation);
-            if (is != null)
-            {
-                List<AzureIssue> issues = new AzureIssuesVisitor().apply(is);
-                issues.forEach(issue -> result.put(issue.getKey(), issue));
-            }
+            List<AzureIssue> issues = new AzureIssuesVisitor().apply(is);
+            issues.forEach(issue -> result.put(issue.getKey(), issue));
         }
-        catch(XMLLoaderException|IOException e)
+        catch(InterruptedException e)
         {
-            logger.warn("Can't load issues file: " + azureIssueLocation, e);
+            logger.warn("Can't load issues file '{}' due to thread interruption.", azureIssueLocation, e);
+            Thread.currentThread().interrupt();
+        }
+        catch(XMLLoaderException | IOException e)
+        {
+            logger.warn("Can't load issues file '{}'.", azureIssueLocation, e);
         }
         return result;
     }

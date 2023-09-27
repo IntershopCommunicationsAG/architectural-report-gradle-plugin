@@ -19,9 +19,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // project plugins
-    // project plugins
     `java-gradle-plugin`
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.9.10"
 
     // test coverage
     jacoco
@@ -37,10 +36,10 @@ plugins {
     signing
 
     // intershop version plugin
-    id("com.intershop.gradle.scmversion") version "6.2.0"
+    id("com.intershop.gradle.scmversion") version "6.2.1"
 
     // plugin for publishing to Gradle Portal
-    id("com.gradle.plugin-publish") version "1.0.0"
+    id("com.gradle.plugin-publish") version "1.2.1"
 }
 
 scm {
@@ -72,26 +71,25 @@ repositories {
 }
 
 gradlePlugin {
+    website.set("https://github.com/IntershopCommunicationsAG/${project.name}")
+    vcsUrl.set("https://github.com/IntershopCommunicationsAG/${project.name}")
     plugins {
-        register("ArchitectureReportPlugin") {
+        create("ArchitectureReportPlugin") {
             id = "com.intershop.gradle.architectural.report"
             implementationClass = "com.intershop.tool.architecture.report.plugin.ArchitectureReportPlugin"
             displayName = project.displayName
             description = project.description
+            tags.set(listOf("intershop", "validation", "analysis"))
         }
     }
 }
 
-pluginBundle {
-    website = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    vcsUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
-    description = project.description
-    tags = listOf("intershop", "validation", "analysis")
-}
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 // set correct project status
@@ -100,7 +98,7 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
 }
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = "0.8.10"
 }
 
 tasks {
@@ -110,16 +108,16 @@ tasks {
 
     register("generateResources") {
         // Generate properties file with plugin version to access this information in plugin itself
-        val versionPropertyFile = file("${buildDir}/generated/version.properties")
+        val versionPropertyFile = project.layout.buildDirectory.file("generated/version.properties")
         outputs.file(versionPropertyFile)
         doLast {
-            mkdir(versionPropertyFile.parentFile)
-            versionPropertyFile.writeText("version=${project.version}")
+            mkdir(versionPropertyFile.get().asFile.parentFile)
+            versionPropertyFile.get().asFile.writeText("version=${project.version}")
         }
     }
 
     withType<KotlinCompile>  {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     withType<ProcessResources> {
@@ -131,7 +129,7 @@ tasks {
             xml.required.set(true)
             html.required.set(true)
 
-            html.outputLocation.set( File(project.buildDir, "jacocoHtml") )
+            html.outputLocation.set(project.layout.buildDirectory.dir("jacocoHtml"))
         }
 
         val jacocoTestReport by tasks
@@ -208,24 +206,19 @@ signing {
 dependencies {
     implementation(gradleApi())
 
-    implementation("org.slf4j:slf4j-api:2.0.1")
-    implementation("org.ow2.asm:asm:9.3")
+    implementation("org.slf4j:slf4j-api:2.0.9")
+    implementation("org.ow2.asm:asm:9.5")
     implementation("javax.inject:javax.inject:1")
-    implementation("commons-io:commons-io:2.11.0")
-    implementation("javax.ws.rs:javax.ws.rs-api:2.1.1")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
-    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.0")
-    implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.4.2")
+    implementation("commons-io:commons-io:2.13.0")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.3")
+    implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0")
 
-    runtimeOnly("org.apache.cxf:cxf-rt-rs-client:3.5.3")
-    runtimeOnly("org.apache.cxf:cxf-rt-transports-http:3.5.3")
-    runtimeOnly("org.apache.cxf:cxf-rt-transports-local:3.5.3")
-    runtimeOnly("ch.qos.logback:logback-classic:1.4.0")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.11")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("com.google.jimfs:jimfs:1.2")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
-    //testImplementation("com.intershop.gradle.test:test-gradle-plugin:4.1.2")
+    testImplementation("com.google.jimfs:jimfs:1.3.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
 }
-

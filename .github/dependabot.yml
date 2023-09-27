@@ -1,0 +1,33 @@
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    commit-message:
+      prefix: "build(dependencies)"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "dependabot"
+      - "github-actions"
+    reviewers:
+      - "intershop/intershop-core"
+
+  - package-ecosystem: "gradle"
+    directory: "/"
+    commit-message:
+      prefix: "build(dependencies)"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "dependabot"
+      - "gradle"
+    reviewers:
+      - "intershop/intershop-core"
+    ignore:
+      # Security updates are not affected by this ignore filter and still will be updated
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-major" ]
