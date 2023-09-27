@@ -19,7 +19,7 @@ The plugin can be applied to all Gradle Intershop projects.
 In build.gradle:
 ```groovy
 plugins {
-    id "com.intershop.gradle.architectural.report" version "3.0.4"
+    id "com.intershop.gradle.architectural.report" version "3.2.0"
 }
 
 architectureReport {
@@ -35,7 +35,7 @@ architectureReport {
 In build.gradle.kts:
 ```kotlin
 plugins {
-    id("com.intershop.gradle.architectural.report") version "3.0.4"
+    id("com.intershop.gradle.architectural.report") version "3.2.0"
 }
 
 architectureReport {
@@ -101,7 +101,7 @@ Start the architecture report task:
 
 ## License
 
-Copyright 2014-2022 Intershop Communications.
+Copyright 2014-2023 Intershop Communications.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
