@@ -207,7 +207,7 @@ dependencies {
     implementation(gradleApi())
 
     implementation("org.slf4j:slf4j-api:2.0.9")
-    implementation("org.ow2.asm:asm:9.5")
+    implementation("org.ow2.asm:asm:9.6")
     implementation("javax.inject:javax.inject:1")
     implementation("commons-io:commons-io:2.14.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
