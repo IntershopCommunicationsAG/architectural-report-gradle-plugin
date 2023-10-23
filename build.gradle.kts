@@ -211,7 +211,7 @@ dependencies {
     implementation("javax.inject:javax.inject:1")
     implementation("commons-io:commons-io:2.14.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
-    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.3")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.4")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0")
 
     runtimeOnly("ch.qos.logback:logback-classic:1.4.11")
