@@ -209,7 +209,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("org.ow2.asm:asm:9.6")
     implementation("javax.inject:javax.inject:1")
-    implementation("commons-io:commons-io:2.14.0")
+    implementation("commons-io:commons-io:2.15.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.4")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0")
