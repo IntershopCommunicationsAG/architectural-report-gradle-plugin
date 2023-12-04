@@ -214,7 +214,7 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.4")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0")
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.4.11")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.14")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
