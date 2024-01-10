@@ -35,27 +35,17 @@ plugins {
     // artifact signing - necessary on Maven Central
     signing
 
-    // intershop version plugin
-    id("com.intershop.gradle.scmversion") version "6.2.1"
-
     // plugin for publishing to Gradle Portal
     id("com.gradle.plugin-publish") version "1.2.1"
 }
 
-scm {
-    version {
-        type = "threeDigits"
-        initialVersion = "1.0.0"
-    }
-}
 
 // release configuration
 group = "com.intershop.gradle.architectural.report"
 description = "Gradle architectural report plugin"
-
-// IMPORTANT version referenced at README.md, adapt it there
-version = scm.version.version
-// IMPORTANT version referenced at README.md, adapt it there
+// apply gradle property 'projectVersion' to project.version, default to 'LOCAL'
+val projectVersion : String? by project
+version = projectVersion ?: "LOCAL"
 
 // set correct project status
 if (project.version.toString().endsWith("-SNAPSHOT")) {
@@ -68,11 +58,13 @@ val sonatypePassword: String? by project
 repositories {
     gradlePluginPortal()
     mavenCentral()
+    mavenLocal()
 }
 
+val pluginUrl = "https://github.com/IntershopCommunicationsAG/${project.name}"
 gradlePlugin {
-    website.set("https://github.com/IntershopCommunicationsAG/${project.name}")
-    vcsUrl.set("https://github.com/IntershopCommunicationsAG/${project.name}")
+    website.set(pluginUrl)
+    vcsUrl.set(pluginUrl)
     plugins {
         create("ArchitectureReportPlugin") {
             id = "com.intershop.gradle.architectural.report"
@@ -85,27 +77,36 @@ gradlePlugin {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-
     withJavadocJar()
     withSourcesJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 // set correct project status
 if (project.version.toString().endsWith("-SNAPSHOT")) {
-    status = "snapshot'"
+    status = "snapshot"
 }
 
 jacoco {
     toolVersion = "0.8.10"
 }
 
-tasks {
-    withType<Test> {
-        useJUnitPlatform()
+testing {
+    suites.withType<JvmTestSuite> {
+        useJUnitJupiter()
+        dependencies {
+            runtimeOnly("org.junit.platform:junit-platform-launcher:1.10.1")
+            implementation("org.junit.jupiter:junit-jupiter:5.10.1")
+            implementation("org.hamcrest:hamcrest:2.2")
+            implementation("com.google.jimfs:jimfs:1.3.0")
+            implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+        }
     }
+}
 
+tasks {
     register("generateResources") {
         // Generate properties file with plugin version to access this information in plugin itself
         val versionPropertyFile = project.layout.buildDirectory.file("generated/version.properties")
@@ -114,10 +115,6 @@ tasks {
             mkdir(versionPropertyFile.get().asFile.parentFile)
             versionPropertyFile.get().asFile.writeText("version=${project.version}")
         }
-    }
-
-    withType<KotlinCompile>  {
-        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     withType<ProcessResources> {
@@ -179,9 +176,9 @@ publishing {
                 }
 
                 scm {
-                    connection.set("https://github.com/IntershopCommunicationsAG/${project.name}.git")
+                    connection.set(pluginUrl)
                     developerConnection.set("git@github.com:IntershopCommunicationsAG/${project.name}.git")
-                    url.set("https://github.com/IntershopCommunicationsAG/${project.name}")
+                    url.set(pluginUrl)
                 }
             }
         }
@@ -216,9 +213,4 @@ dependencies {
 
     runtimeOnly("ch.qos.logback:logback-classic:1.4.14")
 
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.1")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
-    testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("com.google.jimfs:jimfs:1.3.0")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 }
