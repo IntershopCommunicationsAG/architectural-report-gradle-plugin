@@ -24,27 +24,7 @@ jobs:
       pull-requests: write
     name: Build & Test with Java ${{ matrix.Java }} (${{ matrix.os }})
     steps:
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: ${{ matrix.java }}
-
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - run: git fetch --all --tags
-
-      - name: Create .gradle dir
-        run: mkdir -p $HOME/.gradle
-
-      - name: Build and test with Gradle
-        env:
-          GRADLE_OPTS: "-Dorg.gradle.daemon=true"
-        run: ./gradlew test build --stacktrace --scan
-
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action/composite@v2
-        if: always()
-        with:
-          files: build/test-results/**/*.xml
+      - name: Setup
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v1.0
+      - name: Build
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v1.0
