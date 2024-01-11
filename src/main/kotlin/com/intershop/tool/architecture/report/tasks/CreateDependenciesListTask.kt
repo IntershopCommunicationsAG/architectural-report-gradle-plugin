@@ -95,7 +95,6 @@ open class CreateDependenciesListTask : DefaultTask() {
                 val identifier = artifact.moduleVersion.id
                 when (componentIdentifier) {
                     is ProjectComponentIdentifier ->
-                        //dependencies.add("cartridge${componentIdentifier.projectPath}:${identifier.version}")
                         dependencies.add("cartridge:${identifier.group}:${identifier.name}:${identifier.version}")
                     is ModuleComponentIdentifier ->
                         if (CartridgeUtil.isCartridge(project, componentIdentifier)) {

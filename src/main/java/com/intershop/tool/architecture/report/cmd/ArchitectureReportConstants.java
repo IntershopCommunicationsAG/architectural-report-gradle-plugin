@@ -5,7 +5,6 @@ public class ArchitectureReportConstants
     public static final String ARG_OUTPUT_DIRECTORY = "reports";
     public static final String ARG_BASELINE = "baseline";
     public static final String ARG_DEPENDENCIES_FILE = "dependencies";
-    public static final String ARG_CARTRIDGE_DIRECTORY = "cartridges";
     public static final String ARG_EXISTING_ISSUES_FILE = "issues";
     public static final String ARG_KEYS = "keyselector";
     public static final String ARG_STRATEGY = "strategy";

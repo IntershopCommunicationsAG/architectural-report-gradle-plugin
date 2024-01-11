@@ -45,9 +45,7 @@ open class ArchitectureReportExtension(val project: Project) {
     val keySelector: ListProperty<String> = project.objects.listProperty(String::class.java)
 
     val dependenciesFile: RegularFileProperty = project.objects.fileProperty()
-
-    val cartridgesDirectory: DirectoryProperty = project.objects.directoryProperty()
-
+    
     val baselineFile: RegularFileProperty = project.objects.fileProperty()
 
     val knownIssuesFile: RegularFileProperty = project.objects.fileProperty()
@@ -61,7 +59,6 @@ open class ArchitectureReportExtension(val project: Project) {
     init {
         useExternalProcess.convention(true)
         dependenciesFile.convention(project.layout.buildDirectory.dir(AR_DIRECTORY_NAME).get().file(AR_DEPENDENCIES_FILENAME))
-        cartridgesDirectory.convention(project.layout.projectDirectory.dir(project.rootDir.absolutePath))
         reportsDirectory.convention(project.layout.buildDirectory.dir(AR_DIRECTORY_NAME))
     }
 }
