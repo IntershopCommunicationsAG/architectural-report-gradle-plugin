@@ -72,7 +72,6 @@ Start the architecture report task:
 |--------------------------------------------|------------------------------------------------------------------------------|
 | com.intershop.businessobject.persistence   | References to persistence layer inside of business object API                |
 | com.intershop.businessobject.internal      | References to internal classes inside of business object API                 |
-| com.intershop.pipelet.used.deprecated      | Pipelet is deprecated, but still in use by pipelines                         |
 -->
 
 ## Configuration
