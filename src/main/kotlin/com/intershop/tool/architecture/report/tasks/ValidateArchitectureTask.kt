@@ -17,7 +17,6 @@ package com.intershop.tool.architecture.report.tasks
 
 import com.intershop.tool.architecture.report.cmd.ArchitectureReport
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants
-import com.intershop.tool.architecture.report.plugin.ArchitectureReportExtension.Companion.AR_DIRECTORY_NAME
 import com.intershop.tool.architecture.report.plugin.ArchitectureReportExtension.Companion.AR_EXTENSION_NAME
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -27,12 +26,16 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.File
 
 /**
  * Task for architecture validation.
@@ -79,11 +82,10 @@ open class ValidateArchitectureTask : DefaultTask() {
     val dependenciesFile: RegularFileProperty = project.objects.fileProperty()
 
     /**
-     * Cartridge directory.
+     * Specifies classpath list file whereas each line represents a classpath entry (jar file).
      */
-    @Optional
-    @InputDirectory
-    val cartridgesDirectory: DirectoryProperty = project.objects.directoryProperty()
+    @InputFile
+    val classpathFilesListFile: RegularFileProperty = project.objects.fileProperty()
 
     /**
      * API baseline file.
@@ -121,20 +123,13 @@ open class ValidateArchitectureTask : DefaultTask() {
     val reportsDirectory: DirectoryProperty = project.objects.directoryProperty()
 
     /**
-     * Store list of classpath files in a temporary file in order to pass it as argument
-     * in case the string exceeds the maximum length of an CLI argument of the OS.
-     */
-    @OutputFile
-    val classpathFilesListFile: File = project.layout.buildDirectory.dir(AR_DIRECTORY_NAME).get().file("classpath_files.txt").asFile
-
-    /**
      * File collection of Java runtime classpath files.
      */
     @get:Classpath
-    val classpathFiles : FileCollection by lazy {
+    val classpathFiles: FileCollection by lazy {
         project.files().from(
-            project.configurations.findByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME),
-            project.tasks.named("jar").get().outputs.files.singleFile
+                project.configurations.findByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME),
+                project.tasks.named("jar").get().outputs.files.singleFile
         )
     }
 
@@ -143,8 +138,6 @@ open class ValidateArchitectureTask : DefaultTask() {
      */
     @TaskAction
     open fun validateArchitecture() {
-        // Write list of classpath files to temporary text file
-        classpathFilesListFile.writeText(classpathFiles.joinToString(separator = System.lineSeparator()))
 
         val args = getArguments()
         try {
@@ -199,16 +192,19 @@ open class ValidateArchitectureTask : DefaultTask() {
         addArgument(arguments, ArchitectureReportConstants.ARG_GROUP, project.group as String)
         addArgument(arguments, ArchitectureReportConstants.ARG_VERSION, project.version as String)
         addArgument(arguments, ArchitectureReportConstants.ARG_KEYS, keySelector.get().joinToString(separator = ","))
-        addArgument(arguments, ArchitectureReportConstants.ARG_DEPENDENCIES_FILE, dependenciesFile.get().asFile.absolutePath)
-        addArgument(arguments, ArchitectureReportConstants.ARG_CLASSPATH_FILES_LIST_FILE, classpathFilesListFile.absolutePath)
-        addArgument(arguments, ArchitectureReportConstants.ARG_CARTRIDGE_DIRECTORY, cartridgesDirectory.get().asFile.absolutePath)
+        addArgument(arguments, ArchitectureReportConstants.ARG_DEPENDENCIES_FILE,
+                dependenciesFile.get().asFile.absolutePath)
+        addArgument(arguments, ArchitectureReportConstants.ARG_CLASSPATH_FILES_LIST_FILE,
+                classpathFilesListFile.get().asFile.absolutePath)
         if (baselineFile.isPresent) {
             addArgument(arguments, ArchitectureReportConstants.ARG_BASELINE, baselineFile.get().asFile.absolutePath)
         }
         if (knownIssuesFile.isPresent) {
-            addArgument(arguments, ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE, knownIssuesFile.get().asFile.absolutePath)
+            addArgument(arguments, ArchitectureReportConstants.ARG_EXISTING_ISSUES_FILE,
+                    knownIssuesFile.get().asFile.absolutePath)
         }
-        addArgument(arguments, ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY, reportsDirectory.get().asFile.absolutePath)
+        addArgument(arguments, ArchitectureReportConstants.ARG_OUTPUT_DIRECTORY,
+                reportsDirectory.get().asFile.absolutePath)
 
         return arguments.toTypedArray()
     }

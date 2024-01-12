@@ -59,7 +59,8 @@ open class CreateDependenciesListTask : DefaultTask() {
      */
     private fun getLibraryDependencies(): HashSet<String> {
         val dependencies = HashSet<String>()
-        val resolvedConfig = project.configurations.getByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME).resolvedConfiguration
+        val resolvedConfig =
+                project.configurations.getByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME).resolvedConfiguration
         // Ensure build fails if there are resolve errors
         if (resolvedConfig.hasError()) {
             resolvedConfig.rethrowFailure()
@@ -95,8 +96,8 @@ open class CreateDependenciesListTask : DefaultTask() {
                 val identifier = artifact.moduleVersion.id
                 when (componentIdentifier) {
                     is ProjectComponentIdentifier ->
-                        //dependencies.add("cartridge${componentIdentifier.projectPath}:${identifier.version}")
                         dependencies.add("cartridge:${identifier.group}:${identifier.name}:${identifier.version}")
+
                     is ModuleComponentIdentifier ->
                         if (CartridgeUtil.isCartridge(project, componentIdentifier)) {
                             dependencies.add("cartridge:${identifier.group}:${identifier.name}:${identifier.version}")
