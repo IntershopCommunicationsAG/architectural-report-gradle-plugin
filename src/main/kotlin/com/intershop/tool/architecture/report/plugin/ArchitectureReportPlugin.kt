@@ -22,7 +22,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import java.util.*
+import java.util.Properties
 
 /**
  * Plugin implementation.
@@ -90,22 +90,23 @@ class ArchitectureReportPlugin : Plugin<Project> {
             val pluginVersion = props.getProperty("version")
 
             configuration
-                .setTransitive(true)
-                .setDescription("Validate architecture with architecture report")
-                .defaultDependencies { dependencies ->
-                    val dependencyHandler = project.dependencies
+                    .setTransitive(true)
+                    .setDescription("Validate architecture with architecture report")
+                    .defaultDependencies { dependencies ->
+                        val dependencyHandler = project.dependencies
 
-                    dependencies.add(dependencyHandler.create("com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:${pluginVersion}"))
-                    dependencies.add(dependencyHandler.create("org.slf4j:slf4j-api:2.0.9"))
-                    dependencies.add(dependencyHandler.create("org.ow2.asm:asm:9.5"))
-                    dependencies.add(dependencyHandler.create("javax.inject:javax.inject:1"))
-                    dependencies.add(dependencyHandler.create("commons-io:commons-io:2.13.0"))
-                    dependencies.add(dependencyHandler.create("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1"))
-                    dependencies.add(dependencyHandler.create("org.glassfish.jaxb:jaxb-runtime:4.0.3"))
-                    dependencies.add(dependencyHandler.create("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0"))
+                        dependencies.add(dependencyHandler.create(
+                                "com.intershop.gradle.architectural.report:architectural-report-gradle-plugin:${pluginVersion}"))
+                        dependencies.add(dependencyHandler.create("org.slf4j:slf4j-api:2.0.9"))
+                        dependencies.add(dependencyHandler.create("org.ow2.asm:asm:9.5"))
+                        dependencies.add(dependencyHandler.create("javax.inject:javax.inject:1"))
+                        dependencies.add(dependencyHandler.create("commons-io:commons-io:2.13.0"))
+                        dependencies.add(dependencyHandler.create("jakarta.xml.bind:jakarta.xml.bind-api:4.0.1"))
+                        dependencies.add(dependencyHandler.create("org.glassfish.jaxb:jaxb-runtime:4.0.3"))
+                        dependencies.add(dependencyHandler.create("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0"))
 
-                    dependencies.add(dependencyHandler.create("ch.qos.logback:logback-classic:1.4.11"))
-                }
+                        dependencies.add(dependencyHandler.create("ch.qos.logback:logback-classic:1.4.11"))
+                    }
         }
     }
 
@@ -117,7 +118,8 @@ class ArchitectureReportPlugin : Plugin<Project> {
      */
     private fun configureValidateArchitectureTask(project: Project, task: TaskProvider<ValidateArchitectureTask>) {
         val extension = project.extensions.findByType(ArchitectureReportExtension::class.java)
-            ?: project.extensions.create(ArchitectureReportExtension.AR_EXTENSION_NAME, ArchitectureReportExtension::class.java, project)
+                        ?: project.extensions.create(ArchitectureReportExtension.AR_EXTENSION_NAME,
+                                ArchitectureReportExtension::class.java, project)
 
         task.configure {
             with(it) {
