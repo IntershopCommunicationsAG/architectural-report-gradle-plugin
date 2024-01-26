@@ -95,6 +95,10 @@ Start the architecture report task:
 | fixed_issues.xml   | Issues, which are listed at 'knownIssuesFile', but not longer detected |
 | new_issues.xml     | Issues, which are not listed at 'knownIssuesFile', but detected        |
 
+## Contribute
+
+See [here](https://github.com/IntershopCommunicationsAG/.github/blob/main/CONTRIBUTE.asciidoc) for details.
+
 ## License
 
 Copyright 2014-2023 Intershop Communications.
