@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     // project plugins
     `java-gradle-plugin`
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "1.9.24"
 
     // test coverage
     jacoco
