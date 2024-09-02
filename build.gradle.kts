@@ -36,7 +36,7 @@ plugins {
     signing
 
     // plugin for publishing to Gradle Portal
-    id("com.gradle.plugin-publish") version "1.2.1"
+    id("com.gradle.plugin-publish") version "1.2.2"
 }
 
 
