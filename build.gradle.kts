@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * Copyright 2022 Intershop Communications AG.
  *
@@ -209,8 +207,7 @@ dependencies {
     implementation("commons-io:commons-io:2.17.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.5")
-    implementation("com.intershop.gradle.icm:icm-gradle-plugin:5.8.0")
+    implementation("com.intershop.gradle.icm:icm-gradle-plugin:6.2.1")
 
     runtimeOnly("ch.qos.logback:logback-classic:1.5.8")
-
 }
