@@ -13,9 +13,9 @@ jobs:
     name: Run release build from tag
     steps:
       - name: Setup
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v1.0
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v2
       - name: Release
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-release@v1.0
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-release@v2
         with:
           signing-file: ${{ secrets.SIGNINGFILE }}
           signing-key-id: ${{ secrets.SIGNINGKEYID }}
