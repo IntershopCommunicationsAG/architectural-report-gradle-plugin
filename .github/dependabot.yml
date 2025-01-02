@@ -12,8 +12,6 @@ updates:
       - "dependencies"
       - "dependabot"
       - "github-actions"
-    reviewers:
-      - "intershop/intershop-core"
 
   - package-ecosystem: "gradle"
     directory: "/"
@@ -25,8 +23,6 @@ updates:
       - "dependencies"
       - "dependabot"
       - "gradle"
-    reviewers:
-      - "intershop/intershop-core"
     ignore:
       # Security updates are not affected by this ignore filter and still will be updated
       - dependency-name: "*"
