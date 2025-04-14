@@ -95,7 +95,7 @@ testing {
     suites.withType<JvmTestSuite> {
         useJUnitJupiter()
         dependencies {
-            runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
+            runtimeOnly("org.junit.platform:junit-platform-launcher:1.12.2")
             implementation("org.junit.jupiter:junit-jupiter:5.11.4")
             implementation("org.hamcrest:hamcrest:2.2")
             implementation("com.google.jimfs:jimfs:1.3.0")
