@@ -34,7 +34,7 @@ plugins {
     signing
 
     // plugin for publishing to Gradle Portal
-    id("com.gradle.plugin-publish") version "1.3.0"
+    id("com.gradle.plugin-publish") version "1.3.1"
 }
 
 
@@ -209,5 +209,5 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.5")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:6.2.1")
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.16")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.18")
 }
