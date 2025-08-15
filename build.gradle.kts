@@ -36,7 +36,7 @@ plugins {
     signing
 
     // plugin for publishing to Gradle Portal
-    id("com.gradle.plugin-publish") version "1.3.0"
+    id("com.gradle.plugin-publish") version "1.3.1"
 
     id("io.gitee.pkmer.pkmerboot-central-publisher") version "1.1.1"
 }
@@ -100,7 +100,7 @@ testing {
         useJUnitJupiter()
         dependencies {
             runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
-            implementation("org.junit.jupiter:junit-jupiter:5.11.4")
+            implementation("org.junit.jupiter:junit-jupiter:5.12.2")
             implementation("org.hamcrest:hamcrest:2.2")
             implementation("com.google.jimfs:jimfs:1.3.0")
             implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
@@ -228,5 +228,5 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.5")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:6.2.1")
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.16")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.18")
 }
