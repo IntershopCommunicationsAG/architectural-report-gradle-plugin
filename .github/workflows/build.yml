@@ -24,6 +24,6 @@ jobs:
     name: Build & Test with Java ${{ matrix.Java }} (${{ matrix.os }})
     steps:
       - name: Setup
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v2
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v3
       - name: Build
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v2
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-build@v3

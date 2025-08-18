@@ -13,7 +13,7 @@ jobs:
     name: Run release build from tag
     steps:
       - name: Setup
-        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v2
+        uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-setup@v3
       - name: Release
         uses: IntershopCommunicationsAG/.github/actions/gradle-plugin-release@v3
         with:
