@@ -32,15 +32,16 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
-import org.gradle.process.internal.ExecException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import javax.inject.Inject // gradle9 requires javax.inject.Inject
 
 /**
  * Task for architecture validation.
  */
-open class ValidateArchitectureTask : DefaultTask() {
+abstract class ValidateArchitectureTask @Inject constructor(private val execOps : ExecOperations) : DefaultTask() {
     companion object {
         /**
          * Task name
@@ -142,23 +143,19 @@ open class ValidateArchitectureTask : DefaultTask() {
         val args = getArguments()
         try {
             if (useExternalProcess.get()) {
-                try {
-                    val javaExec: ExecResult = project.javaexec { exec ->
-                        exec.mainClass.set(MAIN_CLASS_NAME)
-                        exec.classpath(project.configurations.getByName(AR_EXTENSION_NAME))
+                val javaExec: ExecResult = execOps.javaexec { exec ->
+                    exec.mainClass.set(MAIN_CLASS_NAME)
+                    exec.classpath(project.configurations.getByName(AR_EXTENSION_NAME))
 
-                        exec.jvmArgs(additionalJvmArguments.get())
-                        exec.args(args.toList())
+                    exec.jvmArgs(additionalJvmArguments.get())
+                    exec.args(args.toList())
 
-                        exec.standardOutput = System.out
-                        exec.errorOutput = System.err
+                    exec.standardOutput = System.out
+                    exec.errorOutput = System.err
 
-                        log.info("Architecture Report validation started in child process with arguments: {}", args)
-                    }
-                    javaExec.assertNormalExitValue()
-                } catch (e: ExecException) {
-                    throw GradleException("Build contains architectural issues.")
+                    log.info("Architecture Report validation started in child process with arguments: {}", args)
                 }
+                javaExec.assertNormalExitValue()
             } else {
                 log.info("Architecture Report validation started in Gradle process with arguments: {}", args)
                 if (ArchitectureReport.validateArchitecture(args)) {
