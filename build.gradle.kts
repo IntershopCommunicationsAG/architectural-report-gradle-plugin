@@ -20,7 +20,7 @@ import io.gitee.pkmer.enums.PublishingType
 plugins {
     // project plugins
     `java-gradle-plugin`
-    kotlin("jvm") version "1.9.25"
+    kotlin("jvm") version "2.2.20"
 
     // test coverage
     jacoco
@@ -36,7 +36,7 @@ plugins {
     signing
 
     // plugin for publishing to Gradle Portal
-    id("com.gradle.plugin-publish") version "1.3.1"
+    id("com.gradle.plugin-publish") version "2.0.0"
 
     id("io.gitee.pkmer.pkmerboot-central-publisher") version "1.1.1"
 }
@@ -82,7 +82,7 @@ java {
     withJavadocJar()
     withSourcesJar()
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -99,11 +99,11 @@ testing {
     suites.withType<JvmTestSuite> {
         useJUnitJupiter()
         dependencies {
-            runtimeOnly("org.junit.platform:junit-platform-launcher:1.11.4")
-            implementation("org.junit.jupiter:junit-jupiter:5.12.2")
-            implementation("org.hamcrest:hamcrest:2.2")
-            implementation("com.google.jimfs:jimfs:1.3.0")
-            implementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+            runtimeOnly("org.junit.platform:junit-platform-launcher:6.0.0")
+            implementation("org.junit.jupiter:junit-jupiter:6.0.0")
+            implementation("org.hamcrest:hamcrest:3.0")
+            implementation("com.google.jimfs:jimfs:1.3.1")
+            implementation("com.squareup.okhttp3:mockwebserver:5.2.1")
         }
     }
 }
@@ -131,8 +131,7 @@ tasks {
             html.outputLocation.set(project.layout.buildDirectory.dir("jacocoHtml"))
         }
 
-        val jacocoTestReport by tasks
-        jacocoTestReport.dependsOn("test")
+        dependsOn(test)
     }
 
     withType<Sign> {
@@ -220,13 +219,13 @@ signing {
 dependencies {
     implementation(gradleApi())
 
-    implementation("org.slf4j:slf4j-api:2.0.16")
-    implementation("org.ow2.asm:asm:9.7.1")
-    implementation("javax.inject:javax.inject:1")
-    implementation("commons-io:commons-io:2.18.0")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
-    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.5")
-    implementation("com.intershop.gradle.icm:icm-gradle-plugin:6.2.1")
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("org.ow2.asm:asm:9.9")
+    implementation("jakarta.inject:jakarta.inject-api:2.0.1")
+    implementation("commons-io:commons-io:2.20.0")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.4")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.6")
+    implementation("com.intershop.gradle.icm:icm-gradle-plugin:7.0.0")
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.18")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.19")
 }
