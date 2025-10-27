@@ -20,7 +20,7 @@ import io.gitee.pkmer.enums.PublishingType
 plugins {
     // project plugins
     `java-gradle-plugin`
-    kotlin("jvm") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
 
     // test coverage
     jacoco
