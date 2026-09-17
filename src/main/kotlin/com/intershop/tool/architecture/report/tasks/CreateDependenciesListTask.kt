@@ -9,10 +9,13 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
 /**
  * Task which creates list of project dependencies (libraries, cartridges).
  */
+@DisableCachingByDefault(because = "Resolves the runtime and cartridge configurations of the project " +
+        "and has no declared inputs, so its result cannot be safely cached")
 open class CreateDependenciesListTask : DefaultTask() {
     companion object {
         /**

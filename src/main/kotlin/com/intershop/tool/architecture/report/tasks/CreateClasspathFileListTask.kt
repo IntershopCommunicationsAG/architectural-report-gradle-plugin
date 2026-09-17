@@ -8,10 +8,13 @@ import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
 /**
  * Task which creates list of classpath files (jars determined from classpath).
  */
+@DisableCachingByDefault(because = "Writes the absolute paths of the runtime classpath entries, " +
+        "which are machine specific and therefore not cacheable")
 open class CreateClasspathFileListTask : DefaultTask() {
     companion object {
         /**

@@ -1,4 +1,5 @@
 import io.gitee.pkmer.enums.PublishingType
+import java.nio.file.Files
 
 /*
  * Copyright 2022 Intershop Communications AG.
@@ -20,7 +21,7 @@ import io.gitee.pkmer.enums.PublishingType
 plugins {
     // project plugins
     `java-gradle-plugin`
-    kotlin("jvm") version "2.2.20"
+    kotlin("jvm") version "2.4.20"
 
     // test coverage
     jacoco
@@ -36,7 +37,7 @@ plugins {
     signing
 
     // plugin for publishing to Gradle Portal
-    id("com.gradle.plugin-publish") version "2.0.0"
+    id("com.gradle.plugin-publish") version "2.2.1"
 
     id("io.gitee.pkmer.pkmerboot-central-publisher") version "1.1.1"
 }
@@ -46,7 +47,7 @@ plugins {
 group = "com.intershop.gradle.architectural.report"
 description = "Gradle architectural report plugin"
 // apply gradle property 'projectVersion' to project.version, default to 'LOCAL'
-val projectVersion : String? by project
+val projectVersion = project.findProperty("projectVersion") as String?
 version = projectVersion ?: "LOCAL"
 
 // set correct project status
@@ -54,8 +55,8 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
     status = "snapshot"
 }
 
-val sonatypeUsername: String? by project
-val sonatypePassword: String? by project
+val sonatypeUsername = project.findProperty("sonatypeUsername") as String?
+val sonatypePassword = project.findProperty("sonatypePassword") as String?
 
 repositories {
     gradlePluginPortal()
@@ -92,18 +93,21 @@ if (project.version.toString().endsWith("-SNAPSHOT")) {
 }
 
 jacoco {
-    toolVersion = "0.8.10"
+    toolVersion = "0.8.15"
 }
+
+// dependency versions
+val junitVersion = "6.1.3"
 
 testing {
     suites.withType<JvmTestSuite> {
-        useJUnitJupiter()
+        useJUnitJupiter(junitVersion)
         dependencies {
-            runtimeOnly("org.junit.platform:junit-platform-launcher:6.0.0")
-            implementation("org.junit.jupiter:junit-jupiter:6.0.0")
+            runtimeOnly("org.junit.platform:junit-platform-launcher:$junitVersion")
+            implementation("org.junit.jupiter:junit-jupiter:$junitVersion")
             implementation("org.hamcrest:hamcrest:3.0")
-            implementation("com.google.jimfs:jimfs:1.3.1")
-            implementation("com.squareup.okhttp3:mockwebserver:5.2.1")
+            implementation("com.google.jimfs:jimfs:1.3.2")
+            implementation("com.squareup.okhttp3:mockwebserver:5.5.0")
         }
     }
 }
@@ -112,10 +116,14 @@ tasks {
     register("generateResources") {
         // Generate properties file with plugin version to access this information in plugin itself
         val versionPropertyFile = project.layout.buildDirectory.file("generated/version.properties")
+        // capture at configuration time - accessing Task.project (and Project.mkdir) from a task
+        // action is deprecated in Gradle 9 and fails in Gradle 10 (configuration cache incompatible)
+        val pluginVersion = project.version.toString()
         outputs.file(versionPropertyFile)
         doLast {
-            mkdir(versionPropertyFile.get().asFile.parentFile)
-            versionPropertyFile.get().asFile.writeText("version=${project.version}")
+            val file = versionPropertyFile.get().asFile
+            Files.createDirectories(file.parentFile.toPath())
+            file.writeText("version=$pluginVersion")
         }
     }
 
@@ -217,15 +225,19 @@ signing {
 }
 
 dependencies {
-    implementation(gradleApi())
+    // NOTE: do NOT declare implementation(gradleApi()) here - the 'java-gradle-plugin' plugin already
+    // provides the Gradle API for compilation. As 'implementation' it additionally puts the *current*
+    // Gradle distribution jars (gradle-api-<version>.jar, <dist>/lib/*) on the runtime classpath,
+    // which 'pluginUnderTestMetadata' would inject into TestKit builds via withPluginClasspath().
+    // Older Gradle versions under test cannot instrument those 9.x jars.
 
-    implementation("org.slf4j:slf4j-api:2.0.17")
-    implementation("org.ow2.asm:asm:9.9")
+    implementation("org.slf4j:slf4j-api:2.0.19")
+    implementation("org.ow2.asm:asm:9.10.1")
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
-    implementation("commons-io:commons-io:2.20.0")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.4")
-    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.6")
-    implementation("com.intershop.gradle.icm:icm-gradle-plugin:7.0.0")
+    implementation("commons-io:commons-io:2.22.0")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.5")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.9")
+    implementation("com.intershop.gradle.icm:icm-gradle-plugin:8.0.0")
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.19")
+    runtimeOnly("ch.qos.logback:logback-classic:1.6.3")
 }

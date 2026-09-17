@@ -31,9 +31,12 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
+import org.gradle.work.DisableCachingByDefault
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import javax.inject.Inject // gradle9 requires javax.inject.Inject
@@ -41,6 +44,8 @@ import javax.inject.Inject // gradle9 requires javax.inject.Inject
 /**
  * Task for architecture validation.
  */
+@DisableCachingByDefault(because = "Analyses the whole runtime classpath and writes a report; " +
+        "the result depends on the concrete project layout and is not worth caching")
 abstract class ValidateArchitectureTask @Inject constructor(private val execOps : ExecOperations) : DefaultTask() {
     companion object {
         /**
@@ -80,12 +85,14 @@ abstract class ValidateArchitectureTask @Inject constructor(private val execOps 
      */
     @Optional
     @InputFile
+    @PathSensitive(PathSensitivity.NONE)
     val dependenciesFile: RegularFileProperty = project.objects.fileProperty()
 
     /**
      * Specifies classpath list file whereas each line represents a classpath entry (jar file).
      */
     @InputFile
+    @PathSensitive(PathSensitivity.NONE)
     val classpathFilesListFile: RegularFileProperty = project.objects.fileProperty()
 
     /**
@@ -93,6 +100,7 @@ abstract class ValidateArchitectureTask @Inject constructor(private val execOps 
      */
     @Optional
     @InputFile
+    @PathSensitive(PathSensitivity.NONE)
     val baselineFile: RegularFileProperty = project.objects.fileProperty()
 
     /**
@@ -100,6 +108,7 @@ abstract class ValidateArchitectureTask @Inject constructor(private val execOps 
      */
     @Optional
     @InputFile
+    @PathSensitive(PathSensitivity.NONE)
     val knownIssuesFile: RegularFileProperty = project.objects.fileProperty()
 
     /**
