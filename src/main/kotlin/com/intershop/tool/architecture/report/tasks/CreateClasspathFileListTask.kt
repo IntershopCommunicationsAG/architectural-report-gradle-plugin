@@ -2,20 +2,24 @@ package com.intershop.tool.architecture.report.tasks
 
 import com.intershop.tool.architecture.report.plugin.ArchitectureReportExtension
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import javax.inject.Inject
 
 /**
  * Task which creates list of classpath files (jars determined from classpath).
  */
 @DisableCachingByDefault(because = "Writes the absolute paths of the runtime classpath entries, " +
         "which are machine specific and therefore not cacheable")
-open class CreateClasspathFileListTask : DefaultTask() {
+abstract class CreateClasspathFileListTask @Inject constructor(
+        objectFactory: ObjectFactory,
+        projectLayout: ProjectLayout) : DefaultTask() {
     companion object {
         /**
          * Task name
@@ -36,24 +40,24 @@ open class CreateClasspathFileListTask : DefaultTask() {
 
     /**
      * File collection of Java runtime classpath files.
+     *
+     * The plugin wires this at configuration time. The task must not resolve the configuration itself,
+     * because that would happen during input snapshotting in the execution phase, where accessing
+     * {@code Task.project} is deprecated in Gradle 9 and fails in Gradle 10.
+     *
+     * @property classpathFiles
      */
     @get:Classpath
-    val classpathFiles: FileCollection by lazy {
-        project.files().from(
-                project.configurations.findByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME),
-                project.tasks.named("jar").get().outputs.files.singleFile
-        )
-    }
+    val classpathFiles: ConfigurableFileCollection = objectFactory.fileCollection()
 
     /**
      * Store list of classpath files in a temporary file in order to pass it as argument
      * in case the string exceeds the maximum length of an CLI argument of the OS.
      */
     @OutputFile
-    val classpathFilesListFile: RegularFileProperty = project.objects.fileProperty().convention(project.provider {
-        project.layout.buildDirectory.dir(ArchitectureReportExtension.AR_DIRECTORY_NAME).get()
-                .file("classpath_files.txt")
-    })
+    val classpathFilesListFile: RegularFileProperty = objectFactory.fileProperty().convention(
+            projectLayout.buildDirectory.dir(ArchitectureReportExtension.AR_DIRECTORY_NAME)
+                    .map { it.file("classpath_files.txt") })
 
     /**
      * Retrieve classpath entries via [classpathFiles] and write them to [classpathFilesListFile]

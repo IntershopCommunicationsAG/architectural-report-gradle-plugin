@@ -119,6 +119,9 @@ tasks {
         // capture at configuration time - accessing Task.project (and Project.mkdir) from a task
         // action is deprecated in Gradle 9 and fails in Gradle 10 (configuration cache incompatible)
         val pluginVersion = project.version.toString()
+        // the version must be declared as an input, otherwise the task stays UP-TO-DATE when the version
+        // changes (e.g. '-PprojectVersion=...') and a stale version.properties is packaged into the jar
+        inputs.property("pluginVersion", pluginVersion)
         outputs.file(versionPropertyFile)
         doLast {
             val file = versionPropertyFile.get().asFile
