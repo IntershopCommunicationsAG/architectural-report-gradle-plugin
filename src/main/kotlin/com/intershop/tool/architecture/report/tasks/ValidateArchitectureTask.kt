@@ -17,23 +17,26 @@ package com.intershop.tool.architecture.report.tasks
 
 import com.intershop.tool.architecture.report.cmd.ArchitectureReport
 import com.intershop.tool.architecture.report.cmd.ArchitectureReportConstants
-import com.intershop.tool.architecture.report.plugin.ArchitectureReportExtension.Companion.AR_EXTENSION_NAME
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
+import org.gradle.work.DisableCachingByDefault
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import javax.inject.Inject // gradle9 requires javax.inject.Inject
@@ -41,7 +44,11 @@ import javax.inject.Inject // gradle9 requires javax.inject.Inject
 /**
  * Task for architecture validation.
  */
-abstract class ValidateArchitectureTask @Inject constructor(private val execOps : ExecOperations) : DefaultTask() {
+@DisableCachingByDefault(because = "Analyses the whole runtime classpath and writes a report; " +
+        "the result depends on the concrete project layout and is not worth caching")
+abstract class ValidateArchitectureTask @Inject constructor(
+        private val execOps : ExecOperations,
+        objectFactory: ObjectFactory) : DefaultTask() {
     companion object {
         /**
          * Task name
@@ -73,66 +80,103 @@ abstract class ValidateArchitectureTask @Inject constructor(private val execOps 
      * Defines keys for validation.
      */
     @Input
-    val keySelector: ListProperty<String> = project.objects.listProperty(String::class.java)
+    val keySelector: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
     /**
      * Specifies dependencies file whereas each line represents a project dependency.
      */
     @Optional
     @InputFile
-    val dependenciesFile: RegularFileProperty = project.objects.fileProperty()
+    @PathSensitive(PathSensitivity.NONE)
+    val dependenciesFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Specifies classpath list file whereas each line represents a classpath entry (jar file).
      */
     @InputFile
-    val classpathFilesListFile: RegularFileProperty = project.objects.fileProperty()
+    @PathSensitive(PathSensitivity.NONE)
+    val classpathFilesListFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * API baseline file.
      */
     @Optional
     @InputFile
-    val baselineFile: RegularFileProperty = project.objects.fileProperty()
+    @PathSensitive(PathSensitivity.NONE)
+    val baselineFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Known issues file to ignore listed issues.
      */
     @Optional
     @InputFile
-    val knownIssuesFile: RegularFileProperty = project.objects.fileProperty()
+    @PathSensitive(PathSensitivity.NONE)
+    val knownIssuesFile: RegularFileProperty = objectFactory.fileProperty()
 
     /**
      * Whether to use external execution handler for validation process.
      */
     @Optional
     @Input
-    val useExternalProcess: Property<Boolean> = project.objects.property(Boolean::class.java)
+    val useExternalProcess: Property<Boolean> = objectFactory.property(Boolean::class.java)
 
     /**
      * Additional JVM arguments.
      */
     @Optional
     @Input
-    val additionalJvmArguments: ListProperty<String> = project.objects.listProperty(String::class.java)
+    val additionalJvmArguments: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
     /**
      * Output directory to write reports to.
      */
     @Optional
     @OutputDirectory
-    val reportsDirectory: DirectoryProperty = project.objects.directoryProperty()
+    val reportsDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
     /**
      * File collection of Java runtime classpath files.
+     *
+     * The plugin wires this at configuration time. The task must not resolve the configuration itself,
+     * because that would happen during input snapshotting in the execution phase, where accessing
+     * {@code Task.project} is deprecated in Gradle 9 and fails in Gradle 10.
+     *
+     * @property classpathFiles
      */
     @get:Classpath
-    val classpathFiles: FileCollection by lazy {
-        project.files().from(
-                project.configurations.findByName(RUNTIME_CLASSPATH_CONFIGURATION_NAME),
-                project.tasks.named("jar").get().outputs.files.singleFile
-        )
-    }
+    val classpathFiles: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    /**
+     * Classpath of the architecture report tool, used when it is started in a child process.
+     *
+     * The plugin wires this at configuration time, see {@link #classpathFiles}.
+     *
+     * This property must not be an input: it would then be resolved while the task inputs are snapshotted,
+     * which resolves the architecture report tool even when the validation runs in the Gradle process
+     * ({@code useExternalProcess = false}) and never needs it.
+     *
+     * @property reportToolClasspath
+     */
+    @get:Internal
+    val reportToolClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    /**
+     * Group of the project this task belongs to.
+     */
+    @get:Input
+    val projectGroup: Property<String> = objectFactory.property(String::class.java)
+
+    /**
+     * Name of the project this task belongs to.
+     */
+    @get:Input
+    val projectName: Property<String> = objectFactory.property(String::class.java)
+
+    /**
+     * Version of the project this task belongs to.
+     */
+    @get:Input
+    val projectVersion: Property<String> = objectFactory.property(String::class.java)
 
     /**
      * Validate architecture.
@@ -145,7 +189,7 @@ abstract class ValidateArchitectureTask @Inject constructor(private val execOps 
             if (useExternalProcess.get()) {
                 val javaExec: ExecResult = execOps.javaexec { exec ->
                     exec.mainClass.set(MAIN_CLASS_NAME)
-                    exec.classpath(project.configurations.getByName(AR_EXTENSION_NAME))
+                    exec.classpath(reportToolClasspath)
 
                     exec.jvmArgs(additionalJvmArguments.get())
                     exec.args(args.toList())
@@ -185,9 +229,9 @@ abstract class ValidateArchitectureTask @Inject constructor(private val execOps 
      */
     private fun getArguments(): Array<String> {
         val arguments = arrayListOf<String>()
-        addArgument(arguments, ArchitectureReportConstants.ARG_ARTIFACT, project.name)
-        addArgument(arguments, ArchitectureReportConstants.ARG_GROUP, project.group as String)
-        addArgument(arguments, ArchitectureReportConstants.ARG_VERSION, project.version as String)
+        addArgument(arguments, ArchitectureReportConstants.ARG_ARTIFACT, projectName.get())
+        addArgument(arguments, ArchitectureReportConstants.ARG_GROUP, projectGroup.get())
+        addArgument(arguments, ArchitectureReportConstants.ARG_VERSION, projectVersion.get())
         addArgument(arguments, ArchitectureReportConstants.ARG_KEYS, keySelector.get().joinToString(separator = ","))
         addArgument(arguments, ArchitectureReportConstants.ARG_DEPENDENCIES_FILE,
                 dependenciesFile.get().asFile.absolutePath)
