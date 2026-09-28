@@ -234,7 +234,7 @@ dependencies {
     // which 'pluginUnderTestMetadata' would inject into TestKit builds via withPluginClasspath().
     // Older Gradle versions under test cannot instrument those 9.x jars.
 
-    implementation("org.slf4j:slf4j-api:2.0.19")
+    implementation("org.slf4j:slf4j-api:2.0.20")
     implementation("org.ow2.asm:asm:9.10.1")
     implementation("jakarta.inject:jakarta.inject-api:2.0.1")
     implementation("commons-io:commons-io:2.22.0")
