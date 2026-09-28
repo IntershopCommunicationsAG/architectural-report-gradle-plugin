@@ -242,5 +242,5 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:4.0.9")
     implementation("com.intershop.gradle.icm:icm-gradle-plugin:8.0.0")
 
-    runtimeOnly("ch.qos.logback:logback-classic:1.6.3")
+    runtimeOnly("ch.qos.logback:logback-classic:1.6.4")
 }
